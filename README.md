@@ -10,6 +10,7 @@ Created using "qiskit-test_duration*.py".
 
 - Qubits: 2
 - Depth: [1..10]
+- Evals: 20
 - Shots: [None, 2**7, .., 2**10]
 
 ![](plots/duration_depth_2_10.png)
@@ -18,9 +19,19 @@ Created using "qiskit-test_duration*.py".
 
 - Qubits: [1..10]
 - Depth: 5
+- Evals: 20
 - Shots: [None, 2**7, .., 2**10]
 
 ![](plots/duration_qubits_10_5.png)
+
+---
+
+- Qubits: 2
+- Depth: 5
+- Evals: [1,10, ..,100]
+- Shots: [None, 2**7, .., 2**10]
+
+![](plots/duration_multiprocessing_2_5.png)
 
 ---
 
