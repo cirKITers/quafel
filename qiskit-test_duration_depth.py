@@ -32,7 +32,7 @@ for i, shots in enumerate(shots_list):
 
         start_time = time.time()
         job_result = q.execute(qcs, backend=backend, shots=shots).result()
-        duration_matrix[i,j] = time.time() - start_time
+        duration_matrix[i,j-1] = time.time() - start_time
         # print(f"Execution of {evals} circuits took {duration} seconds.")
     print(f"Progress: {i*depth}/{len(shots_list)*depth}")
 
