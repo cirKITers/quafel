@@ -17,7 +17,7 @@ depth = 5
 duration_matrix = np.zeros((len(shots_list), qubits))
 
 for i, shots in enumerate(shots_list):
-    for j in range(qubits):
+    for j in range(1,qubits+1):
         if shots == None:
             backend = q.Aer.get_backend("statevector_simulator")
         else:
@@ -39,7 +39,7 @@ for i, shots in enumerate(shots_list):
 
 fig, ax = plt.subplots()
 im, cbar = plot_util.heatmap(duration_matrix, shots_list, [d for d in range(qubits)], ax=ax,
-                   cmap="YlGn", cbarlabel=f"{evals} circuit duration [s] - {depth} depth")
+                   cmap="magma_r", cbarlabel=f"{evals} circuit duration [s] - {depth} depth")
 texts = plot_util.annotate_heatmap(im, valfmt="{x:.1f} s")
 fig.tight_layout()
 plt.savefig(f"plots/duration_qubits_{qubits}_{depth}.png")
