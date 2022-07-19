@@ -16,8 +16,8 @@ Created using "qiskit-test_duration*.py".
 
 ---
 
-- Qubits: 2
-- Depth: [1..10]
+- Qubits: [1..10]
+- Depth: 5
 - Shots: [None, 2**7, .., 2**10]
 
 ![](plots/duration_qubits_10_5.png)
