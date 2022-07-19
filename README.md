@@ -22,6 +22,7 @@ Created using "qiskit-test_duration*.py".
 
 ![](plots/duration_qubits_10_5.png)
 
+---
 
 ## Further experiments
 
