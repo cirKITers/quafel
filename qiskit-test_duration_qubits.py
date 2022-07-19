@@ -42,5 +42,4 @@ im, cbar = plot_util.heatmap(duration_matrix, shots_list, [d for d in range(qubi
                    cmap="YlGn", cbarlabel=f"{evals} circuit duration [s] - {depth} depth")
 texts = plot_util.annotate_heatmap(im, valfmt="{x:.1f} s")
 fig.tight_layout()
-plt.show()
 plt.savefig(f"plots/duration_qubits_{qubits}_{depth}.png")
