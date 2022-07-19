@@ -1,0 +1,4 @@
+matplotlib
+pip-chill
+qiskit
+typing-extensions
