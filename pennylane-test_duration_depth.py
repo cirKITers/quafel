@@ -12,34 +12,32 @@ evals = 20
 
 # -------------------------------------------------------------------------------------
 
-qubits = 10
-depth = 5
+qubits = 2
+depth = 10
 
-duration_matrix = np.zeros((len(shots_list), qubits))
+duration_matrix = np.zeros((len(shots_list), depth))
 
 for i, shots in enumerate(shots_list):
-    for j in range(1,qubits+1):
-        dev = qml.device("default.qubit", wires=j, shots=shots)
+    for j in range(1,depth+1):
+        dev = qml.device("default.qubit", wires=2, shots=shots)
 
-       
         @qml.qnode(dev)        
         def circuit(w):
-            qml.RandomLayers(weights=w, wires=range(j))
-            return [qml.expval(qml.PauliZ(i)) for i in range(j)]
-        
-        weights = np.random.rand(depth, j)
+            qml.RandomLayers(weights=w, wires=range(2))
+            return [qml.expval(qml.PauliZ(i)) for i in range(2)]
+
+        weights = np.random.rand(j, qubits)
         start_time = time.time()
-        for _ in range(evals):    
+        for _ in range(evals):
             result = circuit(weights)
         duration_matrix[i,j-1] = time.time() - start_time
-        
         # print(f"Execution of {evals} circuits took {duration} seconds.")
-    print(f"Progress: {i*qubits}/{len(shots_list)*qubits}")
+    print(f"Progress: {i*depth}/{len(shots_list)*depth}")
 
 
 fig, ax = plt.subplots()
-im, cbar = plot_util.heatmap(duration_matrix, shots_list, [d for d in range(qubits)], ax=ax,
-                   cmap="magma_r", cbarlabel=f"{evals} circuit duration [s] - {depth} depth")
+im, cbar = plot_util.heatmap(duration_matrix, shots_list, [d for d in range(depth)], ax=ax,
+                   cmap="magma_r", cbarlabel=f"{evals} circuit duration [s] - {qubits} qubits")
 texts = plot_util.annotate_heatmap(im, valfmt="{x:.1f} s")
 fig.tight_layout()
-plt.savefig(f"plots/pennylane_duration_qubits_{qubits}_{depth}.png")
+plt.savefig(f"plots/pennylane_duration_depth_{qubits}_{depth}.png")
