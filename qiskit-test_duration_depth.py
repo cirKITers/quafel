@@ -25,7 +25,9 @@ for i, shots in enumerate(shots_list):
 
         qcs = []
         for e in range(evals):
+            # welchen Wert haben die qubits am anfang?
             qc = random_circuit(qubits, j, max_operands=3, measure=True, seed=seed)
+            # warum wird hier schon gemessen?
             qc.measure_all()
 
             qcs.append(qc)
