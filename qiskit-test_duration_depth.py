@@ -8,7 +8,7 @@ import plot_util
 shots_list = [None, *[2**s for s in range(7, 12)]]
 seed = 10000
 evals = 20
-evals = 2
+
 
 # -------------------------------------------------------------------------------------
 
@@ -45,6 +45,6 @@ im, cbar = plot_util.heatmap(duration_matrix, shots_list, [d for d in range(dept
                    title="Qiskit Duration Test - Circuit Depth")
 texts = plot_util.annotate_heatmap(im, valfmt="{x:.1f} s")
 fig.tight_layout()
-# plt.savefig(f"plots/duration_depth_{qubits}_{depth}.png")
-plt.savefig(f"testing.png")
+plt.savefig(f"plots/duration_depth_{qubits}_{depth}.png")
+#plt.savefig(f"testing.png")
 plt.close() #TODO: still not able to prevent file handle closed warning

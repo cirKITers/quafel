@@ -37,7 +37,11 @@ for i, shots in enumerate(shots_list):
 
 fig, ax = plt.subplots()
 im, cbar = plot_util.heatmap(duration_matrix, shots_list, [d for d in range(depth)], ax=ax,
-                   cmap="magma_r", cbarlabel=f"{evals} circuit duration [s] - {qubits} qubits")
+                   cmap="magma_r", cbarlabel=f"{evals} circuit duration (s) - {qubits} qubits",
+                   axis_labels=("Circuit Depth", "Analytical (An.) / Number of Shots"),
+                   title="Pennylane Duration Test - Circuit Depth")
 texts = plot_util.annotate_heatmap(im, valfmt="{x:.1f} s")
 fig.tight_layout()
 plt.savefig(f"plots/pennylane_duration_depth_{qubits}_{depth}.png")
+#plt.savefig(f"testing.png")
+plt.close() #TODO: still not able to prevent file handle closed warning
