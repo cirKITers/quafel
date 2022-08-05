@@ -5,4 +5,3 @@ seed = 10000
 evals = 20
 qubits = 10
 depth = 10
-#framework = classes.duration_pennylane()

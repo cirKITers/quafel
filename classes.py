@@ -1,23 +1,17 @@
 import pennylane as qml
 from pennylane import numpy as np
-
 import qiskit as q
 from qiskit.circuit.random import random_circuit
-
 import cirq
-
 import config
 
 class duration_pennylane:   
     def __init__(self):
-        self.shots_list = config.shots_list
         self.seed = config.seed
         self.evals = config.evals
         self.qubits = config.qubits
         self.depth = config.depth
         
-        
-
     def generate_circuit(self, shots):
         self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
         self.w = np.random.rand(self.depth, self.qubits)
@@ -52,16 +46,10 @@ class duration_pennylane:
         for i in range(self.evals):
             self.qcs.append(qnode)
         
-         
-      
     def execute(self, shots):
-        #for _ in range(self.evals):
-        #    self.generate_circuit(shots)
-        
         for i in self.qcs:
             i(self.w)
-        
-        #result = qml.execute(tapes=self.qcs, device=self.dev, gradient_fn=None, device_batch_transform=False)
+
 
 class duration_qiskit:   
     def __init__(self):
@@ -83,26 +71,31 @@ class duration_qiskit:
             qc = random_circuit(self.qubits, self.depth, max_operands=3, measure=True, seed=self.seed)
             # warum wird hier schon gemessen?
             qc.measure_all()
-
             self.qcs.append(qc)
         
-
     def execute(self, shots):
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result() 
 
+
 class duration_cirq():
     def __init__(self):
-        self.shots_list = config.shots_list
         self.seed = config.seed
         self.evals = config.evals
         self.qubits = config.qubits
         self.depth = config.depth
 
     def generate_circuit(self, shots):
-        self.circuit = cirq.testing.random_circuit(qubits = self.qubits, n_moments = self.depth, random_state = self.seed, op_density=0.5)
+        self.qcs = []
+        for i in range(self.evals):
+            self.circuit = cirq.testing.random_circuit(qubits = self.qubits, n_moments = self.depth, random_state = self.seed, op_density=0.5)
+            self.circuit.append(cirq.measure(cirq.NamedQubit.range(self.qubits, prefix=''),key='result'))
+            self.qcs.append(self.circuit)        
         self.simulator = cirq.Simulator()
         
-
     def execute(self, shots):
-        result = self.simulator.run(self.circuit, repetitions=20)
+        for i in self.qcs: 
+            if shots == None:
+                result = self.simulator.simulate(i)
+            else:
+                result = self.simulator.run(i, repetitions=shots)
 
