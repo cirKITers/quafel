@@ -47,8 +47,8 @@ class duration_pennylane:
             self.qcs.append(qnode)
         
     def execute(self, shots):
-        for i in self.qcs:
-            i(self.w)
+        for circuit in self.qcs:
+            circuit(self.w)
 
 
 class duration_qiskit:   
@@ -87,9 +87,9 @@ class duration_cirq():
     def generate_circuit(self, shots):
         self.qcs = []
         for i in range(self.evals):
-            self.circuit = cirq.testing.random_circuit(qubits = self.qubits, n_moments = self.depth, random_state = self.seed, op_density=0.5)
-            self.circuit.append(cirq.measure(cirq.NamedQubit.range(self.qubits, prefix=''),key='result'))
-            self.qcs.append(self.circuit)        
+            circuit = cirq.testing.random_circuit(qubits = self.qubits, n_moments = self.depth, random_state = self.seed, op_density=0.5)
+            circuit.append(cirq.measure(cirq.NamedQubit.range(self.qubits, prefix=''),key='result'))
+            self.qcs.append(circuit)        
         self.simulator = cirq.Simulator()
         
     def execute(self, shots):
