@@ -1,9 +1,15 @@
 import pennylane as qml
 from pennylane import numpy as np
+
 import qiskit as q
 from qiskit.circuit.random import random_circuit
+
+
 import cirq
+from cirq.contrib.qasm_import import circuit_from_qasm
+
 import config
+import utils
 
 class duration_pennylane:   
     def __init__(self):
@@ -11,42 +17,47 @@ class duration_pennylane:
         self.evals = config.evals
         self.qubits = config.qubits
         self.depth = config.depth
+        self.consistent_circuit = config.consistent_circuit
         
     def generate_circuit(self, shots):
+        if self.consistent_circuit == False:
+            self.__generate_pennylane_circuit(shots)
+        
+        else:
+            self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
+
+            def create_circuit():
+                circuit = qml.from_qasm(utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed))
+                return [qml.expval(qml.PauliZ(i)) for i in range(self.qubits)]
+
+                
+            qnode = qml.QNode(create_circuit, self.dev)
+            self.qcs = []
+            for i in range(self.evals):
+                self.qcs.append(qnode)
+
+    def __generate_pennylane_circuit(self, shots):
         self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
         self.w = np.random.rand(self.depth, self.qubits)
-
-        """    
-        @qml.qnode(self.dev)        
-        def create_circuit(w):
-            qml.RandomLayers(weights=w, wires=range(self.qubits))
-            return [qml.expval(qml.PauliZ(i)) for i in range(self.qubits)]
-        w = self.w
-
-        for i in self.evals:
-            self.qcs.append(create_circuit(w))
-        return create_circuit(w) 
-        """             
-        """ def create_circuit(w):
-            qml.RandomLayers(weights=w, wires=range(self.qubits))
-            return [qml.expval(qml.PauliZ(i)) for i in range(self.qubits)]
-        qnode = qml.QNode(create_circuit, self.dev)
-        w = self.w
-        self.qcs = []
-        for i in range(self.evals):
-            self.qcs.append(create_circuit(w))
-        return qnode(w) """
         
         def create_circuit(w):
             qml.RandomLayers(weights=w, wires=range(self.qubits))
             return [qml.expval(qml.PauliZ(i)) for i in range(self.qubits)]
+
         qnode = qml.QNode(create_circuit, self.dev)
         w = self.w
         self.qcs = []
         for i in range(self.evals):
             self.qcs.append(qnode)
-        
+    
     def execute(self, shots):
+        if self.consistent_circuit == False:
+           self.__execute_specific_circuit() 
+        else:
+            for circuit in self.qcs:
+                circuit()  
+
+    def __execute_specific_circuit(self):
         for circuit in self.qcs:
             circuit(self.w)
 
@@ -58,8 +69,26 @@ class duration_qiskit:
         self.evals = config.evals
         self.qubits = config.qubits
         self.depth = config.depth
+        self.consistent_circuit = config.consistent_circuit
 
     def generate_circuit(self, shots):
+        if self.consistent_circuit == False:
+            self.__generate_qiskit_circuit(shots)
+        else:
+            if shots == None:
+                self.backend = q.Aer.get_backend("statevector_simulator")
+            else:
+                self.backend = q.Aer.get_backend("qasm_simulator")
+
+            self.qcs = []
+            for e in range(self.evals):
+                # welchen Wert haben die qubits am Anfang?
+                qasm_circuit = utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed)
+                qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
+                # warum wird hier schon gemessen?
+                self.qcs.append(qc)
+        
+    def __generate_qiskit_circuit(self, shots):
         if shots == None:
             self.backend = q.Aer.get_backend("statevector_simulator")
         else:
@@ -83,8 +112,21 @@ class duration_cirq():
         self.evals = config.evals
         self.qubits = config.qubits
         self.depth = config.depth
+        self.consistent_circuit = config.consistent_circuit
 
     def generate_circuit(self, shots):
+        if self.consistent_circuit == False:
+            self.__generate_cirq_circuit()
+        else:
+            self.qcs = []
+            for i in range(self.evals):
+                qasm_circuit = utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed)
+                circuit = circuit_from_qasm(qasm_circuit)
+                circuit.append(cirq.measure(cirq.NamedQubit.range(self.qubits, prefix=''),key='result'))
+                self.qcs.append(circuit)        
+            self.simulator = cirq.Simulator()
+    
+    def __generate_cirq_circuit(self):
         self.qcs = []
         for i in range(self.evals):
             circuit = cirq.testing.random_circuit(qubits = self.qubits, n_moments = self.depth, random_state = self.seed, op_density=0.5)
