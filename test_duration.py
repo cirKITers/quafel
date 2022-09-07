@@ -7,8 +7,13 @@ import time
 import plot_util
 import classes
 import config
+import argparse
 
-user_input = input("Choose your framework (pennylane, qiskit or cirq): \n")
+# user input
+CLI = argparse.ArgumentParser()
+CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq"])
+options = CLI.parse_args()
+user_input = options.framework
 
 # Inhalt der config datei -----------------------------
 shots_list = config.shots_list

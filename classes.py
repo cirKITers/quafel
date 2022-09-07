@@ -4,7 +4,6 @@ from pennylane import numpy as np
 import qiskit as q
 from qiskit.circuit.random import random_circuit
 
-
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
 
