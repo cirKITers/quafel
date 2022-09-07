@@ -13,12 +13,16 @@ import utils
 
 
 class duration_pennylane:
-    def __init__(self):
-        self.seed = config.seed
-        self.evals = config.evals
-        self.qubits = config.qubits
-        self.depth = config.depth
-        self.consistent_circuit = config.consistent_circuit
+    def __init__(self, seed, evals, qubits, depth, consistent_circuit):
+        self.seed = seed
+        self.evals = evals
+        self.qubits = qubits
+        self.depth = depth
+        self.consistent_circuit = consistent_circuit
+
+    @classmethod
+    def from_config(cls):
+        return cls(config.seed, config.evals, config.qubits, config.depth, config.consistent_circuit)
 
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
