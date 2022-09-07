@@ -12,7 +12,7 @@ import config
 import utils
 
 
-class duration_pennylane:
+class initialize:
     def __init__(self, seed, evals, qubits, depth, consistent_circuit):
         self.seed = seed
         self.evals = evals
@@ -22,11 +22,19 @@ class duration_pennylane:
 
     @classmethod
     def from_config(cls):
-        return cls(config.seed, config.evals, config.qubits, config.depth, config.consistent_circuit)
+        return cls(
+            config.seed,
+            config.evals,
+            config.qubits,
+            config.depth,
+            config.consistent_circuit,
+        )
 
+
+class duration_pennylane(initialize):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
-            self.__generate_pennylane_circuit(shots)
+            self._generate_pennylane_circuit(shots)
 
         else:
             self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
@@ -42,7 +50,7 @@ class duration_pennylane:
             for i in range(self.evals):
                 self.qcs.append(qnode)
 
-    def __generate_pennylane_circuit(self, shots):
+    def _generate_pennylane_circuit(self, shots):
         self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
         self.w = np.random.rand(self.depth, self.qubits)
 
@@ -68,18 +76,10 @@ class duration_pennylane:
             circuit(self.w)
 
 
-class duration_qiskit:
-    def __init__(self):
-        self.shots_list = config.shots_list
-        self.seed = config.seed
-        self.evals = config.evals
-        self.qubits = config.qubits
-        self.depth = config.depth
-        self.consistent_circuit = config.consistent_circuit
-
+class duration_qiskit(initialize):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
-            self.__generate_qiskit_circuit(shots)
+            self._generate_qiskit_circuit(shots)
         else:
             if shots == None:
                 self.backend = q.Aer.get_backend("statevector_simulator")
@@ -96,7 +96,7 @@ class duration_qiskit:
                 # warum wird hier schon gemessen?
                 self.qcs.append(qc)
 
-    def __generate_qiskit_circuit(self, shots):
+    def _generate_qiskit_circuit(self, shots):
         if shots == None:
             self.backend = q.Aer.get_backend("statevector_simulator")
         else:
@@ -116,17 +116,10 @@ class duration_qiskit:
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
 
-class duration_cirq:
-    def __init__(self):
-        self.seed = config.seed
-        self.evals = config.evals
-        self.qubits = config.qubits
-        self.depth = config.depth
-        self.consistent_circuit = config.consistent_circuit
-
+class duration_cirq(initialize):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
-            self.__generate_cirq_circuit()
+            self._generate_cirq_circuit()
         else:
             self.qcs = []
             for i in range(self.evals):
@@ -142,7 +135,7 @@ class duration_cirq:
                 self.qcs.append(circuit)
             self.simulator = cirq.Simulator()
 
-    def __generate_cirq_circuit(self):
+    def _generate_cirq_circuit(self):
         self.qcs = []
         for i in range(self.evals):
             circuit = cirq.testing.random_circuit(

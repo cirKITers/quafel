@@ -16,8 +16,7 @@ seed = config.seed
 evals = config.evals
 qubits = config.qubits
 depth = config.depth
-framework = getattr(classes, "duration_" + user_input)()
-# framework = eval("classes.duration_" + user_input +"()")
+framework = getattr(classes, "duration_" + user_input).from_config()
 # -----------------------------------------------------
 
 duration_matrix_depth = np.zeros((len(shots_list), depth))
