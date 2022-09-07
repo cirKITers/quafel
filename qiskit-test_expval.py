@@ -19,7 +19,7 @@ for shots in shots_list:
     qcs = []
     for e in range(evals):
         qc = q.QuantumCircuit(1)
-        qc.rx(e*np.pi/evals, 0)
+        qc.rx(e * np.pi / evals, 0)
         qc.measure_all()
 
         qcs.append(qc)
@@ -32,16 +32,15 @@ for shots in shots_list:
     def exp_val(results, shots=None):
         p_0 = results["0"] if "0" in results else 0
         p_1 = results["1"] if "1" in results else 0
-            
 
         shots = 1 if shots == None else shots
 
-        return 1/shots * (p_1-p_0)
+        return 1 / shots * (p_1 - p_0)
 
     results = [exp_val(job_result.get_counts(qc), shots) for qc in qcs]
 
     fig = plt.figure()
-    plt.xlabel(f'shots')
-    plt.ylabel(f'depth')
+    plt.xlabel(f"shots")
+    plt.ylabel(f"depth")
     plt.plot(results)
     plt.savefig(f"plots/expval_{evals}_{shots}.png")

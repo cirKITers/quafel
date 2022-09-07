@@ -11,26 +11,28 @@ from cirq.contrib.qasm_import import circuit_from_qasm
 import config
 import utils
 
-class duration_pennylane:   
+
+class duration_pennylane:
     def __init__(self):
         self.seed = config.seed
         self.evals = config.evals
         self.qubits = config.qubits
         self.depth = config.depth
         self.consistent_circuit = config.consistent_circuit
-        
+
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
             self.__generate_pennylane_circuit(shots)
-        
+
         else:
             self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
 
             def create_circuit():
-                circuit = qml.from_qasm(utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed))
+                circuit = qml.from_qasm(
+                    utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed)
+                )
                 return [qml.expval(qml.PauliZ(i)) for i in range(self.qubits)]
 
-                
             qnode = qml.QNode(create_circuit, self.dev)
             self.qcs = []
             for i in range(self.evals):
@@ -39,7 +41,7 @@ class duration_pennylane:
     def __generate_pennylane_circuit(self, shots):
         self.dev = qml.device("default.qubit", wires=self.qubits, shots=shots)
         self.w = np.random.rand(self.depth, self.qubits)
-        
+
         def create_circuit(w):
             qml.RandomLayers(weights=w, wires=range(self.qubits))
             return [qml.expval(qml.PauliZ(i)) for i in range(self.qubits)]
@@ -49,20 +51,20 @@ class duration_pennylane:
         self.qcs = []
         for i in range(self.evals):
             self.qcs.append(qnode)
-    
+
     def execute(self, shots):
         if self.consistent_circuit == False:
-           self.__execute_specific_circuit() 
+            self.__execute_specific_circuit()
         else:
             for circuit in self.qcs:
-                circuit()  
+                circuit()
 
     def __execute_specific_circuit(self):
         for circuit in self.qcs:
             circuit(self.w)
 
 
-class duration_qiskit:   
+class duration_qiskit:
     def __init__(self):
         self.shots_list = config.shots_list
         self.seed = config.seed
@@ -83,11 +85,13 @@ class duration_qiskit:
             self.qcs = []
             for e in range(self.evals):
                 # welchen Wert haben die qubits am Anfang?
-                qasm_circuit = utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed)
+                qasm_circuit = utils.get_random_qasm_circuit(
+                    self.qubits, self.depth, self.seed
+                )
                 qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
                 # warum wird hier schon gemessen?
                 self.qcs.append(qc)
-        
+
     def __generate_qiskit_circuit(self, shots):
         if shots == None:
             self.backend = q.Aer.get_backend("statevector_simulator")
@@ -97,16 +101,18 @@ class duration_qiskit:
         self.qcs = []
         for e in range(self.evals):
             # welchen Wert haben die qubits am Anfang?
-            qc = random_circuit(self.qubits, self.depth, max_operands=3, measure=True, seed=self.seed)
+            qc = random_circuit(
+                self.qubits, self.depth, max_operands=3, measure=True, seed=self.seed
+            )
             # warum wird hier schon gemessen?
             qc.measure_all()
             self.qcs.append(qc)
-        
+
     def execute(self, shots):
-        result = q.execute(self.qcs, backend=self.backend, shots=shots).result() 
+        result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
 
-class duration_cirq():
+class duration_cirq:
     def __init__(self):
         self.seed = config.seed
         self.evals = config.evals
@@ -120,24 +126,38 @@ class duration_cirq():
         else:
             self.qcs = []
             for i in range(self.evals):
-                qasm_circuit = utils.get_random_qasm_circuit(self.qubits, self.depth, self.seed)
+                qasm_circuit = utils.get_random_qasm_circuit(
+                    self.qubits, self.depth, self.seed
+                )
                 circuit = circuit_from_qasm(qasm_circuit)
-                circuit.append(cirq.measure(cirq.NamedQubit.range(self.qubits, prefix=''),key='result'))
-                self.qcs.append(circuit)        
+                circuit.append(
+                    cirq.measure(
+                        cirq.NamedQubit.range(self.qubits, prefix=""), key="result"
+                    )
+                )
+                self.qcs.append(circuit)
             self.simulator = cirq.Simulator()
-    
+
     def __generate_cirq_circuit(self):
         self.qcs = []
         for i in range(self.evals):
-            circuit = cirq.testing.random_circuit(qubits = self.qubits, n_moments = self.depth, random_state = self.seed, op_density=0.5)
-            circuit.append(cirq.measure(cirq.NamedQubit.range(self.qubits, prefix=''),key='result'))
-            self.qcs.append(circuit)        
+            circuit = cirq.testing.random_circuit(
+                qubits=self.qubits,
+                n_moments=self.depth,
+                random_state=self.seed,
+                op_density=0.5,
+            )
+            circuit.append(
+                cirq.measure(
+                    cirq.NamedQubit.range(self.qubits, prefix=""), key="result"
+                )
+            )
+            self.qcs.append(circuit)
         self.simulator = cirq.Simulator()
-        
+
     def execute(self, shots):
-        for i in self.qcs: 
+        for i in self.qcs:
             if shots == None:
                 result = self.simulator.simulate(i)
             else:
                 result = self.simulator.run(i, repetitions=shots)
-
