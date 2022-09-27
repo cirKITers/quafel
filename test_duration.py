@@ -34,16 +34,17 @@ for i, shots in enumerate(shots_list):
         framework.depth = j
         framework.generate_circuit(shots)
         start_time = time.time()
-        framework.execute(shots)
-        duration_matrix_depth[i, j - 1] = time.time() - start_time
+        duration = framework.execute(shots)
+        duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
+
 
     # iteration over qubits
     for j in range(1, qubits + 1):
         framework.qubits = j
         framework.generate_circuit(shots)
         start_time = time.time()
-        framework.execute(shots)
-        duration_matrix_qubits[i, j - 1] = time.time() - start_time
+        duration = framework.execute(shots)
+        duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
 
     print(f"Progress: {i*depth}/{len(shots_list)*depth}")
 
