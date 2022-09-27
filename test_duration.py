@@ -8,9 +8,11 @@ import argparse
 
 # user input
 CLI = argparse.ArgumentParser()
-CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq"])
+CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real"])
 options = CLI.parse_args()
 user_input = options.framework
+
+
 
 # Inhalt der config datei -----------------------------
 shots_list = config.shots_list
