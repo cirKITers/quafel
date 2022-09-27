@@ -5,10 +5,13 @@ import plot_util
 import classes
 import config
 import argparse
+import os
+import pickle
 
 # user input
 CLI = argparse.ArgumentParser()
 CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real"])
+CLI.add_argument("--resume", action='store_true')
 options = CLI.parse_args()
 user_input = options.framework
 
@@ -23,29 +26,49 @@ depth = config.depth
 framework = getattr(classes, "duration_" + user_input).from_config()
 # -----------------------------------------------------
 
-duration_matrix_depth = np.zeros((len(shots_list), depth))
-duration_matrix_qubits = np.zeros((len(shots_list), depth))
+if options.resume:
+    with open(os.path.join("artifacts", "duration_matrix_depth.pkl"), mode="rb") as f:
+        duration_matrix_depth = pickle.load(f)
 
-for i, shots in enumerate(shots_list):
+    with open(os.path.join("artifacts", "duration_matrix_qubits.pkl"), mode="rb") as f:
+        duration_matrix_qubits = pickle.load(f)
+else:
+    duration_matrix_depth = np.zeros((len(shots_list), depth))
+    duration_matrix_qubits = np.zeros((len(shots_list), depth))
 
-    # iteration over depth
-    for j in range(1, depth + 1):
-        framework.depth = j
-        framework.generate_circuit(shots)
-        start_time = time.time()
-        duration = framework.execute(shots)
-        duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
+try:
+    for i, shots in enumerate(shots_list):
+
+        # iteration over depth
+        for j in range(1, depth + 1):
+            framework.depth = j
+            framework.generate_circuit(shots)
+            start_time = time.time()
+            duration = framework.execute(shots)
+            duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
 
 
-    # iteration over qubits
-    for j in range(1, qubits + 1):
-        framework.qubits = j
-        framework.generate_circuit(shots)
-        start_time = time.time()
-        duration = framework.execute(shots)
-        duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
+        # iteration over qubits
+        for j in range(1, qubits + 1):
+            framework.qubits = j
+            framework.generate_circuit(shots)
+            start_time = time.time()
+            duration = framework.execute(shots)
+            duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
 
-    print(f"Progress: {i*depth}/{len(shots_list)*depth}")
+        print(f"Progress: {i*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
+
+except KeyboardInterrupt:
+    print(f"Interrupted by user, trying to plot what has been measured so far.")
+
+result = input("Save measurement results? [Y/n]")
+if result.lower() != "n":
+    with open(os.path.join("artifacts", "duration_matrix_depth.pkl"), mode="wb") as f:
+        pickle.dump(duration_matrix_depth, f)
+
+    with open(os.path.join("artifacts", "duration_matrix_qubits.pkl"), mode="wb") as f:
+        pickle.dump(duration_matrix_qubits, f)
+
 
 # Darstellung depth -----------------------------------------
 fig, ax = plt.subplots()
