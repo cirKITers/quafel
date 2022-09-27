@@ -146,7 +146,18 @@ class duration_real(duration_qiskit):
                 self.qcs.append(qc)
 
     def _generate_qiskit_circuit(self, shots):
-        return super()._generate_qiskit_circuit(shots)
+        self.qcs = []
+
+        if shots == None:
+            return # just return in case no shots are specified
+
+        for e in range(self.evals):
+            # welchen Wert haben die qubits am Anfang?
+            qc = random_circuit(
+                self.qubits, self.depth, max_operands=3, measure=True, seed=self.seed
+            )
+            # warum wird hier schon gemessen?
+            self.qcs.append(qc)
 
     def execute(self, shots):
         if self.qcs.__len__() == 0:
