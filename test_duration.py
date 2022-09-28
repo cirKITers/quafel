@@ -64,6 +64,8 @@ try:
 
 except KeyboardInterrupt:
     print(f"Interrupted by user, trying to plot what has been measured so far.")
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 result = input("Save measurement results? [Y/n]")
 if result.lower() != "n":
