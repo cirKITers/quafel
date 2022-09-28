@@ -41,6 +41,8 @@ try:
 
         # iteration over depth
         for j in range(1, depth + 1):
+            if duration_matrix_depth[i, j - 1] != -1:
+                continue
             framework.depth = j
             framework.generate_circuit(shots)
             start_time = time.time()
@@ -50,6 +52,8 @@ try:
 
         # iteration over qubits
         for j in range(1, qubits + 1):
+            if duration_matrix_qubits[i, j - 1] != -1:
+                continue
             framework.qubits = j
             framework.generate_circuit(shots)
             start_time = time.time()
