@@ -161,7 +161,7 @@ class duration_real(duration_qiskit):
 
     def execute(self, shots):
         if self.qcs.__len__() == 0:
-            return
+            return 0
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
         duration = result._metadata['time_taken']
