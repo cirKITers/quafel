@@ -33,8 +33,8 @@ if options.resume:
     with open(os.path.join("artifacts", "duration_matrix_qubits.pkl"), mode="rb") as f:
         duration_matrix_qubits = pickle.load(f)
 else:
-    duration_matrix_depth = np.zeros((len(shots_list), depth))
-    duration_matrix_qubits = np.zeros((len(shots_list), depth))
+    duration_matrix_depth = np.ones((len(shots_list), depth))*(-1)
+    duration_matrix_qubits = np.ones((len(shots_list), depth))*(-1)
 
 try:
     for i, shots in enumerate(shots_list):
