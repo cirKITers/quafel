@@ -45,7 +45,7 @@ try:
             framework.generate_circuit(shots)
             start_time = time.time()
             duration = framework.execute(shots)
-            duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
+            duration_matrix_depth[i, j - 1] = duration if duration is not None else time.time() - start_time
 
 
         # iteration over qubits
