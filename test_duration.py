@@ -81,7 +81,7 @@ fig, ax = plt.subplots()
 im, cbar = plot_util.heatmap(
     duration_matrix_depth,
     shots_list,
-    [d for d in range(depth)],
+    [d+1 for d in range(depth)],
     ax=ax,
     cmap="magma_r",
     cbarlabel=f"{evals} circuit duration (s) - {qubits} qubits",
@@ -98,7 +98,7 @@ fig, ax = plt.subplots()
 im, cbar = plot_util.heatmap(
     duration_matrix_qubits,
     shots_list,
-    [d for d in range(depth)],
+    [d+1 for d in range(qubits)],
     ax=ax,
     cmap="magma_r",
     cbarlabel=f"{evals} circuit duration (s) - {qubits} qubits",
