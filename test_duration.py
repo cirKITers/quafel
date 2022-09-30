@@ -34,7 +34,7 @@ if options.resume:
         duration_matrix_qubits = pickle.load(f)
 else:
     duration_matrix_depth = np.ones((len(shots_list), depth))*(-1)
-    duration_matrix_qubits = np.ones((len(shots_list), depth))*(-1)
+    duration_matrix_qubits = np.ones((len(shots_list), qubits))*(-1)
 
 try:
     for i, shots in enumerate(shots_list):
