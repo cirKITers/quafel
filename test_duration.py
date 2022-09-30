@@ -11,10 +11,9 @@ import pickle
 # user input
 CLI = argparse.ArgumentParser()
 CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real"])
-CLI.add_argument("--resume", action='store_true')
+CLI.add_argument("--resume", action="store_true")
 options = CLI.parse_args()
 user_input = options.framework
-
 
 
 # Inhalt der config datei -----------------------------
@@ -33,8 +32,8 @@ if options.resume:
     with open(os.path.join("artifacts", "duration_matrix_qubits.pkl"), mode="rb") as f:
         duration_matrix_qubits = pickle.load(f)
 else:
-    duration_matrix_depth = np.ones((len(shots_list), depth))*(-1)
-    duration_matrix_qubits = np.ones((len(shots_list), qubits))*(-1)
+    duration_matrix_depth = np.ones((len(shots_list), depth)) * (-1)
+    duration_matrix_qubits = np.ones((len(shots_list), qubits)) * (-1)
 
 try:
     for i, shots in enumerate(shots_list):
@@ -47,8 +46,9 @@ try:
             framework.generate_circuit(shots)
             start_time = time.time()
             duration = framework.execute(shots)
-            duration_matrix_depth[i, j - 1] = duration if duration is not None else time.time() - start_time
-
+            duration_matrix_depth[i, j - 1] = (
+                duration if duration is not None else time.time() - start_time
+            )
 
         # iteration over qubits
         for j in range(1, qubits + 1):
@@ -58,7 +58,9 @@ try:
             framework.generate_circuit(shots)
             start_time = time.time()
             duration = framework.execute(shots)
-            duration_matrix_qubits[i, j - 1] = duration if duration is not None else time.time() - start_time
+            duration_matrix_qubits[i, j - 1] = (
+                duration if duration is not None else time.time() - start_time
+            )
 
         print(f"Progress: {i*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
 
@@ -81,7 +83,7 @@ fig, ax = plt.subplots()
 im, cbar = plot_util.heatmap(
     duration_matrix_depth,
     shots_list,
-    [d+1 for d in range(depth)],
+    [d + 1 for d in range(depth)],
     ax=ax,
     cmap="magma_r",
     cbarlabel=f"{evals} circuit duration (s) - {qubits} qubits",
@@ -98,7 +100,7 @@ fig, ax = plt.subplots()
 im, cbar = plot_util.heatmap(
     duration_matrix_qubits,
     shots_list,
-    [d+1 for d in range(qubits)],
+    [d + 1 for d in range(qubits)],
     ax=ax,
     cmap="magma_r",
     cbarlabel=f"{evals} circuit duration (s) - {qubits} qubits",

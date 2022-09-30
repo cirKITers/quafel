@@ -75,7 +75,6 @@ class duration_pennylane(initialize):
             circuit(self.w)
 
 
-
 class duration_qiskit(initialize):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
@@ -115,17 +114,24 @@ class duration_qiskit(initialize):
     def execute(self, shots):
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
+
 class duration_real(duration_qiskit):
     def __init__(self, *args, **kwargs):
         # reading token for interfacing ibm qcs
         import ibmq_access
 
-        print(f"Signing in to IBMQ using token {ibmq_access.token[:10]}****, hub {ibmq_access.hub}, group {ibmq_access.group} and project {ibmq_access.project}")
-        self.provider = q.IBMQ.enable_account(token=ibmq_access.token, hub=ibmq_access.hub, group=ibmq_access.group, project=ibmq_access.project)
+        print(
+            f"Signing in to IBMQ using token {ibmq_access.token[:10]}****, hub {ibmq_access.hub}, group {ibmq_access.group} and project {ibmq_access.project}"
+        )
+        self.provider = q.IBMQ.enable_account(
+            token=ibmq_access.token,
+            hub=ibmq_access.hub,
+            group=ibmq_access.group,
+            project=ibmq_access.project,
+        )
         self.backend = self.provider.get_backend(config.real_backend)
 
         super().__init__(*args, **kwargs)
-        
 
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
@@ -134,7 +140,7 @@ class duration_real(duration_qiskit):
             self.qcs = []
 
             if shots == None:
-                return # just return in case no shots are specified
+                return  # just return in case no shots are specified
 
             for e in range(self.evals):
                 # welchen Wert haben die qubits am Anfang?
@@ -149,7 +155,7 @@ class duration_real(duration_qiskit):
         self.qcs = []
 
         if shots == None:
-            return # just return in case no shots are specified
+            return  # just return in case no shots are specified
 
         for e in range(self.evals):
             # welchen Wert haben die qubits am Anfang?
@@ -164,9 +170,10 @@ class duration_real(duration_qiskit):
             return 0
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
-        duration = result._metadata['time_taken']
+        duration = result._metadata["time_taken"]
 
         return duration
+
 
 class duration_cirq(initialize):
     def generate_circuit(self, shots):
