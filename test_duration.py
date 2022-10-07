@@ -10,7 +10,7 @@ import pickle
 
 # user input
 CLI = argparse.ArgumentParser()
-CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real"])
+CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real", "matrix"])
 CLI.add_argument("--resume", action="store_true")
 options = CLI.parse_args()
 user_input = options.framework
@@ -62,7 +62,7 @@ try:
                 duration if duration is not None else time.time() - start_time
             )
 
-        print(f"Progress: {i*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
+        print(f"Progress: {(i+1)*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
 
 except KeyboardInterrupt:
     print(f"Interrupted by user, trying to plot what has been measured so far.")

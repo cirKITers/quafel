@@ -3,6 +3,9 @@ from pennylane import numpy as np
 
 import qiskit as q
 from qiskit.circuit.random import random_circuit
+from qiskit.quantum_info import Statevector
+import numpy as np
+from qiskit.quantum_info import Operator
 
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
@@ -173,6 +176,27 @@ class duration_real(duration_qiskit):
         duration = result._metadata["time_taken"]
 
         return duration
+
+
+class duration_matrix(initialize):
+    def generate_circuit(self, shots):
+        self.qcs = []
+        for e in range(self.evals):
+            qasm_circuit = utils.get_random_qasm_circuit(
+                self.qubits, self.depth, self.seed, measure=False
+            )
+            qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
+            matrix = Operator(qc)
+            self.qcs.append(matrix)
+
+    def execute(self, shots):
+        # keine circuits sondern fertige Matrizen
+        for matrix in self.qcs:
+
+            row_vector = np.zeros(2**self.qubits)
+            row_vector[0] = 1
+            qubit_vector = np.array([row_vector]).T
+            result = np.dot(np.array(matrix), np.array(qubit_vector))
 
 
 class duration_cirq(initialize):
