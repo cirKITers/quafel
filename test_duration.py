@@ -71,10 +71,16 @@ except Exception as e:
 
 result = input("Save measurement results? [Y/n]")
 if result.lower() != "n":
-    with open(os.path.join("artifacts", "duration_matrix_depth.pkl"), mode="wb") as f:
+    with open(
+        os.path.join("artifacts", f"{user_input}_duration_depth_{qubits}_{depth}.pkl"),
+        mode="wb",
+    ) as f:
         pickle.dump(duration_matrix_depth, f)
 
-    with open(os.path.join("artifacts", "duration_matrix_qubits.pkl"), mode="wb") as f:
+    with open(
+        os.path.join("artifacts", f"{user_input}_duration_qubits_{qubits}_{depth}.pkl"),
+        mode="wb",
+    ) as f:
         pickle.dump(duration_matrix_qubits, f)
 
 
