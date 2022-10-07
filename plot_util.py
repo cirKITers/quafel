@@ -82,7 +82,7 @@ def heatmap(
     ax.set_xlabel(axis_labels[0])
     ax.set_ylabel(axis_labels[1])
 
-    ax.set_title(title)
+    ax.set_title(title.capitalize())
 
     return im, cbar
 

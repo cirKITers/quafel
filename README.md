@@ -6,6 +6,8 @@ Simple experiments evaluating the duration of circuit execution using different 
 Plots in "plots/duration_*.png" show the results either with varying circuit depth or width (num. of qubits).
 Created using "test_duration.py".
 
+Real quantum devices can be specified in the config and creating a file named "ibmq_access" in the project root directory providing variables "hub", "group", "project" and "token".
+
 ## Results
 
 - Framework: qiskit
