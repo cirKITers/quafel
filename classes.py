@@ -116,6 +116,9 @@ class duration_qiskit(initialize):
 
     def execute(self, shots):
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
+        if shots == None:
+            print(result)
+            print(result.shape, self.qubits)
 
 
 class duration_real(duration_qiskit):
@@ -191,13 +194,13 @@ class duration_matrix(initialize):
 
     def execute(self, shots):
         # keine circuits sondern fertige Matrizen
-        shots = 1 if shots == None else shots
-        for _ in range(shots):
-            for matrix in self.qcs:
-                row_vector = np.zeros(2**self.qubits)
-                row_vector[0] = 1
-                qubit_vector = np.array([row_vector]).T
-                result = np.dot(np.array(matrix), np.array(qubit_vector))
+        for matrix in self.qcs:
+            statevector = np.array(matrix)[:, 0]
+            probabilities = np.abs((statevector) ** 2)
+            if shots == None:
+                result = probabilities
+            else:
+                result = np.random.choice(len(probabilities), shots, p=probabilities)
 
 
 class duration_cirq(initialize):
