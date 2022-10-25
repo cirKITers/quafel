@@ -181,7 +181,7 @@ class duration_real(duration_qiskit):
 class duration_matrix(initialize):
     def generate_circuit(self, shots):
         self.qcs = []
-        for e in range(self.evals):
+        for _ in range(self.evals):
             qasm_circuit = utils.get_random_qasm_circuit(
                 self.qubits, self.depth, self.seed, measure=False
             )
@@ -191,12 +191,13 @@ class duration_matrix(initialize):
 
     def execute(self, shots):
         # keine circuits sondern fertige Matrizen
-        for matrix in self.qcs:
-
-            row_vector = np.zeros(2**self.qubits)
-            row_vector[0] = 1
-            qubit_vector = np.array([row_vector]).T
-            result = np.dot(np.array(matrix), np.array(qubit_vector))
+        shots = 1 if shots == None else shots
+        for _ in range(shots):
+            for matrix in self.qcs:
+                row_vector = np.zeros(2**self.qubits)
+                row_vector[0] = 1
+                qubit_vector = np.array([row_vector]).T
+                result = np.dot(np.array(matrix), np.array(qubit_vector))
 
 
 class duration_cirq(initialize):
