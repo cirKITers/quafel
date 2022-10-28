@@ -7,6 +7,8 @@ from qiskit.quantum_info import Statevector
 import numpy as np
 from qiskit.quantum_info import Operator
 
+import qibo
+
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
 
@@ -245,3 +247,38 @@ class duration_cirq(initialize):
                 result = self.simulator.simulate(i)
             else:
                 result = self.simulator.run(i, repetitions=shots)
+
+
+class duration_qibo(initialize):
+    def generate_circuit(self, shots):
+        if self.consistent_circuit == False:
+            raise NotImplementedError
+        else:
+            self.qcs = []
+
+            if shots == None:
+                return
+            self.backend = qibo.get_backend()
+
+            for e in range(self.evals):
+                # welchen Wert haben die qubits am Anfang?
+                qasm_circuit = utils.get_random_qasm_circuit(
+                    self.qubits, self.depth, self.seed
+                )
+                qc = qibo.models.Circuit.from_qasm(qasm_circuit)
+                # warum wird hier schon gemessen?
+                self.qcs.append(qc)
+            
+            states = [ np.random.random(2**self.qubits) for i in range(5)]
+
+    def _generate_qibo_circuit(self, shots):
+        pass
+
+    def execute(self, shots):
+        if self.qcs.__len__() == 0:
+            return 0
+
+        for i in self.qcs:
+            qibo.set_threads(1)
+            # execute in parallel
+            results = qibo.parallel.parallel_execution(i, self.states, processes=2)

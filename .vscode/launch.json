@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/test_duration.py",
             "console": "integratedTerminal",
-            "args": ["real"],
+            "args": ["qibo"],
             "justMyCode": true
         },
         {

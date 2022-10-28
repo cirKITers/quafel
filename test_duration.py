@@ -10,7 +10,7 @@ import pickle
 
 # user input
 CLI = argparse.ArgumentParser()
-CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real", "matrix"])
+CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real", "matrix", "qibo"])
 CLI.add_argument("--resume", action="store_true")
 options = CLI.parse_args()
 user_input = options.framework
