@@ -198,7 +198,7 @@ class duration_matrix(initialize):
             statevector = np.array(matrix)[:, 0]
             probabilities = np.abs((statevector) ** 2)
             if shots is not None:
-               np.random.choice(len(probabilities), shots, p=probabilities)
+                np.random.choice(len(probabilities), shots, p=probabilities)
 
 
 class duration_cirq(initialize):
@@ -264,16 +264,19 @@ class duration_qibo(initialize):
 
                 # this is super hacky, but the way qibo parses the QASM string
                 # does not deserve better.
-                def qasm_conv(match:re.Match):
+                def qasm_conv(match: re.Match):
                     denominator = float(match.group()[1:])
                     return f"*{1/denominator}"
-                qasm_circuit = re.sub(r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE)
+
+                qasm_circuit = re.sub(
+                    r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE
+                )
 
                 qc = qibo.models.Circuit.from_qasm(qasm_circuit)
                 # warum wird hier schon gemessen?
                 self.qcs.append(qc)
-            
-            self.states = [ np.random.random(2**self.qubits) for i in range(5)]
+
+            self.states = [np.random.random(2**self.qubits) for i in range(5)]
 
     def _generate_qibo_circuit(self, shots):
         pass
