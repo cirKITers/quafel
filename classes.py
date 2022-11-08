@@ -291,4 +291,4 @@ class duration_qibo(initialize):
         for i in self.qcs:
             qibo.set_threads(1)
             # execute in parallel
-            results = qibo.parallel.parallel_execution(i, self.states, processes=2)
+            results = qibo.parallel.parallel_execution(i, self.states, processes=10)
