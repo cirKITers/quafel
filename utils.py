@@ -28,12 +28,12 @@ def get_random_qasm_circuit(qubits, depth, seed, measure=True):
             "ry",
             "rz",
             "cx",
-            "cy",
+            # "cy", #not in qibo framework
             "cz",
-            "ch",
+            # "ch", #not in qibo framework
             "swap",
             "ccx",
-            "cswap",
+            # "cswap", #not in qibo framework
         ],
     )
     return qc.qasm()
