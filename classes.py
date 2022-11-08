@@ -236,6 +236,6 @@ class duration_cirq(initialize):
     def execute(self, shots):
         for i in self.qcs:
             if shots is None:
-                self.simulator.simulate(i)
+                result = self.simulator.simulate(i)
             else:
-                self.simulator.run(i, repetitions=shots)
+                result = self.simulator.run(i, repetitions=shots)
