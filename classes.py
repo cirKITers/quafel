@@ -1,3 +1,5 @@
+import re
+
 import pennylane as qml
 from pennylane import numpy as np
 
@@ -265,6 +267,14 @@ class duration_qibo(initialize):
                 qasm_circuit = utils.get_random_qasm_circuit(
                     self.qubits, self.depth, self.seed
                 )
+
+                # this is super hacky, but the way qibo parses the QASM string
+                # does not deserve better.
+                def qasm_conv(match:re.Match):
+                    denominator = float(match.group()[1:])
+                    return f"*{1/denominator}"
+                qasm_circuit = re.sub(r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE)
+
                 qc = qibo.models.Circuit.from_qasm(qasm_circuit)
                 # warum wird hier schon gemessen?
                 self.qcs.append(qc)
