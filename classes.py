@@ -279,7 +279,7 @@ class duration_qibo(initialize):
                 # warum wird hier schon gemessen?
                 self.qcs.append(qc)
             
-            states = [ np.random.random(2**self.qubits) for i in range(5)]
+            self.states = [ np.random.random(2**self.qubits) for i in range(5)]
 
     def _generate_qibo_circuit(self, shots):
         pass
