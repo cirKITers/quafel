@@ -16,14 +16,21 @@ from cirq.contrib.qasm_import import circuit_from_qasm
 import config
 import utils
 
+import time
 
-class initialize:
+
+class duration_framework:
     def __init__(self, seed, evals, qubits, depth, consistent_circuit):
         self.seed = seed
         self.evals = evals
         self.qubits = qubits
         self.depth = depth
         self.consistent_circuit = consistent_circuit
+
+    def time_measurement(self, shots):
+        start_time = time.time()
+        self.execute(shots)
+        return (time.time()-start_time)
 
     @classmethod
     def from_config(cls):
@@ -36,7 +43,7 @@ class initialize:
         )
 
 
-class duration_pennylane(initialize):
+class duration_pennylane(duration_framework):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
             self._generate_pennylane_circuit(shots)
@@ -81,7 +88,7 @@ class duration_pennylane(initialize):
             circuit(self.w)
 
 
-class duration_qiskit(initialize):
+class duration_qiskit(duration_framework):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
             self._generate_qiskit_circuit(shots)
@@ -180,8 +187,10 @@ class duration_real(duration_qiskit):
 
         return duration
 
+    def time_measurement(self, shots):
+        return self.execute(shots)
 
-class duration_matrix(initialize):
+class duration_matrix(duration_framework):
     def generate_circuit(self, shots):
         self.qcs = []
         for _ in range(self.evals):
@@ -201,7 +210,7 @@ class duration_matrix(initialize):
                 np.random.choice(len(probabilities), shots, p=probabilities)
 
 
-class duration_cirq(initialize):
+class duration_cirq(duration_framework):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
             self._generate_cirq_circuit()
@@ -245,7 +254,7 @@ class duration_cirq(initialize):
                 self.simulator.run(i, repetitions=shots)
 
 
-class duration_qibo(initialize):
+class duration_qibo(duration_framework):
     def generate_circuit(self, shots):
         if self.consistent_circuit == False:
             raise NotImplementedError
