@@ -1,3 +1,5 @@
+import re
+
 import pennylane as qml
 from pennylane import numpy as np
 
@@ -5,6 +7,8 @@ import qiskit as q
 from qiskit.circuit.random import random_circuit
 import numpy as np
 from qiskit.quantum_info import Operator
+
+import qibo
 
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
@@ -114,7 +118,7 @@ class duration_qiskit(initialize):
             self.qcs.append(qc)
 
     def execute(self, shots):
-        result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
+        q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
 
 class duration_real(duration_qiskit):
@@ -194,7 +198,7 @@ class duration_matrix(initialize):
             statevector = np.array(matrix)[:, 0]
             probabilities = np.abs((statevector) ** 2)
             if shots is not None:
-               np.random.choice(len(probabilities), shots, p=probabilities)
+                np.random.choice(len(probabilities), shots, p=probabilities)
 
 
 class duration_cirq(initialize):
@@ -236,6 +240,52 @@ class duration_cirq(initialize):
     def execute(self, shots):
         for i in self.qcs:
             if shots is None:
-                result = self.simulator.simulate(i)
+                self.simulator.simulate(i)
             else:
-                result = self.simulator.run(i, repetitions=shots)
+                self.simulator.run(i, repetitions=shots)
+
+
+class duration_qibo(initialize):
+    def generate_circuit(self, shots):
+        if self.consistent_circuit == False:
+            raise NotImplementedError
+        else:
+            self.qcs = []
+
+            if shots is None:
+                return
+            self.backend = qibo.get_backend()
+
+            for e in range(self.evals):
+                # welchen Wert haben die qubits am Anfang?
+                qasm_circuit = utils.get_random_qasm_circuit(
+                    self.qubits, self.depth, self.seed
+                )
+
+                # this is super hacky, but the way qibo parses the QASM string
+                # does not deserve better.
+                def qasm_conv(match: re.Match) -> str:
+                    denominator = float(match.group()[1:])
+                    return f"*{1/denominator}"
+
+                qasm_circuit = re.sub(
+                    r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE
+                )
+
+                qc = qibo.models.Circuit.from_qasm(qasm_circuit)
+                # warum wird hier schon gemessen?
+                self.qcs.append(qc)
+
+            self.states = [np.random.random(2**self.qubits) for i in range(5)]
+
+    def _generate_qibo_circuit(self, shots):
+        pass
+
+    def execute(self, shots):
+        if self.qcs.__len__() == 0:
+            return 0
+
+        for i in self.qcs:
+            qibo.set_threads(1)
+            # execute in parallel
+            qibo.parallel.parallel_execution(i, self.states, processes=10)
