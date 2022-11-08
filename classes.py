@@ -3,6 +3,8 @@ from pennylane import numpy as np
 
 import qiskit as q
 from qiskit.circuit.random import random_circuit
+import numpy as np
+from qiskit.quantum_info import Operator
 
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
@@ -80,7 +82,7 @@ class duration_qiskit(initialize):
         if self.consistent_circuit == False:
             self._generate_qiskit_circuit(shots)
         else:
-            if shots == None:
+            if shots is None:
                 self.backend = q.Aer.get_backend("statevector_simulator")
             else:
                 self.backend = q.Aer.get_backend("qasm_simulator")
@@ -96,7 +98,7 @@ class duration_qiskit(initialize):
                 self.qcs.append(qc)
 
     def _generate_qiskit_circuit(self, shots):
-        if shots == None:
+        if shots is None:
             self.backend = q.Aer.get_backend("statevector_simulator")
         else:
             self.backend = q.Aer.get_backend("qasm_simulator")
@@ -139,7 +141,7 @@ class duration_real(duration_qiskit):
         else:
             self.qcs = []
 
-            if shots == None:
+            if shots is None:
                 return  # just return in case no shots are specified
 
             for e in range(self.evals):
@@ -154,7 +156,7 @@ class duration_real(duration_qiskit):
     def _generate_qiskit_circuit(self, shots):
         self.qcs = []
 
-        if shots == None:
+        if shots is None:
             return  # just return in case no shots are specified
 
         for e in range(self.evals):
@@ -173,6 +175,26 @@ class duration_real(duration_qiskit):
         duration = result._metadata["time_taken"]
 
         return duration
+
+
+class duration_matrix(initialize):
+    def generate_circuit(self, shots):
+        self.qcs = []
+        for _ in range(self.evals):
+            qasm_circuit = utils.get_random_qasm_circuit(
+                self.qubits, self.depth, self.seed, measure=False
+            )
+            qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
+            matrix = Operator(qc)
+            self.qcs.append(matrix)
+
+    def execute(self, shots):
+        # keine circuits sondern fertige Matrizen
+        for matrix in self.qcs:
+            statevector = np.array(matrix)[:, 0]
+            probabilities = np.abs((statevector) ** 2)
+            if shots is not None:
+               np.random.choice(len(probabilities), shots, p=probabilities)
 
 
 class duration_cirq(initialize):
@@ -213,7 +235,7 @@ class duration_cirq(initialize):
 
     def execute(self, shots):
         for i in self.qcs:
-            if shots == None:
+            if shots is None:
                 result = self.simulator.simulate(i)
             else:
                 result = self.simulator.run(i, repetitions=shots)

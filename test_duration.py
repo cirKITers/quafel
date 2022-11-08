@@ -10,7 +10,7 @@ import pickle
 
 # user input
 CLI = argparse.ArgumentParser()
-CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real"])
+CLI.add_argument("framework", choices=["pennylane", "qiskit", "cirq", "real", "matrix"])
 CLI.add_argument("--resume", action="store_true")
 options = CLI.parse_args()
 user_input = options.framework
@@ -62,7 +62,7 @@ try:
                 duration if duration is not None else time.time() - start_time
             )
 
-        print(f"Progress: {i*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
+        print(f"Progress: {(i+1)*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
 
 except KeyboardInterrupt:
     print(f"Interrupted by user, trying to plot what has been measured so far.")
@@ -71,10 +71,16 @@ except Exception as e:
 
 result = input("Save measurement results? [Y/n]")
 if result.lower() != "n":
-    with open(os.path.join("artifacts", "duration_matrix_depth.pkl"), mode="wb") as f:
+    with open(
+        os.path.join("artifacts", f"{user_input}_duration_depth_{qubits}_{depth}.pkl"),
+        mode="wb",
+    ) as f:
         pickle.dump(duration_matrix_depth, f)
 
-    with open(os.path.join("artifacts", "duration_matrix_qubits.pkl"), mode="wb") as f:
+    with open(
+        os.path.join("artifacts", f"{user_input}_duration_qubits_{qubits}_{depth}.pkl"),
+        mode="wb",
+    ) as f:
         pickle.dump(duration_matrix_qubits, f)
 
 

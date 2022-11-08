@@ -40,7 +40,7 @@ Real quantum devices can be specified in the config and creating a file named "i
 
 ---
 
-- Framework: qiskit
+- Framework: pennylane
 - Qubits: [1..10]
 - Depth: 10
 - Evals: 20
@@ -66,6 +66,27 @@ Real quantum devices can be specified in the config and creating a file named "i
 - Shots: [None, 2**7, .., 2**10]
 
 ![](plots/cirq_duration_qubits_10_10.png)
+
+---
+
+---
+- Framework: numpy
+- Qubits: 7
+- Depth: [1..10]
+- Evals: 20
+- Shots: [None, 2**7, .., 2**10]
+
+![](plots/matrix_duration_depth_7_10.png)
+
+---
+
+- Framework: numpy
+- Qubits: [1..7]
+- Depth: 10
+- Evals: 20
+- Shots: [None, 2**7, .., 2**10]
+
+![](plots/matrix_duration_qubits_7_10.png)
 
 ---
 
