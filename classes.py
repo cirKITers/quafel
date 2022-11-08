@@ -118,7 +118,7 @@ class duration_qiskit(initialize):
             self.qcs.append(qc)
 
     def execute(self, shots):
-        result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
+        q.execute(self.qcs, backend=self.backend, shots=shots).result()
 
 
 class duration_real(duration_qiskit):
@@ -240,9 +240,9 @@ class duration_cirq(initialize):
     def execute(self, shots):
         for i in self.qcs:
             if shots is None:
-                result = self.simulator.simulate(i)
+                self.simulator.simulate(i)
             else:
-                result = self.simulator.run(i, repetitions=shots)
+                self.simulator.run(i, repetitions=shots)
 
 
 class duration_qibo(initialize):
@@ -288,4 +288,4 @@ class duration_qibo(initialize):
         for i in self.qcs:
             qibo.set_threads(1)
             # execute in parallel
-            results = qibo.parallel.parallel_execution(i, self.states, processes=10)
+            qibo.parallel.parallel_execution(i, self.states, processes=10)
