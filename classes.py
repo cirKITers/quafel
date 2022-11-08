@@ -115,9 +115,6 @@ class duration_qiskit(initialize):
 
     def execute(self, shots):
         result = q.execute(self.qcs, backend=self.backend, shots=shots).result()
-        if shots is None:
-            print(result)
-            print(result.shape, self.qubits)
 
 
 class duration_real(duration_qiskit):
