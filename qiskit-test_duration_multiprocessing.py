@@ -18,7 +18,7 @@ duration_matrix = np.zeros((len(shots_list), evals // 10))
 
 for i, shots in enumerate(shots_list):
     for j in range(1, 11):
-        if shots == None:
+        if shots is None:
             backend = q.Aer.get_backend("statevector_simulator")
         else:
             backend = q.Aer.get_backend("qasm_simulator")
