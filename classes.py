@@ -252,7 +252,7 @@ class duration_qibo(initialize):
         else:
             self.qcs = []
 
-            if shots == None:
+            if shots is None:
                 return
             self.backend = qibo.get_backend()
 
