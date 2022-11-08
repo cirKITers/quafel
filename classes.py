@@ -264,7 +264,7 @@ class duration_qibo(initialize):
 
                 # this is super hacky, but the way qibo parses the QASM string
                 # does not deserve better.
-                def qasm_conv(match: re.Match):
+                def qasm_conv(match: re.Match) -> str:
                     denominator = float(match.group()[1:])
                     return f"*{1/denominator}"
 
