@@ -2,7 +2,7 @@
 
 Simple experiments evaluating the duration of circuit execution using different frameworks for evaluation of
 - no shots (None): analytical evaluation of the cirucuit -> statevector backend is used
-- $[2^7 \dots 2^{12}]$ shots: measurements are taken -> qasm backend Plots in "plots/[framework]_duration_[mode]_[qubits/depth]_[evals]*.png" show the results for both modes either with varying circuit depth or width (num. of qubits).
+- $[2^7 \dots 2^{12}]$ shots: measurements are taken -> qasm backend Plots in "plots/[framework]\_duration\_[mode]\_[qubits/depth]\_[evals]*.png" show the results for both modes either with varying circuit depth or width (num. of qubits).
 
 
 Real quantum devices can be specified in the config and creating a file named "ibmq_access" in the project root directory providing variables "hub", "group", "project" and "token".
