@@ -30,7 +30,7 @@ class duration_framework:
     def time_measurement(self, shots):
         start_time = time.time()
         self.execute(shots)
-        return (time.time()-start_time)
+        return time.time() - start_time
 
     @classmethod
     def from_config(cls):
@@ -189,6 +189,7 @@ class duration_real(duration_qiskit):
 
     def time_measurement(self, shots):
         return self.execute(shots)
+
 
 class duration_matrix(duration_framework):
     def generate_circuit(self, shots):
