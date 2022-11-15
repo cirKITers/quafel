@@ -46,11 +46,9 @@ try:
                 continue
             framework.depth = j
             framework.generate_circuit(shots)
-            start_time = time.time()
-            duration = framework.execute(shots)
-            duration_matrix_depth[i, j - 1] = (
-                duration if duration is not None else time.time() - start_time
-            )
+
+            measured_time = framework.time_measurement(shots)
+            duration_matrix_depth[i, j - 1] = measured_time
 
         # iteration over qubits
         for j in range(1, qubits + 1):
@@ -58,11 +56,9 @@ try:
                 continue
             framework.qubits = j
             framework.generate_circuit(shots)
-            start_time = time.time()
-            duration = framework.execute(shots)
-            duration_matrix_qubits[i, j - 1] = (
-                duration if duration is not None else time.time() - start_time
-            )
+
+            measured_time = framework.time_measurement(shots)
+            duration_matrix_qubits[i, j - 1] = measured_time
 
         print(f"Progress: {(i+1)*(depth+qubits)}/{len(shots_list)*(depth+qubits)}")
 

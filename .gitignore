@@ -2,3 +2,4 @@ venv
 ibmq_access.py
 __pycache__
 config.py
+.DS_Store
