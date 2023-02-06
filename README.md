@@ -127,9 +127,3 @@ Real quantum devices can be specified in the config and creating a file named "i
 ![](plots/real_duration_qubits_7_10.png)
 
 ---
-
-## Further experiments
-
-Plots in "plots/expval_*.png" show variations of an RX gate acting on a single qubit with increasing rotation angles.
-Just a dummy experiment to show impact of measurments.
-Created using "qiskit-test_expval.py".
