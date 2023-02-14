@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "quafel"
+version = "0.1.0"
+description = ""
+authors = ["lc3267 <melvin.strobl@kit.edu>"]
+readme = "README.md"
+packages = [{include = "quantum_framework_runtime_eval"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+kedro = "^0.18.4"
+pennylane = "^0.28.0"
+qiskit = "^0.41.0"
+matplotlib = "^3.7.0"
+cirq = "^1.1.0"
+qibo = "^0.1.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
