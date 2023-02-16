@@ -153,48 +153,30 @@ class qiskit_fw:
 #                 np.random.choice(len(probabilities), shots, p=probabilities)
 
 
-# class duration_cirq(duration_framework):
-#     def generate_circuit(self, shots):
-#         if self.consistent_circuit == False:
-#             self._generate_cirq_circuit()
-#         else:
-#             self.qcs = []
-#             for i in range(self.evals):
-#                 qasm_circuit = utils.get_random_qasm_circuit(
-#                     self.qubits, self.depth, self.seed
-#                 )
-#                 circuit = circuit_from_qasm(qasm_circuit)
-#                 circuit.append(
-#                     cirq.measure(
-#                         cirq.NamedQubit.range(self.qubits, prefix=""), key="result"
-#                     )
-#                 )
-#                 self.qcs.append(circuit)
-#             self.simulator = cirq.Simulator()
+class cirq_fw:
+    def __init__(self, qasm_circuit, n_shots):
+        self.n_shots = n_shots
 
-#     def _generate_cirq_circuit(self):
-#         self.qcs = []
-#         for i in range(self.evals):
-#             circuit = cirq.testing.random_circuit(
-#                 qubits=self.qubits,
-#                 n_moments=self.depth,
-#                 random_state=self.seed,
-#                 op_density=0.5,
-#             )
-#             circuit.append(
-#                 cirq.measure(
-#                     cirq.NamedQubit.range(self.qubits, prefix=""), key="result"
-#                 )
-#             )
-#             self.qcs.append(circuit)
-#         self.simulator = cirq.Simulator()
+        n_qubits = int(
+            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
+        )  # TODO: improvement wanted
 
-#     def execute(self, shots):
-#         for i in self.qcs:
-#             if shots is None:
-#                 self.simulator.simulate(i)
-#             else:
-#                 self.simulator.run(i, repetitions=shots)
+        self.qc = circuit_from_qasm(qasm_circuit)
+
+        self.qc.append(
+            cirq.measure(
+                cirq.NamedQubit.range(n_qubits, prefix=""), key="result"
+            )
+        )
+        self.backend = cirq.Simulator()
+
+    def execute(self):
+        if self.n_shots is None:
+            result = self.backend.simulate(self.qc)
+        else:
+            result = self.backend.run(self.qc, repetitions=self.n_shots)
+
+        return result
 
 
 # class duration_qibo(duration_framework):
