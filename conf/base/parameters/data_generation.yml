@@ -1,0 +1,5 @@
+data_generation:
+  qubits: 1
+  depth: 1
+  measure: true
+  seed: 1111

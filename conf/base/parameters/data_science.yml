@@ -1,0 +1,4 @@
+data_science:
+  evaluations: 1
+  framework_identifier: "qiskit_fw"
+  n_shots: 1000
