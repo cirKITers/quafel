@@ -13,14 +13,9 @@ import qibo
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
 
-import config
-import utils
-
-import time
-
 
 # class duration_framework:
-        
+
 #     def time_measurement(self, shots):
 #         start_time = time.time()
 #         self.execute(shots)
@@ -37,22 +32,28 @@ import time
 #         )
 
 
-class pennylane_fw():
+class pennylane_fw:
     def __init__(self, qasm_circuit, n_shots):
-        circuit = self.convert_circuit(qasm_circuit)
-        self.backend = qml.device("default.qubit", wires=len(circuit.wires), shots=n_shots)
+        n_qubits = int(
+            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
+        )  # TODO: improvement wanted
+
+        def circuit():
+            qml.from_qasm(qasm_circuit)
+            return [qml.expval(qml.PauliZ(i)) for i in range(n_qubits)]
+
+        self.backend = qml.device(
+            "default.qubit", wires=range(n_qubits), shots=n_shots
+        )
 
         self.qc = qml.QNode(circuit, self.backend)
-
-    def convert_circuit(qasm_circuit):
-        qml.from_qasm(qasm_circuit)
-        return [qml.expval(qml.PauliZ(i)) for i in range(qml.AllWires)]
 
     def execute(self):
         result = self.qc()
         return result
 
-class qiskit_fw():
+
+class qiskit_fw:
     def __init__(self, qasm_circuit, n_shots):
         if n_shots is None:
             self.backend = q.Aer.get_backend("statevector_simulator")
@@ -63,8 +64,11 @@ class qiskit_fw():
         self.n_shots = n_shots
 
     def execute(self):
-        result = q.execute(self.qc, backend=self.backend, shots=self.n_shots).result()
+        result = q.execute(
+            self.qc, backend=self.backend, shots=self.n_shots
+        ).result()
         return result
+
 
 # class duration_real(duration_qiskit):
 #     def __init__(self, *args, **kwargs):
