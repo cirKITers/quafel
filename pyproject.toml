@@ -15,6 +15,15 @@ matplotlib = "^3.7.0"
 cirq = "^1.1.0"
 qibo = "^0.1.11"
 
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+)/
+'''
 
 [build-system]
 requires = ["poetry-core"]
