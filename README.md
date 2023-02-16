@@ -1,129 +1,41 @@
-# Circuit Runtime Evaluation
+# QUAFEL - QUAntum Framework EvaLuation
 
-Simple experiments evaluating the duration of circuit execution using different frameworks for evaluation of
-- no shots (None): analytical evaluation of the cirucuit -> statevector backend is used
-- $[2^7 \dots 2^{12}]$ shots: measurements are taken -> qasm backend Plots in "plots/[framework]\_duration\_[mode]\_[qubits/depth]\_[evals]*.png" show the results for both modes either with varying circuit depth or width (num. of qubits).
+Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffle) ;)
 
+*This project follows the [Kedro Framework](https://kedro.org/) approach.*
 
-Real quantum devices can be specified in the config and creating a file named "ibmq_access" in the project root directory providing variables "hub", "group", "project" and "token".
+## Setup
 
-## Results
+Straight, **without development packages**, you can execute the following command, assuming you have [Poetry](https://python-poetry.org/) installed:
+```
+poetry install --without dev
+```
+There is a ```setup.sh``` script in the ```.vscode``` directory for convenience.
 
-- Framework: qiskit
-- Qubits: 7
-- Depth: [1..10]
-- Evals: 20
-- Shots: [None, 128, .., 2048]
+If you considere building docs, running tests and commiting to the project, run:
+```
+poetry install
+poetry run pre-commit autoupdate
+poetry run pre-commit install
+poetry run pytest
+poetry run mkdocs build
+```
+Again, there is a ```setup_dev.sh``` script in the ```.vscode``` directory for convenience.
 
-![](plots/qiskit_duration_depth_7_10.png)
+## Usage
 
----
+Without any configuration needed, you can execute
+```
+poetry kedro run
+```
+(or omit poetry if you're using classical venvs) and a default pipeline should run.
 
-- Framework: qiskit
-- Qubits: [1..7]
-- Depth: 10
-- Evals: 20
-- Shots: [None, 128, .., 2048]
+### Tuning the test circuits
 
-![](plots/qiskit_duration_qubits_7_10.png)
+Circuits are being generated in the ```data_generation``` namespace of the project.
+To adjust the number of qubits, depth of the circuit and other parameters, checkout [conf/base/parameters/data_generation.yml](/conf/base/parameters/data_generation.yml).
 
----
+### Selecting a Framework and Execution behaviour
 
-- Framework: pennylane
-- Qubits: 7
-- Depth: [1..10]
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/pennylane_duration_depth_7_10.png)
-
----
-
-- Framework: pennylane
-- Qubits: [1..7]
-- Depth: 10
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/pennylane_duration_qubits_7_10.png)
-
----
-- Framework: cirq
-- Qubits: 7
-- Depth: [1..10]
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/cirq_duration_depth_7_10.png)
-
----
-
-- Framework: cirq
-- Qubits: [1..7]
-- Depth: 10
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/cirq_duration_qubits_7_10.png)
-
----
-
-- Framework: numpy
-- Qubits: 7
-- Depth: [1..10]
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/matrix_duration_depth_7_10.png)
-
----
-
-- Framework: numpy
-- Qubits: [1..7]
-- Depth: 10
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/matrix_duration_qubits_7_10.png)
-
----
-
-- Framework: qibo
-- Qubits: 7
-- Depth: [1..10]
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/qibo_duration_depth_7_10.png)
-
----
-
-- Framework: qibo
-- Qubits: [1..7]
-- Depth: 10
-- Evals: 20
-- Shots: [None, 128, .., 2048]
-
-![](plots/qibo_duration_qubits_7_10.png)
-
----
-
-- Framework: real quantum computer
-- Qubits: 7
-- Depth: [1..10]
-- Evals: 1
-- Shots: [None, 128, .., 2048]
-
-![](plots/real_duration_depth_7_10.png)
-
----
-
-- Framework: real quantum computer
-- Qubits: [1..7]
-- Depth: 10
-- Evals: 1
-- Shots: [None, 128, .., 2048]
-
-![](plots/real_duration_qubits_7_10.png)
-
----
+Everything related to executing the circuits and time measurments is contained in the ```data_science``` namespace.
+Head to [conf/base/parameters/data_science.yml](/conf/base/parameters/data_science.yml) to specify a framework and set e.g. the number of evaluations.
