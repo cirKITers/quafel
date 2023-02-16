@@ -14,7 +14,7 @@ There is a ```setup.sh``` script in the ```.vscode``` directory for convenience.
 
 ***
 
-:construction:
+:construction: only:
 
 If you considere building docs, running tests and commiting to the project, run:
 ```
@@ -38,7 +38,7 @@ poetry kedro run
 By now the default pipeline is the only one available.
 
 ***
-:construction:
+:construction: only:
 
 Checkout the pre-defined VSCode tasks if you want to develop on the project.
 
