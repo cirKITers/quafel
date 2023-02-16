@@ -179,47 +179,24 @@ class cirq_fw:
         return result
 
 
-# class duration_qibo(duration_framework):
-#     def generate_circuit(self, shots):
-#         if self.consistent_circuit == False:
-#             raise NotImplementedError
-#         else:
-#             self.qcs = []
+class qibo_fw:
+    def __init__(self, qasm_circuit, n_shots):
+        self.backend = qibo.get_backend()
+        self.n_shots = n_shots
 
-#             if shots is None:
-#                 return
-#             self.backend = qibo.get_backend()
+        # this is super hacky, but the way qibo parses the QASM string
+        # does not deserve better.
+        def qasm_conv(match: re.Match) -> str:
+            denominator = float(match.group()[1:])
+            return f"*{1/denominator}"
 
-#             for e in range(self.evals):
-#                 # welchen Wert haben die qubits am Anfang?
-#                 qasm_circuit = utils.get_random_qasm_circuit(
-#                     self.qubits, self.depth, self.seed
-#                 )
+        qasm_circuit = re.sub(
+            r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE
+        )
 
-#                 # this is super hacky, but the way qibo parses the QASM string
-#                 # does not deserve better.
-#                 def qasm_conv(match: re.Match) -> str:
-#                     denominator = float(match.group()[1:])
-#                     return f"*{1/denominator}"
+        self.qc = qibo.models.Circuit.from_qasm(qasm_circuit)
 
-#                 qasm_circuit = re.sub(
-#                     r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE
-#                 )
+    def execute(self):
+        result = self.qc(nshots=self.n_shots).execution_result
 
-#                 qc = qibo.models.Circuit.from_qasm(qasm_circuit)
-#                 # warum wird hier schon gemessen?
-#                 self.qcs.append(qc)
-
-#             self.states = [np.random.random(2**self.qubits) for i in range(5)]
-
-#     def _generate_qibo_circuit(self, shots):
-#         pass
-
-#     def execute(self, shots):
-#         if self.qcs.__len__() == 0:
-#             return 0
-
-#         for i in self.qcs:
-#             qibo.set_threads(1)
-#             # execute in parallel
-#             qibo.parallel.parallel_execution(i, self.states, processes=10)
+        return result
