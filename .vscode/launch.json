@@ -5,22 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Test Duration",
+            "name": "Default",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/test_duration.py",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "default"],
             "console": "integratedTerminal",
-            "args": ["qibo"],
             "justMyCode": true
         },
-        {
-            "name": "Test Duration (Resume)",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceRoot}/test_duration.py",
-            "console": "integratedTerminal",
-            "args": ["real", "--resume"],
-            "justMyCode": true
-        }
     ]
 }
