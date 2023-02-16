@@ -3,8 +3,7 @@ import re
 import pennylane as qml
 from pennylane import numpy as np
 
-import qiskit as q
-from qiskit.circuit.random import random_circuit
+import qiskit
 import numpy as np
 from qiskit.quantum_info import Operator
 
@@ -12,24 +11,6 @@ import qibo
 
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
-
-
-# class duration_framework:
-
-#     def time_measurement(self, shots):
-#         start_time = time.time()
-#         self.execute(shots)
-#         return time.time() - start_time
-
-#     @classmethod
-#     def from_config(cls):
-#         return cls(
-#             config.seed,
-#             config.evals,
-#             config.qubits,
-#             config.depth,
-#             config.consistent_circuit,
-#         )
 
 
 class pennylane_fw:
@@ -56,15 +37,15 @@ class pennylane_fw:
 class qiskit_fw:
     def __init__(self, qasm_circuit, n_shots):
         if n_shots is None:
-            self.backend = q.Aer.get_backend("statevector_simulator")
+            self.backend = qiskit.Aer.get_backend("statevector_simulator")
         else:
-            self.backend = q.Aer.get_backend("qasm_simulator")
+            self.backend = qiskit.Aer.get_backend("qasm_simulator")
 
-        self.qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
+        self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
         self.n_shots = n_shots
 
     def execute(self):
-        result = q.execute(
+        result = qiskit.execute(
             self.qc, backend=self.backend, shots=self.n_shots
         ).result()
         return result
