@@ -133,24 +133,25 @@ class qiskit_fw:
 #         return self.execute(shots)
 
 
-# class duration_matrix(duration_framework):
-#     def generate_circuit(self, shots):
-#         self.qcs = []
-#         for _ in range(self.evals):
-#             qasm_circuit = utils.get_random_qasm_circuit(
-#                 self.qubits, self.depth, self.seed, measure=False
-#             )
-#             qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
-#             matrix = Operator(qc)
-#             self.qcs.append(matrix)
+class numpy_fw:
+    def __init__(self, qasm_circuit, n_shots):
+        self.n_shots = n_shots
+        self.qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
+        self.qc.remove_final_measurements()
 
-#     def execute(self, shots):
-#         # keine circuits sondern fertige Matrizen
-#         for matrix in self.qcs:
-#             statevector = np.array(matrix)[:, 0]
-#             probabilities = np.abs((statevector) ** 2)
-#             if shots is not None:
-#                 np.random.choice(len(probabilities), shots, p=probabilities)
+    def execute(self):
+        # keine circuits sondern fertige Matrizen
+        matrix = Operator(self.qc)
+        statevector = np.array(matrix)[:, 0]
+        probabilities = np.abs((statevector) ** 2)
+        if self.n_shots is not None:
+            result = np.random.choice(
+                len(probabilities), self.n_shots, p=probabilities
+            )
+        else:
+            result = probabilities
+
+        return result
 
 
 class cirq_fw:
