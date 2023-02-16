@@ -29,6 +29,9 @@ Without any configuration needed, you can execute
 poetry kedro run
 ```
 (or omit poetry if you're using classical venvs) and a default pipeline should run.
+By now the default pipeline is the only one available.
+
+Checkout the pre-defined VSCode tasks if you want to develop on the project.
 
 ### Tuning the test circuits
 
