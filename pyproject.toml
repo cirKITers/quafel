@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["lc3267 <melvin.strobl@kit.edu>"]
 readme = "README.md"
-packages = [{include = "quantum_framework_runtime_eval"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
@@ -14,6 +13,18 @@ qiskit = "^0.41.0"
 matplotlib = "^3.7.0"
 cirq = "^1.1.0"
 qibo = "^0.1.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+pre-commit = "^2.20.0"
+black = "^22.10.0"
+flake8 = "^6.0.0"
+mkdocs = "^1.4.2"
+mkdocstrings = "^0.19.0"
+markdown-include = "^0.8.0"
+mkdocs-material = "^8.5.11"
+mkdocstrings-python = "^0.8.2"
 
 [tool.black]
 line-length = 79
@@ -36,6 +47,7 @@ project_version = "0.18.4"
 
 [tool.isort]
 profile = "black"
+
 
 [tool.pytest.ini_options]
 addopts = """
