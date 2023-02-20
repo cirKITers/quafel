@@ -11,4 +11,6 @@ data_generation:
   depth_increment: 1
   min_shots: 100
   max_shots: 800
-  shots_increment: 100 
+  shots_increment: 100
+
+  frameworks: ["numpy_fw", "qiskit_fw"]

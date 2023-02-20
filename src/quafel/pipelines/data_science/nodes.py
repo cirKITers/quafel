@@ -13,21 +13,22 @@ def aggregate_evaluations(*args):
         "execution_durations": pd.DataFrame(
             {f"{i}": args[i] for i in range(0, len(args) // 2)}
         ),
-        "execution_results": pd.DataFrame(
-            {f"{i}": args[i] for i in range(len(args) // 2, len(args))}
-        ),
+        "execution_results": {"_": 0},
+        # "execution_results": pd.DataFrame(
+        #     {f"{i}": args[i] for i in range(len(args) // 2, len(args))}
+        # ),
     }
 
 
 def measure_execution_durations(
     evaluations: int,
     qasm_circuit: any,
-    framework_identifier: str,
     n_shots: int,
+    framework_id: str,
     **kwargs,
 ):
     try:
-        framework = getattr(fw, framework_identifier)
+        framework = getattr(fw, framework_id)
     except AttributeError:
         raise AttributeError(
             f"Framework identifier does not match one of the existing frameworks. Existing frameworks are {fw}"

@@ -9,8 +9,6 @@ from quafel.pipelines.data_science.nodes import (
     aggregate_evaluations,
 )
 
-import pandas as pd
-
 
 def create_pipeline(n_partitions=1, **kwargs) -> dict:
     nd_measure_execution_durations = node(
@@ -18,8 +16,8 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         inputs={
             "evaluations": "params:evaluations",
             "qasm_circuit": "qasm_circuit",
-            "framework_identifier": "params:framework_identifier",
             "n_shots": "params:n_shots",
+            "framework_id": "params:framework_identifier",
         },
         outputs={
             "execution_duration": "execution_duration",
@@ -35,8 +33,8 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                     inputs={
                         "evaluations": "params:evaluations",
                         "qasm_circuit": f"qasm_circuit_{i}",
-                        "framework_identifier": "params:framework_identifier",
-                        "n_shots": "params:n_shots",
+                        "n_shots": f"n_shots_{i}",
+                        "framework_id": f"framework_{i}",
                     },
                     outputs={
                         "execution_duration": f"execution_duration_{i}",
@@ -59,7 +57,16 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 name=f"aggregate_evaluations",
             ),
         ],
-        inputs=[f"qasm_circuit_{i}" for i in range(n_partitions)],
+        inputs={
+            **{
+                f"qasm_circuit_{i}": f"qasm_circuit_{i}"
+                for i in range(n_partitions)
+            },
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
+            **{
+                f"framework_{i}": f"framework_{i}" for i in range(n_partitions)
+            },
+        },
         outputs={
             "execution_durations": "execution_duration_partitions",
             "execution_results": "execution_result_partitions",

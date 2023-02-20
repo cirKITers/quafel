@@ -10,9 +10,16 @@ def log_circuit(qasm_circuit):
 
 
 def part_generate_random_qasm_circuit(partition, seed=100):
-    qubits = partition[partition.columns[0]][0]
-    depth = partition[partition.columns[0]][1]
-    return generate_random_qasm_circuit(qubits, depth, seed)
+    # TODO: improve this by accessing data by name
+    framework = partition[partition.columns[0]][0]
+    qubits = int(partition[partition.columns[0]][1])
+    depth = int(partition[partition.columns[0]][2])
+    shots = int(partition[partition.columns[0]][3])
+    return {
+        **generate_random_qasm_circuit(qubits, depth, seed),
+        "n_shots": shots,
+        "framework": framework,
+    }
 
 
 def generate_random_qasm_circuit(qubits: int, depth: int, seed: int):
@@ -56,13 +63,16 @@ def generate_evaluation_matrix(
     min_shots: int,
     max_shots: int,
     shots_increment: int,
+    frameworks: List[str],
 ):
     qubits = [i for i in range(min_qubits, max_qubits, qubits_increment)]
     depths = [i for i in range(min_depth, max_depth, depth_increment)]
     shots = [i for i in range(min_shots, max_shots, shots_increment)]
+    frameworks = frameworks
 
     return {
         "evaluation_matrix": {
+            "frameworks": frameworks,
             "qubits": qubits,
             "depths": depths,
             "shots": shots,
@@ -73,11 +83,17 @@ def generate_evaluation_matrix(
 def generate_evaluation_partitions(evaluation_matrix):
     partitions = {}
     idx = 0
-    for q in evaluation_matrix["qubits"]:
-        for d in evaluation_matrix["depths"]:
-            for s in evaluation_matrix["shots"]:
-                partitions[f"{idx}"] = {"qubits": q, "depth": d, "shots": s}
-                idx += 1
+    for f in evaluation_matrix["frameworks"]:
+        for q in evaluation_matrix["qubits"]:
+            for d in evaluation_matrix["depths"]:
+                for s in evaluation_matrix["shots"]:
+                    partitions[f"{idx}"] = {
+                        "framework": f,
+                        "qubits": q,
+                        "depth": d,
+                        "shots": s,
+                    }
+                    idx += 1
 
     pass
     return {"evaluation_partitions": pd.DataFrame(partitions)}

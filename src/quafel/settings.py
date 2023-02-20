@@ -4,6 +4,7 @@ https://kedro.readthedocs.io/en/stable/kedro_project_setup/settings.html."""
 
 # Instantiated project hooks.
 from quafel.hooks import ProjectHooks
+from kedro.config import TemplatedConfigLoader
 
 HOOKS = (ProjectHooks(),)
 
@@ -26,13 +27,10 @@ HOOKS = (ProjectHooks(),)
 # CONF_SOURCE = "conf"
 
 # Class that manages how configuration is loaded.
-# CONFIG_LOADER_CLASS = ConfigLoader
-# Keyword arguments to pass to the `CONFIG_LOADER_CLASS` constructor.
+# CONFIG_LOADER_CLASS = TemplatedConfigLoader
+# # Keyword arguments to pass to the `CONFIG_LOADER_CLASS` constructor.
 # CONFIG_LOADER_ARGS = {
-#       "config_patterns": {
-#           "spark" : ["spark*/"],
-#           "parameters": ["parameters*", "parameters*/**", "**/parameters*"],
-#       }
+#     "globals_pattern": "*data_science.yml",
 # }
 
 # Class that manages the Data Catalog.

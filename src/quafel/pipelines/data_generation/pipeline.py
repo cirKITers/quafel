@@ -45,6 +45,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             "max_shots": "params:max_shots",
             "max_shots": "params:max_shots",
             "shots_increment": "params:shots_increment",
+            "frameworks": "params:frameworks",
         },
         outputs={
             "evaluation_matrix": "evaluation_matrix",
@@ -72,14 +73,26 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                     },
                     outputs={
                         "qasm_circuit": f"qasm_circuit_{i}",
+                        "n_shots": f"n_shots_{i}",
+                        "framework": f"framework_{i}",
                     },
                     name=f"part_generate_random_qasm_circuit_{i}",
                 )
-                # nd_log_circuit
                 for i in range(n_partitions)
             ],
         ],
-        outputs=[f"qasm_circuit_{i}" for i in range(n_partitions)],
+        outputs={
+            "evaluation_matrix": "evaluation_matrix",
+            "evaluation_partitions": "evaluation_partitions",
+            **{
+                f"qasm_circuit_{i}": f"qasm_circuit_{i}"
+                for i in range(n_partitions)
+            },
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
+            **{
+                f"framework_{i}": f"framework_{i}" for i in range(n_partitions)
+            },
+        },
         namespace="data_generation",
     )
 
