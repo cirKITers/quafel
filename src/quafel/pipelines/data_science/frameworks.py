@@ -117,7 +117,7 @@ class qiskit_fw:
 class numpy_fw:
     def __init__(self, qasm_circuit, n_shots):
         self.n_shots = n_shots
-        self.qc = q.QuantumCircuit.from_qasm_str(qasm_circuit)
+        self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
         self.qc.remove_final_measurements()
 
     def execute(self):
