@@ -113,6 +113,6 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
 
     return {
         "pl_generate_and_log_circuit": pl_generate_and_log_circuit,
-        "pl_parallel_generate_and_log_circuit": pl_parallel_generate_and_log_circuit,
         "pl_generate_evaluation_matrix": pl_generate_evaluation_matrix,
+        "pl_parallel_generate_and_log_circuit": pl_parallel_generate_and_log_circuit,
     }

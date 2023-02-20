@@ -22,9 +22,9 @@ def register_pipelines() -> Dict[str, Pipeline]:
     ds_pipelines = ds.create_pipeline(n_partitions=len(partitions))
 
     return {
-        "__default__": dg_pipelines["pl_parallel_generate_and_log_circuit"]
-        + ds_pipelines["pl_parallel_measure_execution_durations"],
+        "__default__": dg_pipelines["pl_generate_and_log_circuit"]
+        + ds_pipelines["pl_measure_execution_durations"],
         "pre": dg_pipelines["pl_generate_evaluation_matrix"],
-        "single": dg_pipelines["pl_parallel_generate_and_log_circuit"]
+        "parallel": dg_pipelines["pl_parallel_generate_and_log_circuit"]
         + ds_pipelines["pl_parallel_measure_execution_durations"],
     }
