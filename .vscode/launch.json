@@ -9,16 +9,16 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "default"],
+            "args": ["run", "--runner", "ParallelRunner"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
         {
-            "name": "Parallel Execution",
+            "name": "Pre Execution",
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "parallel", "--runner", "ParallelRunner"],
+            "args": ["run", "--pipeline", "pre"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
