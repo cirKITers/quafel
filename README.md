@@ -35,7 +35,24 @@ Without any configuration needed, you can execute
 poetry kedro run
 ```
 (or omit poetry if you're using classical venvs) and a default pipeline should run.
-By now the default pipeline is the only one available.
+
+This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
+To enable this, you must run
+```
+poetry kedro run --pipeline pre
+```
+which will generate a [Partitioned Dataset]() from which a parallel runner can spawn individual processes for each configuration defined by the above mentioned parameters.
+This dataset must be re-generated after tuning those parameters.
+After doing so, you can run
+```
+poetry kedro run --pipeline parallel --runner ParallelRunner
+```
+which will calculate the duration and result for each configuration and save those values in [\data\04_execution_results](\data\04_execution_results) and [\data\05_execution_durations](\data\05_execution_durations) respectively.
+As the files are just named by ids, you might want to execute
+```
+poetry kedro run --pipeline visualize
+```
+to view those evaluation results.
 
 ***
 :construction: only:
