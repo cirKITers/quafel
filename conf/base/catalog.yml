@@ -48,3 +48,8 @@ dummy_versioned_dataset: # example to save results to multiple
   type: pandas.CSVDataSet
   filepath: data/07_reporting/dummy.csv
   versioned: true
+
+# numpy_fw_depth_1: # example to save results to multiple 
+#   type: plotly.JSONDataSet
+#   filepath: data/07_reporting/numpy_fw_depth_1.json
+#   versioned: true

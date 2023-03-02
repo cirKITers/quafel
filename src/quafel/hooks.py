@@ -7,6 +7,8 @@ from typing import Any, Dict
 
 import glob
 import os
+import logging
+from kedro.io import DataCatalog
 
 
 class ProjectHooks:
@@ -21,57 +23,104 @@ class ProjectHooks:
             kedro run --params=input:iris_3.csv
         """
         # filename = run_params["extra_params"]["input"]
+        return
+        # if (
+        #     run_params["pipeline_name"] == "parallel"
+        #     or run_params["pipeline_name"] == "viz"
+        #     or run_params["pipeline_name"] is None
+        # ):
+        #     # add input dataset
+        #     partitions = glob.glob("data/02_intermediate/*.csv")
+        #     fw_name = (
+        #         catalog.datasets.params__data_science__framework_identifier
+        #     )
 
-        if (
-            run_params["pipeline_name"] == "parallel"
-            or run_params["pipeline_name"] == "viz"
-            or run_params["pipeline_name"] is None
-        ):
-            # add input dataset
-            partitions = glob.glob("data/02_intermediate/*.csv")
-            fw_name = (
-                catalog.datasets.params__data_science__framework_identifier
+        #     for i, partition in enumerate(partitions):
+        #         # partition loader
+        #         evaluation_partitions_name = (
+        #             f"data_generation.evaluation_partition_{i}"
+        #         )
+        #         input_dataset = CSVDataSet(filepath=partition)
+        #         catalog.add(evaluation_partitions_name, input_dataset)
+
+        #     evaluation_matrix = (
+        #         catalog.datasets.data_generation__evaluation_matrix.load()
+        #     )
+
+        #     names = []
+        #     for f in evaluation_matrix["frameworks"]:
+        #         for q in evaluation_matrix["qubits"]:
+        #             names.append(f"{f}_qubits_{q}")
+        #         for d in evaluation_matrix["depths"]:
+        #             names.append(f"{f}_depth_{d}")
+
+        #     version = Version(
+        #         None, catalog.datasets.dummy_versioned_dataset._version.save
+        #     )
+        #     for name in names:
+        #         filepath = os.path.join("data/07_reporting/", f"{name}.json")
+
+        #         dataset_template = JSONDataSet(
+        #             filepath=filepath, version=version
+        #         )
+        #         catalog.add(name, dataset_template)
+
+        #         try:
+        #             os.mkdir(filepath)
+        #         except FileExistsError:
+        #             # directory already exists
+        #             pass
+        #         # with open(filepath, 'w') as f:
+        #         #     f.write('')
+
+        # elif run_params["pipeline_name"] == "pre":
+        #     pass  # TODO: delete all the old intermediate results
+
+        # # add output dataset
+
+
+class DataCatalogHooks:
+    @property
+    def _logger(self):
+        return logging.getLogger(self.__class__.__name__)
+
+    @hook_impl
+    def after_catalog_created(self, catalog: DataCatalog) -> None:
+        # add input dataset
+        partitions = glob.glob("data/02_intermediate/*.csv")
+
+        for i, partition in enumerate(partitions):
+            # partition loader
+            evaluation_partitions_name = (
+                f"data_generation.evaluation_partition_{i}"
             )
+            input_dataset = CSVDataSet(filepath=partition)
+            catalog.add(evaluation_partitions_name, input_dataset)
 
-            for i, partition in enumerate(partitions):
-                # partition loader
-                evaluation_partitions_name = (
-                    f"data_generation.evaluation_partition_{i}"
-                )
-                input_dataset = CSVDataSet(filepath=partition)
-                catalog.add(evaluation_partitions_name, input_dataset)
+        evaluation_matrix = (
+            catalog.datasets.data_generation__evaluation_matrix.load()
+        )
 
-            evaluation_matrix = (
-                catalog.datasets.data_generation__evaluation_matrix.load()
-            )
+        names = []
+        for f in evaluation_matrix["frameworks"]:
+            for q in evaluation_matrix["qubits"]:
+                names.append(f"{f}_qubits_{q}")
+            for d in evaluation_matrix["depths"]:
+                names.append(f"{f}_depth_{d}")
 
-            names = []
-            for f in evaluation_matrix["frameworks"]:
-                for q in evaluation_matrix["qubits"]:
-                    names.append(f"{f}_qubits_{q}")
-                for d in evaluation_matrix["depths"]:
-                    names.append(f"{f}_depth_{d}")
+        version = Version(
+            None, catalog.datasets.dummy_versioned_dataset._version.save
+        )
+        for name in names:
+            filepath = os.path.join("data/07_reporting/", f"{name}.json")
 
-            version = Version(
-                None, catalog.datasets.dummy_versioned_dataset._version.save
-            )
-            for name in names:
-                filepath = os.path.join("data/07_reporting/", f"{name}.json")
+            dataset_template = JSONDataSet(filepath=filepath, version=version)
+            catalog.add(name, dataset_template)
 
-                dataset_template = JSONDataSet(
-                    filepath=filepath, version=version
-                )
-                catalog.add(name, dataset_template)
-
-                try:
-                    os.mkdir(filepath)
-                except FileExistsError:
-                    # directory already exists
-                    pass
-                # with open(filepath, 'w') as f:
-                #     f.write('')
-
-        elif run_params["pipeline_name"] == "pre":
-            pass  # TODO: delete all the old intermediate results
-
-        # add output dataset
+            try:
+                os.mkdir(filepath)
+            except FileExistsError:
+                # directory already exists
+                pass
+            # with open(filepath, 'w') as f:
+            #     f.write('')
