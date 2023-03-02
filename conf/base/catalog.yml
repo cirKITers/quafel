@@ -42,6 +42,6 @@ execution_duration_partitions: # example to save results to multiple partitions
 
 execution_durations_combined:
   type: pandas.CSVDataSet
-  filepath: data/06_executions_combined/
+  filepath: data/06_executions_combined/execution_durations_combined.csv
   save_args:
     index: False
