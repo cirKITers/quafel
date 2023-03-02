@@ -6,6 +6,7 @@ from kedro.pipeline import Pipeline
 
 from quafel.pipelines import data_generation as dg
 from quafel.pipelines import data_science as ds
+from quafel.pipelines import visualization as viz
 
 import glob
 
@@ -20,6 +21,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     dg_pipelines = dg.create_pipeline(n_partitions=len(partitions))
     ds_pipelines = ds.create_pipeline(n_partitions=len(partitions))
+    viz_pipelines = viz.create_pipeline()
 
     return {
         "__default__": dg_pipelines["pl_generate_and_log_circuit"]
@@ -27,4 +29,5 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "pre": dg_pipelines["pl_generate_evaluation_matrix"],
         "parallel": dg_pipelines["pl_parallel_generate_and_log_circuit"]
         + ds_pipelines["pl_parallel_measure_execution_durations"],
+        "viz": viz_pipelines["pl_visualize_evaluations"],
     }

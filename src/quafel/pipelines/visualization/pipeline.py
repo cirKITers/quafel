@@ -30,7 +30,7 @@ def create_pipeline(**kwargs) -> dict:
         [nd_shots_depths_viz, nd_shots_qubits_viz],
         inputs={
             "evaluation_partitions": "evaluation_partitions",
-            "execution_durations": "execution_duration_partitions",
+            "execution_duration_partitions": "execution_duration_partitions",
         },
     )
 
