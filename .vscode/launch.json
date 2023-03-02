@@ -31,5 +31,14 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "Visualize",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "viz", "--runner", "ParallelRunner"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
     ]
 }
