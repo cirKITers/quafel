@@ -31,11 +31,17 @@ execution_duration_partitions: # example to save results to multiple partitions
   path: data/05_execution_durations/
   filename_suffix: ".csv"
 
-execution_result_partitions: # example to save results to multiple partitions
-  type: PartitionedDataSet
-  dataset:
-    type: pandas.CSVDataSet
-    save_args:
-      index: False
-  path: data/04_execution_results/
-  filename_suffix: ".csv"
+# execution_result_partitions: # example to save results to multiple partitions
+#   type: PartitionedDataSet
+#   dataset:
+#     type: pandas.CSVDataSet
+#     save_args:
+#       index: False
+#   path: data/04_execution_results/
+#   filename_suffix: ".csv"
+
+execution_durations_combined:
+  type: pandas.CSVDataSet
+  filepath: data/06_executions_combined/
+  save_args:
+    index: False
