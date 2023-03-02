@@ -97,30 +97,35 @@ class DataCatalogHooks:
             input_dataset = CSVDataSet(filepath=partition)
             catalog.add(evaluation_partitions_name, input_dataset)
 
-        evaluation_matrix = (
-            catalog.datasets.data_generation__evaluation_matrix.load()
-        )
+        try:
+            evaluation_matrix = (
+                catalog.datasets.data_generation__evaluation_matrix.load()
+            )
 
-        names = []
-        for f in evaluation_matrix["frameworks"]:
-            for q in evaluation_matrix["qubits"]:
-                names.append(f"{f}_qubits_{q}")
-            for d in evaluation_matrix["depths"]:
-                names.append(f"{f}_depth_{d}")
+            names = []
+            for f in evaluation_matrix["frameworks"]:
+                for q in evaluation_matrix["qubits"]:
+                    names.append(f"{f}_qubits_{q}")
+                for d in evaluation_matrix["depths"]:
+                    names.append(f"{f}_depth_{d}")
 
-        version = Version(
-            None, catalog.datasets.dummy_versioned_dataset._version.save
-        )
-        for name in names:
-            filepath = os.path.join("data/07_reporting/", f"{name}.json")
+            version = Version(
+                None, catalog.datasets.dummy_versioned_dataset._version.save
+            )
+            for name in names:
+                filepath = os.path.join("data/07_reporting/", f"{name}.json")
 
-            dataset_template = JSONDataSet(filepath=filepath, version=version)
-            catalog.add(name, dataset_template)
+                dataset_template = JSONDataSet(
+                    filepath=filepath, version=version
+                )
+                catalog.add(name, dataset_template)
 
-            try:
-                os.mkdir(filepath)
-            except FileExistsError:
-                # directory already exists
-                pass
-            # with open(filepath, 'w') as f:
-            #     f.write('')
+                try:
+                    os.mkdir(filepath)
+                except FileExistsError:
+                    # directory already exists
+                    pass
+                # with open(filepath, 'w') as f:
+                #     f.write('')
+        except:
+            pass
