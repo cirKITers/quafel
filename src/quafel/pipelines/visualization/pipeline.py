@@ -11,8 +11,7 @@ def create_pipeline(**kwargs) -> dict:
     nd_shots_depths_viz = node(
         func=shots_depths_viz,
         inputs={
-            "evaluation_partitions": "evaluation_partitions",
-            "execution_durations": "execution_duration_partitions",
+            "execution_durations_combined": "execution_durations_combined",
         },
         outputs={"plotly_shots_depth": "plotly_shots_depth"},
     )
@@ -20,8 +19,7 @@ def create_pipeline(**kwargs) -> dict:
     nd_shots_qubits_viz = node(
         func=shots_depths_viz,
         inputs={
-            "evaluation_partitions": "evaluation_partitions",
-            "execution_durations": "execution_duration_partitions",
+            "execution_durations_combined": "execution_durations_combined",
         },
         outputs={"circuit_image": "circuit_image"},
     )
@@ -29,8 +27,7 @@ def create_pipeline(**kwargs) -> dict:
     pl_visualize_evaluations = pipeline(
         [nd_shots_depths_viz, nd_shots_qubits_viz],
         inputs={
-            "evaluation_partitions": "evaluation_partitions",
-            "execution_duration_partitions": "execution_duration_partitions",
+            "execution_durations_combined": "execution_durations_combined",
         },
     )
 

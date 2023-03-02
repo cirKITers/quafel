@@ -4,38 +4,43 @@ generated using Kedro 0.18.4
 """
 
 import plotly.express as px
+import plotly.graph_objs as go
 from typing import Dict
 import pandas as pd
 
 
-def shots_depths_viz(evaluation_partitions: Dict, execution_durations: Dict):
-    combine_all = pd.DataFrame()
+def shots_depths_viz(execution_durations_combined: Dict):
+    figures = {}
 
-    for (partition_id, partition_load_func), (
-        duration_id,
-        duration_load_func,
-    ) in zip(evaluation_partitions.items(), execution_durations.items()):
-        partition_data = partition_load_func()
-        duration_data = duration_load_func()
+    grouped_by_fw = execution_durations_combined.groupby("0")
 
-        combined_partition_duration = pd.concat(
-            [partition_data, duration_data],
-            ignore_index=True,
-            sort=True,
-            axis=0,
-        )
+    for fw, qubit_depth_duration in grouped_by_fw:
+        figures[fw] = {}
 
-        combine_all = pd.concat(
-            [combine_all, combined_partition_duration],
-            ignore_index=True,
-            sort=True,
-            axis=1,
-        )
+        grouped_by_qubit = qubit_depth_duration.groupby("1")
 
-    return combine_all
+        for q, depth_duration in grouped_by_qubit:
+            # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
+            duration_sorted_by_depth = depth_duration.sort_values("2")
 
-    pass
+            # image = []
+            # for s, duration in grouped_by_shots_sorted_by_depth:
+            #     image.append(duration['4'].to_numpy())
+
+            figures[fw][q] = go.Figure(
+                [
+                    go.Heatmap(
+                        x=duration_sorted_by_depth["3"],
+                        y=duration_sorted_by_depth["2"],
+                        z=duration_sorted_by_depth["4"],
+                        # colorscale='Viridis'
+                    )
+                ]
+            )
+    return {
+        "figures": figures,
+    }
 
 
-def shots_qubits_viz(evaluation_partitions, execution_durations):
+def shots_qubits_viz(execution_durations_combined: Dict):
     pass
