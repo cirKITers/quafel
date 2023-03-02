@@ -1,6 +1,6 @@
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.plotly import JSONDataSet
-from kedro.io import Version
+from kedro.io import Version, core
 from kedro.framework.hooks import hook_impl
 
 from typing import Any, Dict
@@ -52,15 +52,24 @@ class ProjectHooks:
                 for d in evaluation_matrix["depths"]:
                     names.append(f"{f}_depth_{d}")
 
-            version = Version(None, None)
+            version = Version(
+                None, catalog.datasets.dummy_versioned_dataset._version.save
+            )
             for name in names:
                 filepath = os.path.join("data/07_reporting/", f"{name}.json")
 
-                dataset_template = JSONDataSet(filepath=filepath)
+                dataset_template = JSONDataSet(
+                    filepath=filepath, version=version
+                )
                 catalog.add(name, dataset_template)
 
-                with open(filepath, "w") as f:
-                    f.write("")
+                try:
+                    os.mkdir(filepath)
+                except FileExistsError:
+                    # directory already exists
+                    pass
+                # with open(filepath, 'w') as f:
+                #     f.write('')
 
         elif run_params["pipeline_name"] == "pre":
             pass  # TODO: delete all the old intermediate results
