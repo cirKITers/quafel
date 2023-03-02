@@ -3,14 +3,11 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://kedro.readthedocs.io/en/stable/data/data_catalog.html
 
-# evaluation_matrix: # example to save results to multiple partitions
-#   type: PartitionedDataSet
-#   dataset:
-#     type: pandas.CSVDataSet
-#     save_args:
-#       index: False
-#   path: data/01_raw/
-#   filename_suffix: ".csv"
+data_generation.evaluation_matrix: # example to save results to multiple partitions
+  type: json.JSONDataSet
+    # save_args:
+    #   index: False
+  filepath: data/01_raw/dataset.json
 
 
 evaluation_partitions: # example to save results to multiple partitions
@@ -45,3 +42,13 @@ execution_durations_combined:
   filepath: data/06_executions_combined/execution_durations_combined.csv
   save_args:
     index: False
+
+# figures_shots_depths: # example to save results to multiple partitions
+#   type: PartitionedDataSet
+#   dataset:
+#     type: plotly.JSONDataSet
+#     save_args:
+#       index: False
+#   path: data/07_reporting/
+#   filename_suffix: ".json"
+#   versioned: True

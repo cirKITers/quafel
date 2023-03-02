@@ -9,6 +9,8 @@ from quafel.pipelines import data_science as ds
 from quafel.pipelines import visualization as viz
 
 import glob
+import os
+from pathlib import Path
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
@@ -18,10 +20,11 @@ def register_pipelines() -> Dict[str, Pipeline]:
         A mapping from pipeline names to ``Pipeline`` objects.
     """
     partitions = glob.glob("data/02_intermediate/*.csv")
+    figures = [Path(f).stem for f in glob.glob("data/07_reporting/*.json")]
 
     dg_pipelines = dg.create_pipeline(n_partitions=len(partitions))
     ds_pipelines = ds.create_pipeline(n_partitions=len(partitions))
-    viz_pipelines = viz.create_pipeline()
+    viz_pipelines = viz.create_pipeline(figures)
 
     return {
         "__default__": dg_pipelines["pl_generate_and_log_circuit"]

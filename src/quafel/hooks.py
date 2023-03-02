@@ -1,10 +1,12 @@
 from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import PartitionedDataSet
+from kedro.extras.datasets.plotly import JSONDataSet
+from kedro.io import Version
 from kedro.framework.hooks import hook_impl
 
 from typing import Any, Dict
 
 import glob
+import os
 
 
 class ProjectHooks:
@@ -22,6 +24,7 @@ class ProjectHooks:
 
         if (
             run_params["pipeline_name"] == "parallel"
+            or run_params["pipeline_name"] == "viz"
             or run_params["pipeline_name"] is None
         ):
             # add input dataset
@@ -38,38 +41,26 @@ class ProjectHooks:
                 input_dataset = CSVDataSet(filepath=partition)
                 catalog.add(evaluation_partitions_name, input_dataset)
 
-            # for fw in catalog.datasets.params__data_generation__frameworks.load():
-            #     # execution_durations
-            #     execution_duration_partitions_name = (
-            #         f"execution_duration_partitions_{fw}"
-            #     )
-            #     execution_duration_partitions_dataset = PartitionedDataSet(
-            #         dataset={
-            #             "type":"pandas.CSVDataSet",
-            #             "save_args":{
-            #                 "index":True
-            #             }
-            #         },
-            #         path=f"data/05_execution_durations/{fw}/",
-            #         filename_suffix=".csv"
-            #     )
-            #     catalog.add(execution_duration_partitions_name, execution_duration_partitions_dataset)
+            evaluation_matrix = (
+                catalog.datasets.data_generation__evaluation_matrix.load()
+            )
 
-            #     # execution_results
-            #     execution_result_partitions_name = (
-            #         f"execution_result_partitions_{fw}"
-            #     )
-            #     execution_result_partitions_dataset = PartitionedDataSet(
-            #         dataset={
-            #             "type":"pandas.CSVDataSet",
-            #             "save_args":{
-            #                 "index":True
-            #             }
-            #         },
-            #         path=f"data/04_execution_results/{fw}",
-            #         filename_suffix=".csv"
-            #     )
-            #     catalog.add(execution_result_partitions_name, execution_result_partitions_dataset)
+            names = []
+            for f in evaluation_matrix["frameworks"]:
+                for q in evaluation_matrix["qubits"]:
+                    names.append(f"{f}_qubits_{q}")
+                for d in evaluation_matrix["depths"]:
+                    names.append(f"{f}_depth_{d}")
+
+            version = Version(None, None)
+            for name in names:
+                filepath = os.path.join("data/07_reporting/", f"{name}.json")
+
+                dataset_template = JSONDataSet(filepath=filepath)
+                catalog.add(name, dataset_template)
+
+                with open(filepath, "w") as f:
+                    f.write("")
 
         elif run_params["pipeline_name"] == "pre":
             pass  # TODO: delete all the old intermediate results

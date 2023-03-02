@@ -7,13 +7,13 @@ from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.visualization.nodes import shots_depths_viz
 
 
-def create_pipeline(**kwargs) -> dict:
+def create_pipeline(figures, **kwargs) -> dict:
     nd_shots_depths_viz = node(
         func=shots_depths_viz,
         inputs={
             "execution_durations_combined": "execution_durations_combined",
         },
-        outputs={"plotly_shots_depth": "plotly_shots_depth"},
+        outputs={"figures_shots_depths": "figures_shots_depths"},
     )
 
     nd_shots_qubits_viz = node(
@@ -25,9 +25,23 @@ def create_pipeline(**kwargs) -> dict:
     )
 
     pl_visualize_evaluations = pipeline(
-        [nd_shots_depths_viz, nd_shots_qubits_viz],
+        [
+            node(
+                func=shots_depths_viz,
+                inputs={
+                    "execution_durations_combined": "execution_durations_combined",
+                },
+                outputs={
+                    **{f: f for f in figures},
+                },
+                name=f"shots_depths_viz",
+            )
+        ],
         inputs={
             "execution_durations_combined": "execution_durations_combined",
+        },
+        outputs={
+            **{f: f for f in figures},
         },
     )
 
