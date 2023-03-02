@@ -40,7 +40,7 @@
             "label": "Kedro Viz",
             "type": "shell",
             "command": "poetry",
-            "args": ["run", "kedro", "viz", "--autoreload"],
+            "args": ["run", "kedro", "viz", "--autoreload", "--pipeline", "parallel", "--no-browser"],
             "group": "none",
             "presentation": {
                 "reveal": "never",
