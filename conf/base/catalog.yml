@@ -42,13 +42,9 @@ execution_durations_combined:
   filepath: data/06_executions_combined/execution_durations_combined.csv
   save_args:
     index: False
+  versioned: true
 
-# figures_shots_depths: # example to save results to multiple partitions
-#   type: PartitionedDataSet
-#   dataset:
-#     type: plotly.JSONDataSet
-#     save_args:
-#       index: False
-#   path: data/07_reporting/
-#   filename_suffix: ".json"
-#   versioned: True
+dummy_versioned_dataset: # example to save results to multiple 
+  type: pandas.CSVDataSet
+  filepath: data/07_reporting/dummy.csv
+  versioned: true
