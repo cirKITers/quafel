@@ -1,7 +1,7 @@
 from . import frameworks as fw
 import time
 import pandas as pd
-
+from typing import Dict
 
 # def execute_circuit(execute_method:callable, n_shots:int, **kwargs):
 #     result = execute_method(shots=n_shots, **kwargs)
@@ -13,7 +13,6 @@ def aggregate_evaluations(*args):
         "execution_durations": pd.DataFrame(
             {f"{i}": args[i] for i in range(0, len(args) // 2)}
         ),
-        "execution_results": {"_": 0},
         # "execution_results": pd.DataFrame(
         #     {f"{i}": args[i] for i in range(len(args) // 2, len(args))}
         # ),
@@ -49,3 +48,31 @@ def measure_execution_durations(
         "execution_duration": execution_durations,
         "execution_result": results,
     }
+
+
+def combine_execution_durations(
+    evaluation_partitions: Dict, execution_durations: Dict
+):
+    combine_all = pd.DataFrame()
+
+    for (partition_id, partition_load_func), (
+        duration_id,
+        duration_load_func,
+    ) in zip(evaluation_partitions.items(), execution_durations.items()):
+        partition_data = partition_load_func()
+        duration_data = duration_load_func()
+
+        combined_partition_duration = pd.concat(
+            [partition_data, duration_data], ignore_index=True, axis=0
+        )
+
+        combine_all = pd.concat(
+            [combine_all, combined_partition_duration],
+            ignore_index=True,
+            axis=1,
+        )
+
+    combine_all = combine_all.transpose()
+    # combine_all = combine_all.sort_values(by=[0, 1, 3]) # sort by framework and shots
+
+    return {"execution_durations_combined": combine_all}

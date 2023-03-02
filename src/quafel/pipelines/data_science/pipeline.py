@@ -7,6 +7,7 @@ from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
     aggregate_evaluations,
+    combine_execution_durations,
 )
 
 
@@ -52,9 +53,19 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 ],
                 outputs={
                     "execution_durations": "execution_durations",
-                    "execution_results": "execution_results",
+                    # "execution_results": "execution_results",
                 },
                 name=f"aggregate_evaluations",
+            ),
+            node(
+                func=combine_execution_durations,
+                inputs={
+                    "evaluation_partitions": "evaluation_partitions",
+                    "execution_durations": "execution_durations",
+                },
+                outputs={
+                    "execution_durations_combined": "execution_durations_combined",
+                },
             ),
         ],
         inputs={
@@ -66,10 +77,12 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             **{
                 f"framework_{i}": f"framework_{i}" for i in range(n_partitions)
             },
+            "evaluation_partitions": "evaluation_partitions",
         },
         outputs={
             "execution_durations": "execution_duration_partitions",
-            "execution_results": "execution_result_partitions",
+            # "execution_results": "execution_result_partitions",
+            "execution_durations_combined": "execution_durations_combined",
         },
         namespace="data_science",
     )
