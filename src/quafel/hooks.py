@@ -20,7 +20,10 @@ class ProjectHooks:
         """
         # filename = run_params["extra_params"]["input"]
 
-        if run_params["pipeline_name"] is None:
+        if (
+            run_params["pipeline_name"] == "parallel"
+            or run_params["pipeline_name"] is None
+        ):
             # add input dataset
             partitions = glob.glob("data/02_intermediate/*.csv")
             fw_name = (
