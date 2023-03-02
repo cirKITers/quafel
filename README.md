@@ -2,6 +2,8 @@
 
 Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffle) :wink:
 
+![Overview](docs/overview.png)
+
 *This project follows the [Kedro Framework](https://kedro.org/) approach.*
 
 ## :hammer: Setup
