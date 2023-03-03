@@ -1,4 +1,4 @@
 data_science:
-  evaluations: 20
+  evaluations: 1
   framework_identifier: "numpy_fw"
   n_shots: 1000

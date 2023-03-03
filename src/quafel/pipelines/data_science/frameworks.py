@@ -12,6 +12,28 @@ import qibo
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
 
+import time
+
+class test_fw:
+    time_const = 1e-9
+    def __init__(self, qasm_circuit, n_shots):
+        self.qubits = int(
+            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
+        )  # TODO: improvement wanted
+
+        self.depth = int(
+            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
+        )  # TODO: improvement wanted
+
+        self.shots = n_shots
+
+    def execute(self):
+        time.sleep(self.time_const * self.qubits * self.depth * self.shots)
+        
+        return {
+            0:0.5,
+            1:0.5
+        }
 
 class pennylane_fw:
     def __init__(self, qasm_circuit, n_shots):
