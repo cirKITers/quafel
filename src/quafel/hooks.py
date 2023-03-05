@@ -6,6 +6,8 @@ from kedro.framework.hooks import hook_impl
 from typing import Any, Dict
 
 import glob
+from pathlib import Path
+
 import os
 import logging
 from kedro.io import DataCatalog
@@ -100,10 +102,10 @@ class DataCatalogHooks:
         # add input dataset
         partitions = glob.glob("data/02_intermediate/*.csv")
 
-        for i, partition in enumerate(partitions):
+        for partition in partitions:
             # partition loader
             evaluation_partitions_name = (
-                f"data_generation.evaluation_partition_{i}"
+                f"data_generation.evaluation_partition_{Path(partition).stem}"
             )
             input_dataset = CSVDataSet(filepath=partition)
             catalog.add(evaluation_partitions_name, input_dataset)
