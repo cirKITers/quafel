@@ -62,8 +62,8 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
 
     pl_parallel_generate_and_log_circuit = pipeline(
         [
-            nd_generate_evaluation_matrix,
-            nd_generate_evaluation_partitions,
+            # nd_generate_evaluation_matrix,
+            # nd_generate_evaluation_partitions,
             *[
                 node(
                     func=part_generate_random_qasm_circuit,
@@ -81,9 +81,15 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 for i in range(n_partitions)
             ],
         ],
+        inputs={
+            **{
+                f"evaluation_partition_{i}": f"data_generation.evaluation_partition_{i}"
+                for i in range(n_partitions)
+            },
+        },
         outputs={
-            "evaluation_matrix": "evaluation_matrix",
-            "evaluation_partitions": "evaluation_partitions",
+            # "evaluation_matrix": "evaluation_matrix",
+            # "evaluation_partitions": "evaluation_partitions",
             **{
                 f"qasm_circuit_{i}": f"qasm_circuit_{i}"
                 for i in range(n_partitions)
