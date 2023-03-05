@@ -38,11 +38,7 @@ def measure_execution_durations(
     )
 
     execution_durations = []
-    if "test" in framework_id:
-        for eval in range(evaluations):
-            results = framework_instance.execute(useTime=False)
-            execution_durations.append(results["time"])
-    else:
+    for eval in range(evaluations):
         start = time.time_ns()
         results = framework_instance.execute()
         end = time.time_ns()
@@ -52,6 +48,12 @@ def measure_execution_durations(
         "execution_duration": execution_durations,
         "execution_result": results,
     }
+
+
+def aggregate_partitions(*args):
+    aggregated = pd.concat(args, axis=1)
+
+    return {"aggregated_partitions": aggregated}
 
 
 def combine_execution_durations(
