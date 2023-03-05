@@ -100,3 +100,5 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
 - [data/07_reportings](data/07_reporting):
   - **Versioned** dataset with the ```.json``` formatted ploty heatmaps
   - The data in this folder is named by the framework and the fixed parameter. E.g. when the number of ```qubits``` is plotted against the ```shots``` and the ```qiskit_fw``` is being used to simulate a circuit of ```depth``` $3$, the filename would be ```qiskit_fw_depth_3```.
+
+Note that all datasets that are not marked as "**versioned**" will be overwritten on the next run!
