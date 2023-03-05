@@ -9,10 +9,10 @@ from typing import Dict
 
 
 def aggregate_evaluations(*args):
+    aggregated = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
+
     return {
-        "execution_durations": pd.DataFrame(
-            {f"{i}": args[i] for i in range(0, len(args) // 2)}
-        ),
+        "execution_durations": aggregated,
         # "execution_results": pd.DataFrame(
         #     {f"{i}": args[i] for i in range(len(args) // 2, len(args))}
         # ),
