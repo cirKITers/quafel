@@ -73,7 +73,7 @@ To adjust the number of qubits, depth of the circuit and other parameters, check
 Everything related to executing the circuits and time measurments is contained in the ```data_science``` namespace.
 Head to [conf/base/parameters/data_science.yml](/conf/base/parameters/data_science.yml) to specify a framework and set e.g. the number of evaluations.
 
-### Pipeline
+### :eyeglasses: Pipeline
 
 You can actually see what's going on by running
 ```
