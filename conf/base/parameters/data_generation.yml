@@ -4,13 +4,13 @@ data_generation:
   seed: 1111
 
   min_qubits: 1
-  max_qubits: 4
+  max_qubits: 7
   qubits_increment: 1
   min_depth: 1
-  max_depth: 4
+  max_depth: 7
   depth_increment: 1
   min_shots: 100
-  max_shots: 1000
+  max_shots: 2600
   shots_increment: 400
 
-  frameworks: ["qiskit_fw"] #["test_fw"] 
+  frameworks: ["numpy_fw", "pennylane_fw", "qiskit_fw"] #["test_fw"] 
