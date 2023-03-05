@@ -32,6 +32,15 @@
             "justMyCode": true
         },
         {
+            "name": "Sequential",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "parallel"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Visualize",
             "type": "python",
             "request": "launch",
