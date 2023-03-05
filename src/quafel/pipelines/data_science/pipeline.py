@@ -68,14 +68,6 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             #     },
             #     name=f"aggregate_evaluations",
             # ),
-            # node(
-            #     func=aggregate_partitions,
-            #     inputs=[f"evaluation_partition_{i}" for i in range(n_partitions)],
-            #     outputs={
-            #         'aggregated_partitions':'evaluation_partitions'
-            #     },
-            #     name='aggregate_partitions'
-            # ),
             node(
                 func=combine_execution_durations,
                 inputs={
