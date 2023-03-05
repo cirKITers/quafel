@@ -8,6 +8,7 @@ from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
     aggregate_evaluations,
     combine_execution_durations,
+    aggregate_partitions,
 )
 
 
@@ -48,15 +49,33 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             node(
                 func=aggregate_evaluations,
                 inputs=[
-                    *[f"execution_duration_{i}" for i in range(n_partitions)],
-                    *[f"execution_result_{i}" for i in range(n_partitions)],
+                    f"execution_duration_{i}" for i in range(n_partitions)
                 ],
                 outputs={
                     "execution_durations": "execution_durations",
                     # "execution_results": "execution_results",
                 },
-                name=f"aggregate_evaluations",
+                name=f"aggregate_durations",
             ),
+            # node(
+            #     func=aggregate_evaluations,
+            #     inputs={
+            #         **{i:f"execution_result_{i}" for i in range(n_partitions)},
+            #     },
+            #     outputs={
+            #         "execution_durations": "execution_durations",
+            #         # "execution_results": "execution_results",
+            #     },
+            #     name=f"aggregate_evaluations",
+            # ),
+            # node(
+            #     func=aggregate_partitions,
+            #     inputs=[f"evaluation_partition_{i}" for i in range(n_partitions)],
+            #     outputs={
+            #         'aggregated_partitions':'evaluation_partitions'
+            #     },
+            #     name='aggregate_partitions'
+            # ),
             node(
                 func=combine_execution_durations,
                 inputs={
