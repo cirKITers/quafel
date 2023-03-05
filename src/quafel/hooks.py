@@ -1,6 +1,6 @@
 from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.plotly import JSONDataSet
-from kedro.io import Version, core
+from kedro.io import Version
 from kedro.framework.hooks import hook_impl
 
 from typing import Any, Dict
@@ -23,7 +23,6 @@ class ProjectHooks:
             kedro run --params=input:iris_3.csv
         """
         # filename = run_params["extra_params"]["input"]
-        return
         # if (
         #     run_params["pipeline_name"] == "parallel"
         #     or run_params["pipeline_name"] == "viz"
@@ -73,8 +72,20 @@ class ProjectHooks:
         #         # with open(filepath, 'w') as f:
         #         #     f.write('')
 
-        # elif run_params["pipeline_name"] == "pre":
-        #     pass  # TODO: delete all the old intermediate results
+        if run_params["pipeline_name"] == "pre":
+            tempFiles = glob.glob("data/02_intermediate/*.csv")
+            for f in tempFiles:
+                os.remove(f)
+
+            tempFiles = glob.glob("data/05_execution_durations/*.csv")
+            for f in tempFiles:
+                os.remove(f)
+
+            tempFiles = glob.glob("data/07_reporting/*.tmp")
+            for f in tempFiles:
+                os.remove(f)
+
+            pass  # TODO: delete all the old intermediate results
 
         # # add output dataset
 
@@ -112,6 +123,7 @@ class DataCatalogHooks:
             version = Version(
                 None, catalog.datasets.dummy_versioned_dataset._version.save
             )
+
             for name in names:
                 filepath = os.path.join("data/07_reporting/", f"{name}.json")
 
@@ -125,7 +137,10 @@ class DataCatalogHooks:
                 except FileExistsError:
                     # directory already exists
                     pass
-                # with open(filepath, 'w') as f:
-                #     f.write('')
+
+                with open(
+                    os.path.join("data/07_reporting/", f"{name}.tmp"), "w"
+                ) as f:
+                    f.write("")
         except:
             pass
