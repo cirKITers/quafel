@@ -38,7 +38,11 @@ def measure_execution_durations(
     )
 
     execution_durations = []
-    for eval in range(evaluations):
+    if "test" in framework_id:
+        for eval in range(evaluations):
+            results = framework_instance.execute(useTime=False)
+            execution_durations.append(results["time"])
+    else:
         start = time.time_ns()
         results = framework_instance.execute()
         end = time.time_ns()
