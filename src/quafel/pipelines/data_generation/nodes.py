@@ -65,9 +65,20 @@ def generate_evaluation_matrix(
     shots_increment: int,
     frameworks: List[str],
 ):
-    qubits = [i for i in range(min_qubits, max_qubits, qubits_increment)]
-    depths = [i for i in range(min_depth, max_depth, depth_increment)]
-    shots = [i for i in range(min_shots, max_shots, shots_increment)]
+    qubits = [
+        i
+        for i in range(
+            min_qubits, max_qubits + qubits_increment, qubits_increment
+        )
+    ]
+    depths = [
+        i
+        for i in range(min_depth, max_depth + depth_increment, depth_increment)
+    ]
+    shots = [
+        i
+        for i in range(min_shots, max_shots + shots_increment, shots_increment)
+    ]
     frameworks = frameworks
 
     return {
