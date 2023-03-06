@@ -21,7 +21,7 @@ def shots_depths_viz(execution_durations_combined: Dict):
             # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_depth = depth_duration.sort_values("depth")
             duration_mean = duration_sorted_by_depth.filter(
-                regex=("duration_\d.")
+                regex=(r"duration_\d.")
             ).mean(axis=1)
             # image = []
             # for s, duration in grouped_by_shots_sorted_by_depth:
@@ -43,7 +43,9 @@ def shots_depths_viz(execution_durations_combined: Dict):
         for d, qubit_duration in grouped_by_depth:
             # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_qubit = qubit_duration.sort_values("qubits")
-
+            duration_mean = duration_sorted_by_qubit.filter(
+                regex=(r"duration_\d.")
+            ).mean(axis=1)
             # image = []
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
@@ -53,7 +55,7 @@ def shots_depths_viz(execution_durations_combined: Dict):
                     go.Heatmap(
                         x=duration_sorted_by_qubit["shots"],
                         y=duration_sorted_by_qubit["qubits"],
-                        z=duration_sorted_by_qubit["mean_duration"],
+                        z=duration_mean,
                         # colorscale='Viridis'
                     )
                 ]
