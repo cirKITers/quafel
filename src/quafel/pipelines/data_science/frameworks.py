@@ -19,7 +19,7 @@ class test_fw:
     time_const = 1e-9
 
     def __init__(self, qasm_circuit, n_shots):
-        self.qubits = int(
+        self.n_qubits = int(
             qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
         )  # TODO: improvement wanted
 
@@ -31,31 +31,52 @@ class test_fw:
 
     def execute(self):
         time.sleep(
-            self.time_const * self.shots * self.depth**2 * self.qubits**3
+            self.time_const * self.shots * self.depth**2 * self.n_qubits**3
         )
 
-        return {0: 0.5, 1: 0.5}
+    def get_result(self):
+        counts = {}
+
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            counts[bitstring] = 0
+
+        return counts
 
 
 class pennylane_fw:
     def __init__(self, qasm_circuit, n_shots):
-        n_qubits = int(
+        self.n_qubits = int(
             qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
         )  # TODO: improvement wanted
 
-        def circuit():
-            qml.from_qasm(qasm_circuit)
-            return [qml.expval(qml.PauliZ(i)) for i in range(n_qubits)]
-
+        self.n_shots = n_shots
         self.backend = qml.device(
-            "default.qubit", wires=range(n_qubits), shots=n_shots
+            "default.qubit", wires=range(self.n_qubits), shots=self.n_shots
         )
 
-        self.qc = qml.QNode(circuit, self.backend)
+        @qml.qnode(self.backend)
+        def circuit():
+            qml.from_qasm(qasm_circuit)()
+            return qml.counts()
+
+        self.qc = circuit
 
     def execute(self):
-        result = self.qc()
-        return result
+        self.result = self.qc()
+
+    def get_result(self):
+        counts = self.result
+
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            if bitstring not in counts.keys():
+                counts[bitstring] = 0
+
+            else:
+                counts[bitstring] /= self.n_shots
+
+        return counts
 
 
 class qiskit_fw:
@@ -65,14 +86,28 @@ class qiskit_fw:
         else:
             self.backend = qiskit.Aer.get_backend("qasm_simulator")
 
+        self.n_qubits = int(
+            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
+        )  # TODO: improvement wanted
+
         self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
         self.n_shots = n_shots
+        self.result = None
 
     def execute(self):
-        result = qiskit.execute(
+        self.result = qiskit.execute(
             self.qc, backend=self.backend, shots=self.n_shots
-        ).result()
-        return result
+        )
+
+    def get_result(self):
+        counts = self.result.result().get_counts()
+
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            if bitstring not in counts.keys():
+                counts[bitstring] = 0
+
+        return counts
 
 
 # class duration_real(duration_qiskit):
@@ -143,6 +178,9 @@ class numpy_fw:
         self.n_shots = n_shots
         self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
         self.qc.remove_final_measurements()
+        self.n_qubits = int(
+            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
+        )  # TODO: improvement wanted
 
     def execute(self):
         # keine circuits sondern fertige Matrizen
@@ -150,13 +188,22 @@ class numpy_fw:
         statevector = np.array(matrix)[:, 0]
         probabilities = np.abs((statevector) ** 2)
         if self.n_shots is not None:
-            result = np.random.choice(
+            self.result = np.random.choice(
                 len(probabilities), self.n_shots, p=probabilities
             )
         else:
-            result = probabilities
+            self.result = probabilities
 
-        return result
+    def get_result(self):
+        counts = {}
+
+        # TODO verification needed!
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            c = np.count_nonzero(self.result == i)
+            counts[bitstring] = c
+
+        return counts
 
 
 class cirq_fw:
@@ -178,10 +225,11 @@ class cirq_fw:
 
     def execute(self):
         if self.n_shots is None:
-            result = self.backend.simulate(self.qc)
+            self.result = self.backend.simulate(self.qc)
         else:
-            result = self.backend.run(self.qc, repetitions=self.n_shots)
+            self.result = self.backend.run(self.qc, repetitions=self.n_shots)
 
+    def get_result(self):
         return result
 
 
@@ -203,6 +251,7 @@ class qibo_fw:
         self.qc = qibo.models.Circuit.from_qasm(qasm_circuit)
 
     def execute(self):
-        result = self.qc(nshots=self.n_shots).execution_result
+        self.result = self.qc(nshots=self.n_shots).execution_result
 
+    def get_result(self):
         return result
