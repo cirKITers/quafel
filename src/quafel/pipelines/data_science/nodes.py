@@ -68,8 +68,13 @@ def combine_execution_durations(
         partition_data = partition_load_func()
         duration_data = duration_load_func()
 
+        mean_duration = duration_data.mean()
+        var_duration = duration_data.var()
+        duration_result = pd.DataFrame([mean_duration, var_duration])
+        duration_result.index = ["mean_duration", "var_duration"]
+
         combined_partition_duration = pd.concat(
-            [partition_data, duration_data], ignore_index=True, axis=0
+            [partition_data, duration_result], ignore_index=True, axis=0
         )
 
         combine_all = pd.concat(
