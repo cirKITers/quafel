@@ -106,5 +106,6 @@ def generate_evaluation_partitions(evaluation_matrix):
                     }
                     idx += 1
 
-    pass
-    return {"evaluation_partitions": pd.DataFrame(partitions)}
+    eval_partitions = pd.DataFrame(partitions)
+
+    return {"evaluation_partitions": eval_partitions}
