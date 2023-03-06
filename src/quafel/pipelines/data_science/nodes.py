@@ -70,13 +70,12 @@ def combine_execution_durations(
 
         partition_data.index = ["framework", "qubits", "depth", "shots"]
 
-        mean_duration = duration_data.mean()
-        var_duration = duration_data.var()
-        duration_result = pd.DataFrame([mean_duration, var_duration])
-        duration_result.index = ["mean_duration", "var_duration"]
+        duration_data.index = [
+            f"duration_{i}" for i in range(len(duration_data))
+        ]
 
         combined_partition_duration = pd.concat(
-            [partition_data, duration_result], ignore_index=False, axis=0
+            [partition_data, duration_data], ignore_index=False, axis=0
         )
 
         combine_all = pd.concat(
