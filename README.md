@@ -92,11 +92,15 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
 - [data/03_qasm_circuits](data/03_qasm_circuits/):
   - as the name suggests, all generated qasm circuits for the job with the corresponding id
 - [data/04_execution_results](data/04_execution_results/):
-  - simulator results from the job with the corresponding id.
+  - simulator results of the job with the corresponding id.
+  - result formats are unified as a dictionary with the keys containing the binary bit representation of the measured qubit and the normalized counts as values.
+  - results are zero padded, so it is ensured that also state combinations with $0$ probability are represented.
 - [data/05_execution_durations](data/05_execution_durations/):
-  - duration results from the job with the corresponding id.
-- [data/06_executions_combined](data/06_executions_combined/):
-  - **Versioned** dataset containing the combined information of both, the input parameters (```framework```, ```qubits```, ```depth```, ```shots```) and the measured duration
+  - duration for the simulation of the job with the corresponding id.
+  - duration is only measured for the execution of the simulator
+  - combining and post-processing results (to obtain the dictionary representation) is not involved
+- [data/06_evaluations_combined](data/06_evaluations_combined/):
+  - **Versioned** dataset containing the combined information of both, the input parameters (```framework```, ```qubits```, ```depth```, ```shots```), the measured duration and the simulator results
 - [data/07_reportings](data/07_reporting):
   - **Versioned** dataset with the ```.json``` formatted ploty heatmaps
   - The data in this folder is named by the framework and the fixed parameter. E.g. when the number of ```qubits``` is plotted against the ```shots``` and the ```qiskit_fw``` is being used to simulate a circuit of ```depth``` $3$, the filename would be ```qiskit_fw_depth_3```.
