@@ -14,6 +14,8 @@ from cirq.contrib.qasm_import import circuit_from_qasm
 
 import time
 
+from typing import Dict
+
 
 def calculate_n_qubits_from_qasm(qasm_string):
     return int(
@@ -33,12 +35,12 @@ class test_fw:
 
         self.shots = n_shots
 
-    def execute(self):
+    def execute(self) -> None:
         time.sleep(
             self.time_const * self.shots * self.depth**2 * self.n_qubits**3
         )
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, float]:
         counts = {}
 
         for i in range(2**self.n_qubits):
@@ -64,10 +66,10 @@ class pennylane_fw:
 
         self.qc = circuit
 
-    def execute(self):
+    def execute(self) -> None:
         self.result = self.qc()
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, float]:
         counts = self.result
 
         for i in range(2**self.n_qubits):
@@ -94,12 +96,12 @@ class qiskit_fw:
         self.n_shots = n_shots
         self.result = None
 
-    def execute(self):
+    def execute(self) -> None:
         self.result = qiskit.execute(
             self.qc, backend=self.backend, shots=self.n_shots
         )
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, float]:
         counts = self.result.result().get_counts()
 
         for i in range(2**self.n_qubits):
@@ -180,7 +182,7 @@ class numpy_fw:
         self.qc.remove_final_measurements()
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
-    def execute(self):
+    def execute(self) -> None:
         # keine circuits sondern fertige Matrizen
         matrix = Operator(self.qc)
         statevector = np.array(matrix)[:, 0]
@@ -192,7 +194,7 @@ class numpy_fw:
         else:
             self.result = probabilities
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, float]:
         counts = {}
 
         # TODO verification needed!
@@ -219,13 +221,13 @@ class cirq_fw:
         )
         self.backend = cirq.Simulator()
 
-    def execute(self):
+    def execute(self) -> None:
         if self.n_shots is None:
             self.result = self.backend.simulate(self.qc)
         else:
             self.result = self.backend.run(self.qc, repetitions=self.n_shots)
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, float]:
         counts = {}
 
         # TODO verification needed!
@@ -264,10 +266,10 @@ class qibo_fw:
 
         self.qc = qibo.models.Circuit.from_qasm(qasm_circuit)
 
-    def execute(self):
+    def execute(self) -> None:
         self.result = self.qc(nshots=self.n_shots)
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, float]:
         counts = dict(self.result.frequencies(binary=True))
 
         # TODO verification needed!
