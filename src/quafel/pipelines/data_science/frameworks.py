@@ -25,9 +25,7 @@ class test_fw:
     time_const = 1e-9
 
     def __init__(self, qasm_circuit, n_shots):
-        self.n_qubits = int(
-            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
-        )  # TODO: improvement wanted
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
         self.depth = int(
             qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
@@ -52,9 +50,7 @@ class test_fw:
 
 class pennylane_fw:
     def __init__(self, qasm_circuit, n_shots):
-        self.n_qubits = int(
-            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
-        )  # TODO: improvement wanted
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
         self.n_shots = n_shots
         self.backend = qml.device(
@@ -92,9 +88,7 @@ class qiskit_fw:
         else:
             self.backend = qiskit.Aer.get_backend("qasm_simulator")
 
-        self.n_qubits = int(
-            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
-        )  # TODO: improvement wanted
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
         self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
         self.n_shots = n_shots
@@ -184,9 +178,7 @@ class numpy_fw:
         self.n_shots = n_shots
         self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
         self.qc.remove_final_measurements()
-        self.n_qubits = int(
-            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
-        )  # TODO: improvement wanted
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
     def execute(self):
         # keine circuits sondern fertige Matrizen
@@ -216,15 +208,13 @@ class cirq_fw:
     def __init__(self, qasm_circuit, n_shots):
         self.n_shots = n_shots
 
-        n_qubits = int(
-            qasm_circuit[qasm_circuit.find("\nqreg q[") + 8]
-        )  # TODO: improvement wanted
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
         self.qc = circuit_from_qasm(qasm_circuit)
 
         self.qc.append(
             cirq.measure(
-                cirq.NamedQubit.range(n_qubits, prefix=""), key="result"
+                cirq.NamedQubit.range(self.n_qubits, prefix=""), key="result"
             )
         )
         self.backend = cirq.Simulator()
@@ -236,13 +226,31 @@ class cirq_fw:
             self.result = self.backend.run(self.qc, repetitions=self.n_shots)
 
     def get_result(self):
-        return result
+        counts = {}
+
+        # TODO verification needed!
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+
+            mask = None
+            for j in range(self.n_qubits):
+                if mask is None:
+                    mask = self.result.data[f"c_{j}"] == int(bitstring[j])
+                else:
+                    mask &= self.result.data[f"c_{j}"] == int(bitstring[j])
+            result = len(self.result.data[mask])
+
+            counts[bitstring] = result / self.n_shots
+
+        return counts
 
 
 class qibo_fw:
     def __init__(self, qasm_circuit, n_shots):
         self.backend = qibo.get_backend()
         self.n_shots = n_shots
+
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
         # this is super hacky, but the way qibo parses the QASM string
         # does not deserve better.
@@ -257,7 +265,15 @@ class qibo_fw:
         self.qc = qibo.models.Circuit.from_qasm(qasm_circuit)
 
     def execute(self):
-        self.result = self.qc(nshots=self.n_shots).execution_result
+        self.result = self.qc(nshots=self.n_shots)
 
     def get_result(self):
-        return result
+        counts = self.result.frequencies(binary=True)
+
+        # TODO verification needed!
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            if bitstring not in counts.keys():
+                counts[bitstring] = 0
+
+        return counts
