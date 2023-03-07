@@ -7,7 +7,7 @@ from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
     aggregate_evaluations,
-    combine_execution_durations,
+    combine_evaluations,
     aggregate_partitions,
 )
 
@@ -52,31 +52,29 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                     f"execution_duration_{i}" for i in range(n_partitions)
                 ],
                 outputs={
-                    "execution_durations": "execution_durations",
-                    # "execution_results": "execution_results",
+                    "aggregated_evaluations": "execution_durations",
                 },
                 name=f"aggregate_durations",
             ),
-            # node(
-            #     func=aggregate_evaluations,
-            #     inputs={
-            #         **{i:f"execution_result_{i}" for i in range(n_partitions)},
-            #     },
-            #     outputs={
-            #         "execution_durations": "execution_durations",
-            #         # "execution_results": "execution_results",
-            #     },
-            #     name=f"aggregate_evaluations",
-            # ),
             node(
-                func=combine_execution_durations,
+                func=aggregate_evaluations,
+                inputs=[f"execution_result_{i}" for i in range(n_partitions)],
+                outputs={
+                    "aggregated_evaluations": "execution_results",
+                },
+                name=f"aggregate_results",
+            ),
+            node(
+                func=combine_evaluations,
                 inputs={
                     "evaluation_partitions": "evaluation_partitions",
                     "execution_durations": "execution_durations",
+                    "execution_results": "execution_results",
                 },
                 outputs={
-                    "execution_durations_combined": "execution_durations_combined",
+                    "evaluations_combined": "evaluations_combined",
                 },
+                name=f"combine_evaluations",
             ),
         ],
         inputs={
@@ -91,9 +89,9 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             "evaluation_partitions": "evaluation_partitions",
         },
         outputs={
+            "execution_results": "execution_result_partitions",
             "execution_durations": "execution_duration_partitions",
-            # "execution_results": "execution_result_partitions",
-            "execution_durations_combined": "execution_durations_combined",
+            "evaluations_combined": "evaluations_combined",
         },
         namespace="data_science",
     )

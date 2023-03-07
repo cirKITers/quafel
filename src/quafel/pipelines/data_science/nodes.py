@@ -9,13 +9,12 @@ from typing import Dict
 
 
 def aggregate_evaluations(*args):
-    aggregated = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
+    aggregated_evaluations = pd.DataFrame(
+        {f"{i}": eval for i, eval in enumerate(args)}
+    )
 
     return {
-        "execution_durations": aggregated,
-        # "execution_results": pd.DataFrame(
-        #     {f"{i}": args[i] for i in range(len(args) // 2, len(args))}
-        # ),
+        "aggregated_evaluations": aggregated_evaluations,
     }
 
 
@@ -58,26 +57,39 @@ def aggregate_partitions(*args):
     return {"aggregated_partitions": aggregated}
 
 
-def combine_execution_durations(
-    evaluation_partitions: Dict, execution_durations: Dict
+def combine_evaluations(
+    evaluation_partitions: Dict,
+    execution_durations: Dict,
+    execution_results: Dict,
 ):
     combine_all = pd.DataFrame()
 
-    for (partition_id, partition_load_func), (
-        duration_id,
-        duration_load_func,
-    ) in zip(evaluation_partitions.items(), execution_durations.items()):
+    for (
+        (partition_id, partition_load_func),
+        (duration_id, duration_load_func),
+        (result_id, result_load_func),
+    ) in zip(
+        evaluation_partitions.items(),
+        execution_durations.items(),
+        execution_results.items(),
+    ):
         partition_data = partition_load_func()
         duration_data = duration_load_func()
+        result_data = result_load_func()
 
+        # TODO: unify somehow with the generation part
         partition_data.index = ["framework", "qubits", "depth", "shots"]
 
         duration_data.index = [
             f"duration_{i}" for i in range(len(duration_data))
         ]
 
+        result_data.index = [f"result_{i}" for i in range(len(duration_data))]
+
         combined_partition_duration = pd.concat(
-            [partition_data, duration_data], ignore_index=False, axis=0
+            [partition_data, duration_data, result_data],
+            ignore_index=False,
+            axis=0,
         )
 
         combine_all = pd.concat(
@@ -89,4 +101,4 @@ def combine_execution_durations(
     combine_all = combine_all.transpose()
     # combine_all = combine_all.sort_values(by=[0, 1, 3]) # sort by framework and shots
 
-    return {"execution_durations_combined": combine_all}
+    return {"evaluations_combined": combine_all}
