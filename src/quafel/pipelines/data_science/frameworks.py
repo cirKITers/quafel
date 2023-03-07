@@ -15,6 +15,12 @@ from cirq.contrib.qasm_import import circuit_from_qasm
 import time
 
 
+def calculate_n_qubits_from_qasm(qasm_string):
+    return int(
+        qasm_string[qasm_string.find("\nqreg q[") + 8]
+    )  # TODO: improvement wanted
+
+
 class test_fw:
     time_const = 1e-9
 
