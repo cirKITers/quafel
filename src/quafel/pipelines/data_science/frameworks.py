@@ -268,7 +268,7 @@ class qibo_fw:
         self.result = self.qc(nshots=self.n_shots)
 
     def get_result(self):
-        counts = self.result.frequencies(binary=True)
+        counts = dict(self.result.frequencies(binary=True))
 
         # TODO verification needed!
         for i in range(2**self.n_qubits):
