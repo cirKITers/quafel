@@ -21,6 +21,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     """
     partitions = glob.glob("data/02_intermediate/*.csv")
     figures = [Path(f).stem for f in glob.glob("data/07_reporting/*.tmp")]
+    figures = [Path(f).stem for f in glob.glob("data/07_reporting/*.tmp")]
 
     dg_pipelines = dg.create_pipeline(n_partitions=len(partitions))
     ds_pipelines = ds.create_pipeline(n_partitions=len(partitions))

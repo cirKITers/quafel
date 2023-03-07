@@ -3,16 +3,15 @@ This is a boilerplate pipeline 'visualization'
 generated using Kedro 0.18.4
 """
 
-import plotly.express as px
 import plotly.graph_objs as go
 from typing import Dict
 import pandas as pd
 
 
-def shots_depths_viz(execution_durations_combined: Dict):
+def shots_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
-    grouped_by_fw = execution_durations_combined.groupby("framework")
+    grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
         grouped_by_qubit = qubit_depth_duration.groupby("qubits")
@@ -38,6 +37,15 @@ def shots_depths_viz(execution_durations_combined: Dict):
                 ]
             )
 
+    return figures
+
+
+def shots_depths_viz(evaluations_combined: Dict):
+    figures = {}
+
+    grouped_by_fw = evaluations_combined.groupby("framework")
+
+    for fw, qubit_depth_duration in grouped_by_fw:
         grouped_by_depth = qubit_depth_duration.groupby("depth")
 
         for d, qubit_duration in grouped_by_depth:
@@ -62,7 +70,3 @@ def shots_depths_viz(execution_durations_combined: Dict):
             )
 
     return figures
-
-
-def shots_qubits_viz(execution_durations_combined: Dict):
-    pass
