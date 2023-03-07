@@ -41,19 +41,19 @@ poetry kedro run
 This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
 To enable this, you must run
 ```
-poetry kedro run --pipeline pre
+poetry run kedro run --pipeline pre
 ```
 which will generate a [Partitioned Dataset]() from which a parallel runner can spawn individual processes for each configuration defined by the above mentioned parameters.
 This dataset must be re-generated after tuning those parameters.
 After doing so, you can run
 ```
-poetry kedro run --pipeline parallel --runner ParallelRunner
+poetry run kedro run --pipeline parallel --runner ParallelRunner
 ```
 which will calculate the duration and result for each configuration.
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
 As the files are just named by ids, you might want to execute
 ```
-poetry kedro run --pipeline visualize
+poetry run kedro run --pipeline visualize
 ```
 to view those evaluation results.
 
