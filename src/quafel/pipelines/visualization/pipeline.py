@@ -7,6 +7,7 @@ from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.visualization.nodes import (
     shots_depths_viz,
     shots_qubits_viz,
+    qubits_time_viz,
 )
 
 
@@ -19,7 +20,13 @@ def create_pipeline(figures, **kwargs) -> dict:
                     "evaluations_combined": "evaluations_combined",
                 },
                 outputs={
-                    **{f: f for f in filter(lambda s: "depth" in s, figures)},
+                    **{
+                        f: f
+                        for f in filter(
+                            lambda s: ("framework_" in s) and ("depth_" in s),
+                            figures,
+                        )
+                    },
                 },
                 name=f"shots_depths_viz",
             ),
@@ -29,9 +36,31 @@ def create_pipeline(figures, **kwargs) -> dict:
                     "evaluations_combined": "evaluations_combined",
                 },
                 outputs={
-                    **{f: f for f in filter(lambda s: "qubits" in s, figures)},
+                    **{
+                        f: f
+                        for f in filter(
+                            lambda s: ("framework_" in s) and ("qubits_" in s),
+                            figures,
+                        )
+                    },
                 },
                 name=f"shots_depth_viz",
+            ),
+            node(
+                func=qubits_time_viz,
+                inputs={
+                    "evaluations_combined": "evaluations_combined",
+                },
+                outputs={
+                    **{
+                        f: f
+                        for f in filter(
+                            lambda s: ("shots_" in s) and ("depth_" in s),
+                            figures,
+                        )
+                    },
+                },
+                name=f"qubits_time_viz",
             ),
         ],
         inputs={
