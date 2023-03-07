@@ -118,9 +118,13 @@ class DataCatalogHooks:
             names = []
             for f in evaluation_matrix["frameworks"]:
                 for q in evaluation_matrix["qubits"]:
-                    names.append(f"{f}_qubits_{q}")
+                    names.append(f"framework_{f}_qubits_{q}")
                 for d in evaluation_matrix["depths"]:
-                    names.append(f"{f}_depth_{d}")
+                    names.append(f"framework_{f}_depth_{d}")
+
+            for d in evaluation_matrix["depths"]:
+                for s in evaluation_matrix["shots"]:
+                    names.append(f"shots_{s}_depth_{d}")
 
             version = Version(
                 None, catalog.datasets.dummy_versioned_dataset._version.save
