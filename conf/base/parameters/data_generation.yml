@@ -13,4 +13,4 @@ data_generation:
   max_shots: 500
   shots_increment: 400
 
-  frameworks: ["numpy_fw"] # "test_fw", "pennylane_fw", "qiskit_fw"
+  frameworks: ["pennylane_fw", "cirq_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
