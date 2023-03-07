@@ -53,7 +53,7 @@ which will calculate the duration and result for each configuration.
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
 As the files are just named by ids, you might want to execute
 ```
-poetry kedro run --pipeline visualize
+poetry kedro run --pipeline viz
 ```
 to view those evaluation results.
 
