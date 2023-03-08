@@ -20,15 +20,17 @@ def rgb_to_rgba(rgb_value, alpha):
     return f"rgba{rgb_value[3:-1]}, {alpha})"
 
 
+def extract_framework_name_from_id(identifier):
+    return identifier.replace("fw", "framework").capitalize().replace("_", " ")
+
+
 def shots_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
     grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
-        framework_name = (
-            fw.replace("fw", "framework").capitalize().replace("_", " ")
-        )
+        framework_name = extract_framework_name_from_id(fw)
         grouped_by_qubit = qubit_depth_duration.groupby("qubits")
 
         for q, depth_duration in grouped_by_qubit:
@@ -67,9 +69,7 @@ def shots_depths_viz(evaluations_combined: Dict):
     grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
-        framework_name = (
-            fw.replace("fw", "framework").capitalize().replace("_", " ")
-        )
+        framework_name = extract_framework_name_from_id(fw)
         grouped_by_depth = qubit_depth_duration.groupby("depth")
 
         for d, qubit_duration in grouped_by_depth:
@@ -113,6 +113,7 @@ def qubits_time_viz(evaluations_combined: Dict):
     for fw, qubit_depth_duration in grouped_by_fw:
         main_color_sel = next(main_colors_it)
         sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
+        framework_name = extract_framework_name_from_id(fw)
 
         grouped_by_depth = qubit_depth_duration.groupby("depth")
 
@@ -144,7 +145,7 @@ def qubits_time_viz(evaluations_combined: Dict):
 
                 figures[f"shots_{s}_depth_{d}"].add_trace(
                     go.Scatter(
-                        name=f"{fw}",
+                        name=f"{framework_name}",
                         x=duration_sorted_by_qubit["qubits"],
                         y=durations_mean,
                         mode="lines",
@@ -153,7 +154,7 @@ def qubits_time_viz(evaluations_combined: Dict):
                 )
                 figures[f"shots_{s}_depth_{d}"].add_trace(
                     go.Scatter(
-                        name=f"{fw} - High",
+                        name=f"{framework_name} - High",
                         x=duration_sorted_by_qubit["qubits"],
                         y=durations_max,
                         mode="lines",
@@ -164,7 +165,7 @@ def qubits_time_viz(evaluations_combined: Dict):
                 )
                 figures[f"shots_{s}_depth_{d}"].add_trace(
                     go.Scatter(
-                        name=f"{fw} - Low",
+                        name=f"{framework_name} - Low",
                         x=duration_sorted_by_qubit["qubits"],
                         y=durations_min,
                         marker=dict(color="#444"),
