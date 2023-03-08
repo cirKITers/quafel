@@ -161,6 +161,7 @@ mypy-extensions = ">=0.4.3"
 pathspec = ">=0.9.0"
 platformdirs = ">=2"
 tomli = {version = ">=1.1.0", markers = "python_full_version < \"3.11.0a7\""}
+typing-extensions = {version = ">=3.10.0.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -1043,6 +1044,9 @@ category = "main"
 optional = false
 python-versions = ">=3.7"
 
+[package.dependencies]
+zipp = {version = ">=3.1.0", markers = "python_version < \"3.10\""}
+
 [package.extras]
 docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
 testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
@@ -1158,7 +1162,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "kedro"
-version = "0.18.5"
+version = "0.18.6"
 description = "Kedro helps you build production-ready data and analytics pipelines"
 category = "main"
 optional = false
@@ -1177,7 +1181,7 @@ importlib-metadata = {version = ">=3.6", markers = "python_version >= \"3.8\""}
 importlib-resources = ">=1.3"
 jmespath = ">=0.9.5,<1.0"
 lxml = {version = ">=4.6,<5.0", optional = true, markers = "extra == \"pandas\""}
-more-itertools = ">=9.0,<10.0"
+more-itertools = ">=9.1,<10.0"
 omegaconf = ">=2.3,<3.0"
 openpyxl = {version = ">=3.0.6,<4.0", optional = true, markers = "extra == \"pandas\""}
 pandas = {version = ">=1.3,<2.0", optional = true, markers = "extra == \"pandas\""}
@@ -1195,7 +1199,7 @@ tables = [
     {version = ">=3.6.0,<3.7.0", optional = true, markers = "platform_system == \"Windows\""},
 ]
 toml = ">=0.10,<1.0"
-toposort = ">=1.9,<2.0"
+toposort = ">=1.10,<2.0"
 
 [package.extras]
 all = ["Jinja2 (<3.1.0)", "Pillow (>=9.0,<10.0)", "PyYAML (>=4.2,<7.0)", "SQLAlchemy (>=1.2,<2.0)", "biopython (>=1.73,<2.0)", "compress-pickle[lz4] (>=2.1.0,<2.2.0)", "dask[complete] (>=2021.10,<2022.0)", "delta-spark (>=1.0,<3.0)", "docutils (==0.16)", "geopandas (>=0.6.0,<1.0)", "hdfs (>=2.5.8,<3.0)", "holoviews (>=1.13.0,<1.14.0)", "ipykernel (>=5.3,<7.0)", "lxml (>=4.6,<5.0)", "matplotlib (>=3.0.3,<4.0)", "myst-parser (>=0.17.2,<0.18.0)", "nbsphinx (==0.8.1)", "nbstripout (>=0.4,<1.0)", "networkx (>=2.4,<3.0)", "opencv-python (>=4.5.5.64,<4.6.0.0)", "openpyxl (>=3.0.6,<4.0)", "pandas (>=1.3,<2.0)", "pandas-gbq (>=0.12.0,<0.18.0)", "plotly (>=4.8.0,<6.0)", "pyarrow (>=1.0,<7.0)", "pyproj (>=3.0,<4.0)", "pyspark (>=2.2,<4.0)", "redis (>=4.1,<5.0)", "requests (>=2.20,<3.0)", "s3fs (>=0.3.0,<0.5)", "scikit-learn (>=1.0.2,<1.1.0)", "scipy (>=1.7.3,<1.8.0)", "sphinx (>=3.4.3,<3.5.0)", "sphinx-autodoc-typehints (==1.11.1)", "sphinx-copybutton (==0.3.1)", "sphinx-rtd-theme (==1.1.1)", "sphinxcontrib-mermaid (>=0.7.1,<0.8.0)", "tables (>=3.6,<4.0)", "tables (>=3.6.0,<3.7.0)", "tensorflow (>=2.0,<3.0)", "triad (>=0.6.7,<1.0)"]
@@ -1315,6 +1319,9 @@ category = "dev"
 optional = false
 python-versions = ">=3.6"
 
+[package.dependencies]
+importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
+
 [package.extras]
 testing = ["coverage", "pyyaml"]
 
@@ -1373,6 +1380,7 @@ python-versions = ">=3.8"
 contourpy = ">=1.0.1"
 cycler = ">=0.10"
 fonttools = ">=4.22.0"
+importlib-resources = {version = ">=3.2.0", markers = "python_version < \"3.10\""}
 kiwisolver = ">=1.0.1"
 numpy = ">=1.20"
 packaging = ">=20.0"
@@ -1428,6 +1436,7 @@ python-versions = ">=3.7"
 click = ">=7.0"
 colorama = {version = ">=0.4", markers = "platform_system == \"Windows\""}
 ghp-import = ">=1.0"
+importlib-metadata = {version = ">=4.3", markers = "python_version < \"3.10\""}
 jinja2 = ">=2.11.1"
 markdown = ">=3.2.1,<3.4"
 mergedeep = ">=1.3.4"
@@ -1691,7 +1700,10 @@ optional = false
 python-versions = ">=3.8"
 
 [package.dependencies]
-numpy = {version = ">=1.21.0", markers = "python_version >= \"3.10\""}
+numpy = [
+    {version = ">=1.20.3", markers = "python_version < \"3.10\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
+]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
 
@@ -2805,6 +2817,7 @@ python-versions = ">=3.7"
 
 [package.dependencies]
 anyio = ">=3.4.0,<5"
+typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
 full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
@@ -2946,7 +2959,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "toposort"
-version = "1.9"
+version = "1.10"
 description = "Implements a topological sort algorithm."
 category = "main"
 optional = false
@@ -3157,8 +3170,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.10,<3.11"
-content-hash = "160e08ec366e2462b8a35c866311c21fdf0c7da8500ba38f7d71639e4cb7b9c1"
+python-versions = ">=3.9,<3.11"
+content-hash = "7819d8653619778a7b35180217d811cb9fbd5d8f1e5fcf04f3dde5edebe25f67"
 
 [metadata.files]
 aiofiles = [
@@ -4044,8 +4057,8 @@ joblib = [
     {file = "joblib-1.2.0.tar.gz", hash = "sha256:e1cee4a79e4af22881164f218d4311f60074197fb707e082e803b61f6d137018"},
 ]
 kedro = [
-    {file = "kedro-0.18.5-py3-none-any.whl", hash = "sha256:bf1c24816e1ff383ee1a07eac8866f1fe0d82703bf42ca1a376869d59eb177cd"},
-    {file = "kedro-0.18.5.tar.gz", hash = "sha256:eb972b4b78b980e621837e59af72083f9fcc8fe4da8dd70d1e1d5ba66df790f8"},
+    {file = "kedro-0.18.6-py3-none-any.whl", hash = "sha256:abae80c32717ddf452c8de1d8ef0c94599efcbe8f6ee09cb2a0c362096f0dfce"},
+    {file = "kedro-0.18.6.tar.gz", hash = "sha256:d8c49f7a0a010f9ae45af5355a1985a7dd1c6d8716d2fcbbd75ce483a4bacab2"},
 ]
 kedro-viz = [
     {file = "kedro-viz-5.2.1.tar.gz", hash = "sha256:d53ca6b997bd76ad725f97806ec5599de879f4088a4a45fdf4c5e39dd26a6acf"},
@@ -5633,8 +5646,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 toposort = [
-    {file = "toposort-1.9-py3-none-any.whl", hash = "sha256:9f434c815e1bd2f9ad05152b6b0071b1f56e288c107869708f2463ec932e2637"},
-    {file = "toposort-1.9.tar.gz", hash = "sha256:f41a34490d44934b533a7bdaff979ee8a47203fd2d8a746db83f2d5ab12458b9"},
+    {file = "toposort-1.10-py3-none-any.whl", hash = "sha256:cbdbc0d0bee4d2695ab2ceec97fe0679e9c10eab4b2a87a9372b929e70563a87"},
+    {file = "toposort-1.10.tar.gz", hash = "sha256:bfbb479c53d0a696ea7402601f4e693c97b0367837c8898bc6471adfca37a6bd"},
 ]
 tqdm = [
     {file = "tqdm-4.64.1-py2.py3-none-any.whl", hash = "sha256:6fee160d6ffcd1b1c68c65f14c829c22832bc401726335ce92c52d395944a6a1"},
