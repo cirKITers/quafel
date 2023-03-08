@@ -10,12 +10,25 @@ from typing import Dict
 import pandas as pd
 
 
+def rgb_to_rgba(rgb_value, alpha):
+    """
+    Adds the alpha channel to an RGB Value and returns it as an RGBA Value
+    :param rgb_value: Input RGB Value
+    :param alpha: Alpha Value to add  in range [0,1]
+    :return: RGBA Value
+    """
+    return f"rgba{rgb_value[3:-1]}, {alpha})"
+
+
 def shots_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
     grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
+        framework_name = (
+            fw.replace("fw", "framework").capitalize().replace("_", " ")
+        )
         grouped_by_qubit = qubit_depth_duration.groupby("qubits")
 
         for q, depth_duration in grouped_by_qubit:
@@ -38,6 +51,12 @@ def shots_qubits_viz(evaluations_combined: Dict):
                     )
                 ]
             )
+            figures[f"framework_{fw}_qubits_{q}"].update_layout(
+                yaxis_title="Circuit Depth",
+                xaxis_title="Num. of Shots",
+                title=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots",
+                hovermode="x",
+            )
 
     return figures
 
@@ -48,6 +67,9 @@ def shots_depths_viz(evaluations_combined: Dict):
     grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
+        framework_name = (
+            fw.replace("fw", "framework").capitalize().replace("_", " ")
+        )
         grouped_by_depth = qubit_depth_duration.groupby("depth")
 
         for d, qubit_duration in grouped_by_depth:
@@ -70,6 +92,12 @@ def shots_depths_viz(evaluations_combined: Dict):
                     )
                 ]
             )
+            figures[f"framework_{fw}_depth_{d}"].update_layout(
+                yaxis_title="Num. of Qubits",
+                xaxis_title="Num. of Shots",
+                title=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots",
+                hovermode="x",
+            )
 
     return figures
 
@@ -77,11 +105,15 @@ def shots_depths_viz(evaluations_combined: Dict):
 def qubits_time_viz(evaluations_combined: Dict):
     figures = {}
 
-    colors_it = iter(px.colors.qualitative.Safe)
+    # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
+    main_colors_it = iter(px.colors.qualitative.Set2)
+    sec_colors_it = iter(px.colors.qualitative.Pastel2)
 
     grouped_by_fw = evaluations_combined.groupby("framework")
     for fw, qubit_depth_duration in grouped_by_fw:
-        color_sel = next(colors_it)
+        main_color_sel = next(main_colors_it)
+        sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
+
         grouped_by_depth = qubit_depth_duration.groupby("depth")
 
         for d, qubit_shots_duration in grouped_by_depth:
@@ -116,7 +148,7 @@ def qubits_time_viz(evaluations_combined: Dict):
                         x=duration_sorted_by_qubit["qubits"],
                         y=durations_mean,
                         mode="lines",
-                        line=dict(color=color_sel),
+                        line=dict(color=main_color_sel),
                     )
                 )
                 figures[f"shots_{s}_depth_{d}"].add_trace(
@@ -138,10 +170,16 @@ def qubits_time_viz(evaluations_combined: Dict):
                         marker=dict(color="#444"),
                         line=dict(width=0),
                         mode="lines",
-                        fillcolor="rgba(68, 68, 68, 0.3)",
+                        fillcolor=sec_color_sel,
                         fill="tonexty",
                         showlegend=False,
                     )
+                )
+                figures[f"shots_{s}_depth_{d}"].update_layout(
+                    yaxis_title="Time (ns)",
+                    xaxis_title="Num. of Qubits",
+                    title="Framework simulation duration over num. of qubits",
+                    hovermode="x",
                 )
 
     return figures
