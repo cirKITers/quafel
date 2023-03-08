@@ -35,9 +35,7 @@ class test_fw:
         self.shots = n_shots
 
     def execute(self) -> None:
-        time.sleep(
-            self.time_const * self.shots * self.depth**2 * self.n_qubits**3
-        )
+        time.sleep(self.time_const * self.shots * self.depth**2 * self.n_qubits**3)
 
     def get_result(self) -> Dict[str, float]:
         counts = {}
@@ -58,9 +56,11 @@ class pennylane_fw:
             "default.qubit", wires=range(self.n_qubits), shots=self.n_shots
         )
 
+        self.qml_qasm = qml.from_qasm(qasm_circuit)
+
         @qml.qnode(self.backend)
         def circuit():
-            qml.from_qasm(qasm_circuit)()
+            self.qml_qasm()
             return qml.counts()
 
         self.qc = circuit
@@ -96,9 +96,7 @@ class qiskit_fw:
         self.result = None
 
     def execute(self) -> None:
-        self.result = qiskit.execute(
-            self.qc, backend=self.backend, shots=self.n_shots
-        )
+        self.result = qiskit.execute(self.qc, backend=self.backend, shots=self.n_shots)
 
     def get_result(self) -> Dict[str, float]:
         counts = self.result.result().get_counts()
@@ -214,9 +212,7 @@ class cirq_fw:
         self.qc = circuit_from_qasm(qasm_circuit)
 
         self.qc.append(
-            cirq.measure(
-                cirq.NamedQubit.range(self.n_qubits, prefix=""), key="result"
-            )
+            cirq.measure(cirq.NamedQubit.range(self.n_qubits, prefix=""), key="result")
         )
         self.backend = cirq.Simulator()
 
@@ -259,9 +255,7 @@ class qibo_fw:
             denominator = float(match.group()[1:])
             return f"*{1/denominator}"
 
-        qasm_circuit = re.sub(
-            r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE
-        )
+        qasm_circuit = re.sub(r"/\d*", qasm_conv, qasm_circuit, flags=re.MULTILINE)
 
         self.qc = qibo.models.Circuit.from_qasm(qasm_circuit)
 
