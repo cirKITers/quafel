@@ -42,6 +42,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                         "execution_duration": f"execution_duration_{i}",
                         "execution_result": f"execution_result_{i}",
                     },
+                    tags=["dynamic"],
                     name=f"measure_execution_durations_{i}",
                 )
                 for i in range(n_partitions)
@@ -54,6 +55,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 outputs={
                     "aggregated_evaluations": "execution_durations",
                 },
+                tags=["static"],
                 name=f"aggregate_durations",
             ),
             node(
@@ -62,6 +64,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 outputs={
                     "aggregated_evaluations": "execution_results",
                 },
+                tags=["static"],
                 name=f"aggregate_results",
             ),
             node(
@@ -74,6 +77,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 outputs={
                     "evaluations_combined": "evaluations_combined",
                 },
+                tags=["static"],
                 name=f"combine_evaluations",
             ),
         ],

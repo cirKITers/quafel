@@ -76,6 +76,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                         "n_shots": f"n_shots_{i}",
                         "framework": f"framework_{i}",
                     },
+                    tags=["dynamic"],
                     name=f"part_generate_random_qasm_circuit_{i}",
                 )
                 for i in range(n_partitions)

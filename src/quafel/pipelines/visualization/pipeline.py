@@ -28,6 +28,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                         )
                     },
                 },
+                tags=["static"],
                 name=f"shots_depths_viz",
             ),
             node(
@@ -44,6 +45,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                         )
                     },
                 },
+                tags=["static"],
                 name=f"shots_depth_viz",
             ),
             node(
@@ -60,6 +62,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                         )
                     },
                 },
+                tags=["static"],
                 name=f"qubits_time_viz",
             ),
         ],
