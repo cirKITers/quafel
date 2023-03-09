@@ -84,10 +84,8 @@ class pennylane_fw:
 
 class qiskit_fw:
     def __init__(self, qasm_circuit, n_shots):
-        if n_shots is None:
-            self.backend = qiskit.Aer.get_backend("statevector_simulator")
-        else:
-            self.backend = qiskit.Aer.get_backend("qasm_simulator")
+        # self.backend = qiskit.Aer.get_backend("qasm_simulator")
+        self.backend = qiskit.Aer.get_backend("aer_simulator")
 
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
