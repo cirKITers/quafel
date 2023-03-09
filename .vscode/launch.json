@@ -23,11 +23,20 @@
             "justMyCode": true
         },
         {
-            "name": "Parallel",
+            "name": "Parallelrunner",
             "type": "python",
             "request": "launch",
             "module": "kedro",
             "args": ["run", "--pipeline", "parallel", "--runner", "ParallelRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Threadrunner",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "parallel", "--runner", "ThreadRunner", "--async"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
