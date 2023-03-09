@@ -69,6 +69,10 @@ def extract_framework_name_from_id(identifier):
 def shots_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_regex)
+    )
+
     grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
@@ -77,9 +81,11 @@ def shots_qubits_viz(evaluations_combined: Dict):
 
         for q, depth_duration in grouped_by_qubit:
             duration_sorted_by_depth = depth_duration.sort_values("depth")
-            duration_mean = duration_sorted_by_depth.filter(regex=duration_regex).mean(
-                axis=1
-            )
+            durations = duration_sorted_by_depth.filter(regex=duration_regex)
+
+            durations *= factor_time
+
+            duration_mean = durations.mean(axis=1)
 
             # Divide by the number of evals
             duration_mean /= len(duration_sorted_by_depth.filter(regex=duration_regex))
@@ -91,6 +97,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
                         y=duration_sorted_by_depth["depth"],
                         z=duration_mean,
                         colorscale=design.seq_main,
+                        colorbar=dict(title=f"Time ({si_time})"),
                     )
                 ]
             )
@@ -115,6 +122,10 @@ def shots_qubits_viz(evaluations_combined: Dict):
 def shots_depths_viz(evaluations_combined: Dict):
     figures = {}
 
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_regex)
+    )
+
     grouped_by_fw = evaluations_combined.groupby("framework")
 
     for fw, qubit_depth_duration in grouped_by_fw:
@@ -124,9 +135,11 @@ def shots_depths_viz(evaluations_combined: Dict):
         for d, qubit_duration in grouped_by_depth:
             # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_qubit = qubit_duration.sort_values("qubits")
-            duration_mean = duration_sorted_by_qubit.filter(regex=duration_regex).mean(
-                axis=1
-            )
+            durations = duration_sorted_by_qubit.filter(regex=duration_regex)
+
+            durations *= factor_time
+
+            duration_mean = durations.mean(axis=1)
             # image = []
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
@@ -138,6 +151,7 @@ def shots_depths_viz(evaluations_combined: Dict):
                         y=duration_sorted_by_qubit["qubits"],
                         z=duration_mean,
                         colorscale=design.seq_main,
+                        colorbar=dict(title=f"Time ({si_time})"),
                     )
                 ]
             )
