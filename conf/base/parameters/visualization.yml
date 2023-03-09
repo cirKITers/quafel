@@ -1,5 +1,2 @@
-# This is a boilerplate parameters config generated for pipeline 'visualization'
-# using Kedro 0.18.4.
-#
-# Documentation for this file format can be found in "Parameters"
-# Link: https://kedro.readthedocs.io/en/0.18.4/kedro_project_setup/configuration.html#parameters
+visualization:
+  selected_plots: ["shots_2600_depth_101"]
