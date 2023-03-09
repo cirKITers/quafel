@@ -52,9 +52,15 @@ class pennylane_fw:
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
 
         self.n_shots = n_shots
-        self.backend = qml.device(
-            "default.qubit", wires=range(self.n_qubits), shots=self.n_shots
-        )
+
+        if self.n_qubits < 20:
+            self.backend = qml.device(
+                "default.qubit", wires=range(self.n_qubits), shots=self.n_shots
+            )
+        else:  # recommended to be used for > 20 qubits
+            self.backend = qml.device(
+                "lightning.qubit", wires=range(self.n_qubits), shots=self.n_shots
+            )
 
         self.qml_qasm = qml.from_qasm(qasm_circuit)
 
