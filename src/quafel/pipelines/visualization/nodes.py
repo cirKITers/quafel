@@ -10,6 +10,11 @@ from typing import Dict
 import pandas as pd
 
 from bisect import bisect_left
+from math import log10, floor
+
+import numpy as np
+
+duration_regex = r"duration_\d*"
 
 
 class design:
@@ -32,15 +37,29 @@ def rgb_to_rgba(rgb_value, alpha):
     return f"rgba{rgb_value[3:-1]}, {alpha})"
 
 
-def get_lcd_time(pd_time):
-    si_time = [["ns", "us", "ms", "s"], [1, 3, 6, 9], [1, 1e3, 1e6, 1e9]]
-    min_digits = len(str(pd_time.min().min()))
-    max_digits = len(str(pd_time.max().max()))
+def find_exp(number) -> int:
+    """
+    From https://stackoverflow.com/questions/64183806/extracting-the-exponent-from-scientific-notation
+    """
+    base10 = log10(abs(number))
+    return floor(base10)
 
-    mid = min_digits + (max_digits - min_digits) // 2
-    idx = bisect_left(si_time[1], mid) - 1
 
-    return (si_time[0][idx], si_time[2][idx])
+def get_time_scale(pd_time):
+    n_evals = pd_time.shape[1]
+
+    mid = np.mean(
+        [
+            find_exp(pd_time.min().min() / n_evals),
+            find_exp(pd_time.max().max() / n_evals),
+        ]
+    ).astype(int)
+
+    si_time = [["ns", "us", "ms", "s"], [-9, -6, -3, 0], [1e9, 1e6, 1e3, 1]]
+
+    idx = bisect_left(si_time[1], mid)
+
+    return (si_time[0][idx], si_time[2][idx] / n_evals)
 
 
 def extract_framework_name_from_id(identifier):
@@ -57,14 +76,13 @@ def shots_qubits_viz(evaluations_combined: Dict):
         grouped_by_qubit = qubit_depth_duration.groupby("qubits")
 
         for q, depth_duration in grouped_by_qubit:
-            # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_depth = depth_duration.sort_values("depth")
-            duration_mean = duration_sorted_by_depth.filter(
-                regex=(r"duration_\d.")
-            ).mean(axis=1)
-            # image = []
-            # for s, duration in grouped_by_shots_sorted_by_depth:
-            #     image.append(duration['4'].to_numpy())
+            duration_mean = duration_sorted_by_depth.filter(regex=duration_regex).mean(
+                axis=1
+            )
+
+            # Divide by the number of evals
+            duration_mean /= len(duration_sorted_by_depth.filter(regex=duration_regex))
 
             figures[f"framework_{fw}_qubits_{q}"] = go.Figure(
                 [
@@ -106,9 +124,9 @@ def shots_depths_viz(evaluations_combined: Dict):
         for d, qubit_duration in grouped_by_depth:
             # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_qubit = qubit_duration.sort_values("qubits")
-            duration_mean = duration_sorted_by_qubit.filter(
-                regex=(r"duration_\d.")
-            ).mean(axis=1)
+            duration_mean = duration_sorted_by_qubit.filter(regex=duration_regex).mean(
+                axis=1
+            )
             # image = []
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
@@ -148,8 +166,8 @@ def qubits_time_viz(evaluations_combined: Dict):
     main_colors_it = iter(design.qual_main)
     sec_colors_it = iter(design.qual_second)
 
-    si_time, factor_time = get_lcd_time(
-        evaluations_combined.filter(regex=(r"duration_\d."))
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -167,11 +185,12 @@ def qubits_time_viz(evaluations_combined: Dict):
                 # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_qubit = fw_qubit_duration.sort_values("qubits")
 
-                durations = duration_sorted_by_qubit.filter(regex=(r"duration_\d."))
+                durations = duration_sorted_by_qubit.filter(regex=duration_regex)
+                durations *= factor_time
 
-                durations_mean = durations.mean(axis=1) / factor_time
-                durations_max = durations.max(axis=1) / factor_time
-                durations_min = durations.min(axis=1) / factor_time
+                durations_mean = durations.mean(axis=1)
+                durations_max = durations.max(axis=1)
+                durations_min = durations.min(axis=1)
 
                 # image = []
                 # for s, duration in grouped_by_shots_sorted_by_depth:
