@@ -263,3 +263,187 @@ def qubits_time_viz(evaluations_combined: Dict):
                 )
 
     return figures
+
+
+def shots_time_viz(evaluations_combined: Dict):
+    figures = {}
+
+    # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
+    main_colors_it = iter(design.qual_main)
+    sec_colors_it = iter(design.qual_second)
+
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_regex)
+    )
+
+    grouped_by_fw = evaluations_combined.groupby("framework")
+    for fw, qubit_depth_duration in grouped_by_fw:
+        main_color_sel = next(main_colors_it)
+        sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
+        framework_name = extract_framework_name_from_id(fw)
+
+        grouped_by_depth = qubit_depth_duration.groupby("depth")
+
+        for d, qubit_shots_duration in grouped_by_depth:
+            grouped_by_qubits = qubit_shots_duration.groupby("qubits")
+
+            for q, fw_shots_duration in grouped_by_qubits:
+                # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
+                duration_sorted_by_shots = fw_shots_duration.sort_values("shots")
+
+                durations = duration_sorted_by_shots.filter(regex=duration_regex)
+                durations *= factor_time
+
+                durations_mean = durations.mean(axis=1)
+                durations_max = durations.max(axis=1)
+                durations_min = durations.min(axis=1)
+
+                # image = []
+                # for s, duration in grouped_by_shots_sorted_by_depth:
+                #     image.append(duration['4'].to_numpy())
+
+                if f"qubits_{q}_depth_{d}" not in figures:
+                    figures[f"qubits_{q}_depth_{d}"] = go.Figure()
+
+                figures[f"qubits_{q}_depth_{d}"].add_trace(
+                    go.Scatter(
+                        name=f"{framework_name}",
+                        x=duration_sorted_by_shots["shots"],
+                        y=durations_mean,
+                        mode="lines",
+                        line=dict(color=main_color_sel),
+                    )
+                )
+                figures[f"qubits_{q}_depth_{d}"].add_trace(
+                    go.Scatter(
+                        name=f"{framework_name} - High",
+                        x=duration_sorted_by_shots["shots"],
+                        y=durations_max,
+                        mode="lines",
+                        marker=dict(color="#444"),
+                        line=dict(width=0),
+                        showlegend=False,
+                    )
+                )
+                figures[f"qubits_{q}_depth_{d}"].add_trace(
+                    go.Scatter(
+                        name=f"{framework_name} - Low",
+                        x=duration_sorted_by_shots["shots"],
+                        y=durations_min,
+                        marker=dict(color="#444"),
+                        line=dict(width=0),
+                        mode="lines",
+                        fillcolor=sec_color_sel,
+                        fill="tonexty",
+                        showlegend=False,
+                    )
+                )
+                figures[f"qubits_{q}_depth_{d}"].update_layout(
+                    yaxis_title=f"Time ({si_time})",
+                    xaxis_title="Num. of Shots",
+                    xaxis=dict(tickmode="linear", tick0=1, dtick=1),
+                    title=dict(
+                        text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})",
+                        font=dict(
+                            size=design.title_font_size,
+                        ),
+                    ),
+                    hovermode="x",
+                    font=dict(
+                        size=design.legend_font_size,
+                    ),
+                )
+
+    return figures
+
+
+def depth_time_viz(evaluations_combined: Dict):
+    figures = {}
+
+    # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
+    main_colors_it = iter(design.qual_main)
+    sec_colors_it = iter(design.qual_second)
+
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_regex)
+    )
+
+    grouped_by_fw = evaluations_combined.groupby("framework")
+    for fw, qubit_depth_duration in grouped_by_fw:
+        main_color_sel = next(main_colors_it)
+        sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
+        framework_name = extract_framework_name_from_id(fw)
+
+        grouped_by_qubits = qubit_depth_duration.groupby("qubits")
+
+        for q, depth_shots_duration in grouped_by_qubits:
+            grouped_by_shots = depth_shots_duration.groupby("shots")
+
+            for s, fw_depth_duration in grouped_by_shots:
+                # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
+                duration_sorted_by_depth = fw_depth_duration.sort_values("depth")
+
+                durations = duration_sorted_by_depth.filter(regex=duration_regex)
+                durations *= factor_time
+
+                durations_mean = durations.mean(axis=1)
+                durations_max = durations.max(axis=1)
+                durations_min = durations.min(axis=1)
+
+                # image = []
+                # for s, duration in grouped_by_shots_sorted_by_depth:
+                #     image.append(duration['4'].to_numpy())
+
+                if f"shots_{s}_qubits_{q}" not in figures:
+                    figures[f"shots_{s}_qubits_{q}"] = go.Figure()
+
+                figures[f"shots_{s}_qubits_{q}"].add_trace(
+                    go.Scatter(
+                        name=f"{framework_name}",
+                        x=duration_sorted_by_depth["depth"],
+                        y=durations_mean,
+                        mode="lines",
+                        line=dict(color=main_color_sel),
+                    )
+                )
+                figures[f"shots_{s}_qubits_{q}"].add_trace(
+                    go.Scatter(
+                        name=f"{framework_name} - High",
+                        x=duration_sorted_by_depth["depth"],
+                        y=durations_max,
+                        mode="lines",
+                        marker=dict(color="#444"),
+                        line=dict(width=0),
+                        showlegend=False,
+                    )
+                )
+                figures[f"shots_{s}_qubits_{q}"].add_trace(
+                    go.Scatter(
+                        name=f"{framework_name} - Low",
+                        x=duration_sorted_by_depth["depth"],
+                        y=durations_min,
+                        marker=dict(color="#444"),
+                        line=dict(width=0),
+                        mode="lines",
+                        fillcolor=sec_color_sel,
+                        fill="tonexty",
+                        showlegend=False,
+                    )
+                )
+                figures[f"shots_{s}_qubits_{q}"].update_layout(
+                    yaxis_title=f"Time ({si_time})",
+                    xaxis_title="Circuit Depth",
+                    xaxis=dict(tickmode="linear", tick0=1, dtick=1),
+                    title=dict(
+                        text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)",
+                        font=dict(
+                            size=design.title_font_size,
+                        ),
+                    ),
+                    hovermode="x",
+                    font=dict(
+                        size=design.legend_font_size,
+                    ),
+                )
+
+    return figures
