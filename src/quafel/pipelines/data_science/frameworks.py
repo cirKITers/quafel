@@ -56,7 +56,7 @@ class pennylane_fw:
 
         self.n_shots = n_shots
 
-        if self.n_qubits < 20:
+        if self.n_qubits <= 20:
             self.backend = qml.device(
                 "default.qubit", wires=range(self.n_qubits), shots=self.n_shots
             )
