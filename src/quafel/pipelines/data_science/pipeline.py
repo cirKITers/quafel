@@ -47,11 +47,30 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                 )
                 for i in range(n_partitions)
             ],
+        ],
+        inputs={
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
+            **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+        },
+        outputs={
+            **{
+                f"execution_duration_{i}": f"execution_duration_{i}"
+                for i in range(n_partitions)
+            },
+            **{
+                f"execution_result_{i}": f"execution_result_{i}"
+                for i in range(n_partitions)
+            },
+        },
+        namespace="data_science",
+    )
+
+    pl_aggregate_evaluations = pipeline(
+        [
             node(
                 func=aggregate_evaluations,
-                inputs=[
-                    f"execution_duration_{i}" for i in range(n_partitions)
-                ],
+                inputs=[f"execution_duration_{i}" for i in range(n_partitions)],
                 outputs={
                     "aggregated_evaluations": "execution_durations",
                 },
@@ -83,12 +102,12 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         ],
         inputs={
             **{
-                f"qasm_circuit_{i}": f"qasm_circuit_{i}"
+                f"execution_duration_{i}": f"execution_duration_{i}"
                 for i in range(n_partitions)
             },
-            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
             **{
-                f"framework_{i}": f"framework_{i}" for i in range(n_partitions)
+                f"execution_result_{i}": f"execution_result_{i}"
+                for i in range(n_partitions)
             },
             "evaluation_partitions": "evaluation_partitions",
         },
@@ -110,5 +129,6 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
 
     return {
         "pl_measure_execution_durations": pl_measure_execution_durations,
-        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations,
+        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations
+        + pl_aggregate_evaluations,
     }
