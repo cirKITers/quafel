@@ -18,10 +18,12 @@ import time
 
 from typing import Dict
 
+import re
+
 
 def calculate_n_qubits_from_qasm(qasm_string):
     return int(
-        qasm_string[qasm_string.find("\nqreg q[") + 8]
+        re.findall(r"qreg q\[(?P<n_qubits>\d*)\]", qasm_string)[0]
     )  # TODO: improvement wanted
 
 
