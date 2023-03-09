@@ -1550,6 +1550,23 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "mthree"
+version = "2.1.0"
+description = "M3: Matrix-free measurement mitigation"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+cython = ">=0.29"
+numpy = ">=1.17"
+orjson = ">=3.0.0"
+psutil = "*"
+qiskit-ibmq-provider = ">=0.19.2"
+qiskit-terra = ">=0.21"
+scipy = ">=1.3"
+
+[[package]]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
@@ -1785,6 +1802,21 @@ pennylane = ">=0.28"
 
 [package.extras]
 gpu = ["pennylane-lightning-gpu"]
+
+[[package]]
+name = "pennylane-qiskit"
+version = "0.29.0"
+description = "PennyLane plugin for qiskit-terra"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+mthree = ">=0.17"
+networkx = ">=2.2"
+numpy = "*"
+pennylane = ">=0.28"
+qiskit = ">=0.32"
 
 [[package]]
 name = "pexpect"
@@ -3125,7 +3157,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9,<3.11"
-content-hash = "a0d5b63e0f432787bc3aa5be584f0073f27a880eb115fbfb026cc644bb5b8acf"
+content-hash = "bc092c13d4f517bff60d9d275eb1d58efbea90c561b26edbdea94fa50b0b2b34"
 
 [metadata.files]
 aiofiles = [
@@ -4335,6 +4367,38 @@ msgpack = [
     {file = "msgpack-0.6.2-cp37-cp37m-win_amd64.whl", hash = "sha256:1904b7cb65342d0998b75908304a03cb004c63ef31e16c8c43fee6b989d7f0d7"},
     {file = "msgpack-0.6.2.tar.gz", hash = "sha256:ea3c2f859346fcd55fc46e96885301d9c2f7a36d453f5d8f2967840efa1e1830"},
 ]
+mthree = [
+    {file = "mthree-2.1.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f5929dd8c7ca65ce499b5b1c1171a4d531e8a5008515536094f9e754d3dc4c04"},
+    {file = "mthree-2.1.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:2131e6b6241b43cfc300e890cb8baee3a1c465a620fdbc4c99735ea3a91f30d2"},
+    {file = "mthree-2.1.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:aed8c9d2244272f55b0c722fe42369197aa2fafb62acb593c5332b52dd0cb38e"},
+    {file = "mthree-2.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b3c418fad1f9b1e46576f11141404d6f8a39506f5c475f03abc0f08385ff5974"},
+    {file = "mthree-2.1.0-cp310-cp310-win32.whl", hash = "sha256:aef0ca81fae8d2bf65c2416c1dbf7684d82dfadf41a981eccc46d8a42d4e9f9e"},
+    {file = "mthree-2.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:2a27fa866f0b057667ffc3a8620422f7b411f883145895ea576f2bb3bb4cae5d"},
+    {file = "mthree-2.1.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:f427552757b73c4856cdbbe43d5cd2b9652f18735fff82fd66c431e8b52ae587"},
+    {file = "mthree-2.1.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:750aa96507ce661315649f77abc36aab5047125784ef69de3f7ca50d9f33d83f"},
+    {file = "mthree-2.1.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1fa31a87f8a9e1960c1822f6ace6a4fed11a9ded8dad576eeafe80f168449e11"},
+    {file = "mthree-2.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c58825dccd2f87fd7983443b4b7b7ba5af5549245e98b9fcb398475310d17fd5"},
+    {file = "mthree-2.1.0-cp311-cp311-win32.whl", hash = "sha256:fe0a78f7b34d567f81128523fc44fcdf31182b9d51c5299efec370c2db25213f"},
+    {file = "mthree-2.1.0-cp311-cp311-win_amd64.whl", hash = "sha256:dc1da8f15cdd1729deedd367f5cf32277c27747c83178c95e63805d12a4a79a4"},
+    {file = "mthree-2.1.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:34dff33c87158284e866ec3972d39e48d4d2199679cbae56051641187adccba0"},
+    {file = "mthree-2.1.0-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:fe68d77e5ba91031b1c651162305590e8a4386583fe2b1eff0e938b99be7b204"},
+    {file = "mthree-2.1.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:503af333a0c51b49d74db9d68ac4af054b77c585b6ad1c48f87d3ba82a7022db"},
+    {file = "mthree-2.1.0-cp37-cp37m-win32.whl", hash = "sha256:cbd6cc069d1a394eceecd8f610b293e59b6ca666a16c08bb575a1d37330f1689"},
+    {file = "mthree-2.1.0-cp37-cp37m-win_amd64.whl", hash = "sha256:3963ab3304383992e2e017ef99e8da96df5357b07c4338f91fcf9ba4d7995300"},
+    {file = "mthree-2.1.0-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:cec79e5e6c05218c741827f8fb244833c3d26aacd4fcfecf71e1b0770c50e1b6"},
+    {file = "mthree-2.1.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:2cf69dd72334da17f6eddc2aeceb0034225768375749f7c1284374f64adb6a95"},
+    {file = "mthree-2.1.0-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:35817ee946f22998a597a5c859b56d333ec35b6de182c82baf61790c5b98f67d"},
+    {file = "mthree-2.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3af623dc6a06a81e6e0138caf26c96cced11c20c3d6801aefbab07f19d82881b"},
+    {file = "mthree-2.1.0-cp38-cp38-win32.whl", hash = "sha256:c9ec5f9b512a1451892f8f9c071564f36895d9a60061b1994cb14c45763d23e7"},
+    {file = "mthree-2.1.0-cp38-cp38-win_amd64.whl", hash = "sha256:30359a037b4c8adcede47ba899da2d445e0b243aeb609357b9021171f54a9bba"},
+    {file = "mthree-2.1.0-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:282e49b14ed15e0560d5c4c4d8ce760f7424120331bd1a2113e3fd657109010a"},
+    {file = "mthree-2.1.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:57ee34a7104cb6845ff0bcc3bf4167a95bc7ca7c847ff748bc5dbee734939f9b"},
+    {file = "mthree-2.1.0-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e3dbb2fb96561aabc07626987c06973403c3b2f88db8adacf98b258ed5ae93b2"},
+    {file = "mthree-2.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8531ba7f2f13e7b38d7b008ce7fb9b113126de456ee23c5e54c79a8a87e40b11"},
+    {file = "mthree-2.1.0-cp39-cp39-win32.whl", hash = "sha256:42a9f140ab9e3378cb2f2c770df394426c96c5e1f58dc3c50707820431e3a6e8"},
+    {file = "mthree-2.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:af9314382ef3b2ea5cac27de0f5a9ec428e387a6dc53ea9eedc4c40ffedd5f1a"},
+    {file = "mthree-2.1.0.tar.gz", hash = "sha256:d773d79a94ce8a5971830333db30611251e9d644b9b19c10a714e47a50597fb1"},
+]
 mypy-extensions = [
     {file = "mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d"},
     {file = "mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782"},
@@ -4565,6 +4629,9 @@ pennylane-lightning = [
     {file = "PennyLane_Lightning-0.29.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:557b0a7b034cb27b66073d56b8cd04324f04f6c9f066368731745eb4c60874c7"},
     {file = "PennyLane_Lightning-0.29.0-cp39-cp39-win_amd64.whl", hash = "sha256:879c14570cdd181043ec0673626f455476617611cabaab877e9b7f3f29ba0402"},
     {file = "PennyLane_Lightning-0.29.0-py3-none-any.whl", hash = "sha256:ae7195ea97d5b15197662d4896a7d77e155084bdb9ee74f146ad522f03121810"},
+]
+pennylane-qiskit = [
+    {file = "PennyLane_qiskit-0.29.0-py3-none-any.whl", hash = "sha256:705907a63dacfacb080d64ffbd7bb79b56a454d447deded4524c923473e940ac"},
 ]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},

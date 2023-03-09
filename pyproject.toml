@@ -13,6 +13,7 @@ qiskit = "^0.41.1"
 cirq = "^1.1.0"
 qibo = "^0.1.11"
 kedro-viz = "5.3.0"
+pennylane-qiskit = "^0.29.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
