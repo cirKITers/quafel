@@ -9,9 +9,7 @@ from typing import Dict
 
 
 def aggregate_evaluations(*args):
-    aggregated_evaluations = pd.DataFrame(
-        {f"{i}": eval for i, eval in enumerate(args)}
-    )
+    aggregated_evaluations = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
 
     return {
         "aggregated_evaluations": aggregated_evaluations,
@@ -32,16 +30,14 @@ def measure_execution_durations(
             f"Framework identifier does not match one of the existing frameworks. Existing frameworks are {fw}"
         )
 
-    framework_instance = framework(
-        qasm_circuit=qasm_circuit, n_shots=n_shots, **kwargs
-    )
+    framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=n_shots, **kwargs)
 
     execution_durations = []
     execution_results = []
     for eval in range(evaluations):
-        start = time.time_ns()
+        start = time.perf_counter()
         framework_instance.execute()
-        end = time.time_ns()
+        end = time.perf_counter()
         execution_durations.append(end - start)
         execution_results.append(framework_instance.get_result())
 
@@ -80,9 +76,7 @@ def combine_evaluations(
         # TODO: unify somehow with the generation part
         partition_data.index = ["framework", "qubits", "depth", "shots"]
 
-        duration_data.index = [
-            f"duration_{i}" for i in range(len(duration_data))
-        ]
+        duration_data.index = [f"duration_{i}" for i in range(len(duration_data))]
 
         result_data.index = [f"result_{i}" for i in range(len(duration_data))]
 
