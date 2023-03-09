@@ -6,6 +6,9 @@ import qiskit
 import numpy as np
 from qiskit.quantum_info import Operator
 
+import qulacs
+from qulacs import converter as qulacs_converter
+
 import qibo
 
 import cirq
@@ -101,6 +104,35 @@ class qiskit_fw:
 
     def execute(self) -> None:
         self.result = qiskit.execute(self.qc, backend=self.backend, shots=self.n_shots)
+
+    def get_result(self) -> Dict[str, float]:
+        counts = self.result.result().get_counts()
+
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            if bitstring not in counts.keys():
+                counts[bitstring] = 0
+
+        return counts
+
+
+class qulacs_fw:
+    def __init__(self, qasm_circuit, n_shots):
+        # self.backend = qiskit.Aer.get_backend("qasm_simulator")
+        self.backend = qiskit.Aer.get_backend("aer_simulator")
+
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
+
+        self.qc = qulacs_converter.qasm_converter.convert_QASM_to_qulacs_circuit(
+            qasm_circuit.split("\n")
+        )
+        self.n_shots = n_shots
+        self.result = None
+
+    def execute(self) -> None:
+        state = qulacs.QuantumState(self.n_qubits)
+        self.qc.update_quantum_state(state)
+        self.result = state.sampling(self.n_shots)
 
     def get_result(self) -> Dict[str, float]:
         counts = self.result.result().get_counts()

@@ -15,6 +15,7 @@ qibo = "^0.1.11"
 kedro-viz = "5.3.0"
 pennylane-qiskit = "^0.29.0"
 qibojit = "^0.0.7"
+qulacs = "^0.5.6"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
