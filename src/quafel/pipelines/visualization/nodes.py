@@ -114,14 +114,13 @@ def shots_qubits_viz(evaluations_combined: Dict):
 
             duration_mean = durations.mean(axis=1)
 
-            # Divide by the number of evals
-            duration_mean /= len(duration_sorted_by_depth.filter(regex=duration_regex))
+            q = int(q)
 
             figures[f"framework_{fw}_qubits_{q}"] = go.Figure(
                 [
                     go.Heatmap(
-                        x=duration_sorted_by_depth["shots"],
-                        y=duration_sorted_by_depth["depth"],
+                        x=duration_sorted_by_depth["shots"].astype(int),
+                        y=duration_sorted_by_depth["depth"].astype(int),
                         z=duration_mean,
                         colorscale=design.seq_main,
                         colorbar=dict(title=f"Time ({si_time})"),
@@ -130,7 +129,16 @@ def shots_qubits_viz(evaluations_combined: Dict):
             )
             figures[f"framework_{fw}_qubits_{q}"].update_layout(
                 yaxis_title="Circuit Depth",
-                xaxis_title="Num. of Shots",
+                xaxis=dict(
+                    type="linear",
+                    tickmode="array",
+                    tickvals=duration_sorted_by_depth["shots"],
+                    ticktext=[
+                        f"2^{i}" for i in duration_sorted_by_depth["qubits"].astype(int)
+                    ],
+                    title="Num. of Shots",
+                    showgrid=False,
+                ),
                 title=dict(
                     text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots"
                     if design.print_figure_title
@@ -169,6 +177,8 @@ def shots_depths_viz(evaluations_combined: Dict):
             durations *= factor_time
 
             duration_mean = durations.mean(axis=1)
+
+            d = int(d)
             # image = []
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
@@ -176,8 +186,8 @@ def shots_depths_viz(evaluations_combined: Dict):
             figures[f"framework_{fw}_depth_{d}"] = go.Figure(
                 [
                     go.Heatmap(
-                        x=duration_sorted_by_qubit["shots"],
-                        y=duration_sorted_by_qubit["qubits"],
+                        x=duration_sorted_by_qubit["shots"].astype(int),
+                        y=duration_sorted_by_qubit["qubits"].astype(int),
                         z=duration_mean,
                         colorscale=design.seq_main,
                         colorbar=dict(title=f"Time ({si_time})"),
@@ -186,7 +196,16 @@ def shots_depths_viz(evaluations_combined: Dict):
             )
             figures[f"framework_{fw}_depth_{d}"].update_layout(
                 yaxis_title="Num. of Qubits",
-                xaxis_title="Num. of Shots",
+                xaxis=dict(
+                    type="linear",
+                    tickmode="array",
+                    tickvals=duration_sorted_by_qubit["shots"],
+                    ticktext=[
+                        f"2^{i}" for i in duration_sorted_by_qubit["qubits"].astype(int)
+                    ],
+                    title="Num. of Shots",
+                    showgrid=False,
+                ),
                 title=dict(
                     text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots"
                     if design.print_figure_title
@@ -240,6 +259,8 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 durations_max = durations.max(axis=1)
                 durations_min = durations.min(axis=1)
 
+                d = int(d)
+                s = int(s)
                 # image = []
                 # for s, duration in grouped_by_shots_sorted_by_depth:
                 #     image.append(duration['4'].to_numpy())
@@ -259,7 +280,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"shots_{s}_depth_{d}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name} - High",
-                        x=duration_sorted_by_qubit["qubits"],
+                        x=duration_sorted_by_qubit["qubits"].astype(int),
                         y=durations_max,
                         mode="lines",
                         marker=dict(color="#444"),
@@ -270,7 +291,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"shots_{s}_depth_{d}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name} - Low",
-                        x=duration_sorted_by_qubit["qubits"],
+                        x=duration_sorted_by_qubit["qubits"].astype(int),
                         y=durations_min,
                         marker=dict(color="#444"),
                         line=dict(width=0),
@@ -344,6 +365,8 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 durations_max = durations.max(axis=1)
                 durations_min = durations.min(axis=1)
 
+                q = int(q)
+                d = int(d)
                 # image = []
                 # for s, duration in grouped_by_shots_sorted_by_depth:
                 #     image.append(duration['4'].to_numpy())
@@ -354,7 +377,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"qubits_{q}_depth_{d}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name}",
-                        x=duration_sorted_by_shots["shots"],
+                        x=duration_sorted_by_shots["shots"].astype(int),
                         y=durations_mean,
                         mode="lines",
                         line=dict(color=main_color_sel),
@@ -363,7 +386,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"qubits_{q}_depth_{d}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name} - High",
-                        x=duration_sorted_by_shots["shots"],
+                        x=duration_sorted_by_shots["shots"].astype(int),
                         y=durations_max,
                         mode="lines",
                         marker=dict(color="#444"),
@@ -374,7 +397,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"qubits_{q}_depth_{d}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name} - Low",
-                        x=duration_sorted_by_shots["shots"],
+                        x=duration_sorted_by_shots["shots"].astype(int),
                         y=durations_min,
                         marker=dict(color="#444"),
                         line=dict(width=0),
@@ -386,9 +409,13 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 )
                 figures[f"qubits_{q}_depth_{d}"].update_layout(
                     xaxis=dict(
-                        tickmode="linear",
-                        tick0=600,
-                        dtick=500,
+                        type="log",
+                        tickmode="array",
+                        tickvals=duration_sorted_by_shots["shots"].astype(int),
+                        ticktext=[
+                            f"2^{i}"
+                            for i in duration_sorted_by_shots["qubits"].astype(int)
+                        ],
                         title="Num. of Shots",
                         showgrid=False,
                     ),
@@ -448,6 +475,8 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 durations_max = durations.max(axis=1)
                 durations_min = durations.min(axis=1)
 
+                q = int(q)
+                s = int(s)
                 # image = []
                 # for s, duration in grouped_by_shots_sorted_by_depth:
                 #     image.append(duration['4'].to_numpy())
@@ -458,7 +487,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"shots_{s}_qubits_{q}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name}",
-                        x=duration_sorted_by_depth["depth"],
+                        x=duration_sorted_by_depth["depth"].astype(int),
                         y=durations_mean,
                         mode="lines",
                         line=dict(color=main_color_sel),
@@ -467,7 +496,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"shots_{s}_qubits_{q}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name} - High",
-                        x=duration_sorted_by_depth["depth"],
+                        x=duration_sorted_by_depth["depth"].astype(int),
                         y=durations_max,
                         mode="lines",
                         marker=dict(color="#444"),
@@ -478,7 +507,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 figures[f"shots_{s}_qubits_{q}"].add_trace(
                     go.Scatter(
                         name=f"{framework_name} - Low",
-                        x=duration_sorted_by_depth["depth"],
+                        x=duration_sorted_by_depth["depth"].astype(int),
                         y=durations_min,
                         marker=dict(color="#444"),
                         line=dict(width=0),
