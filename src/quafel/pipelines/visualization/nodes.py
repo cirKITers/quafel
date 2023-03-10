@@ -26,8 +26,13 @@ class design:
 
     seq_main = px.colors.sequential.Plasma
 
-    title_font_size = 20
-    legend_font_size = 18
+    print_figure_title = False
+
+    title_font_size = 18
+    legend_font_size = 16
+
+    legend_x_pos = 0
+    legend_y_pos = 0.1
 
 
 def rgb_to_rgba(rgb_value, alpha):
@@ -110,7 +115,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 yaxis_title="Circuit Depth",
                 xaxis_title="Num. of Shots",
                 title=dict(
-                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots",
+                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots" if design.print_figure_title else "",
                     font=dict(
                         size=design.title_font_size,
                     ),
@@ -164,7 +169,7 @@ def shots_depths_viz(evaluations_combined: Dict):
                 yaxis_title="Num. of Qubits",
                 xaxis_title="Num. of Shots",
                 title=dict(
-                    text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots",
+                    text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots" if design.print_figure_title else "",
                     font=dict(
                         size=design.title_font_size,
                     ),
@@ -256,7 +261,7 @@ def qubits_time_viz(evaluations_combined: Dict):
                     xaxis_title="Num. of Qubits",
                     xaxis=dict(tickmode="linear", tick0=1, dtick=1),
                     title=dict(
-                        text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})",
+                        text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})" if design.print_figure_title else "",
                         font=dict(
                             size=design.title_font_size,
                         ),
@@ -264,6 +269,13 @@ def qubits_time_viz(evaluations_combined: Dict):
                     hovermode="x",
                     font=dict(
                         size=design.legend_font_size,
+                    ),
+                    legend=dict(
+                        x=design.legend_x_pos,
+                        y=design.legend_y_pos,
+                        traceorder='normal',
+                        font=dict(
+                            size=design.legend_font_size,),
                     ),
                 )
 
@@ -348,7 +360,7 @@ def shots_time_viz(evaluations_combined: Dict):
                     xaxis_title="Num. of Shots",
                     xaxis=dict(tickmode="linear", tick0=1, dtick=1),
                     title=dict(
-                        text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})",
+                        text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})" if design.print_figure_title else "",
                         font=dict(
                             size=design.title_font_size,
                         ),
@@ -356,6 +368,13 @@ def shots_time_viz(evaluations_combined: Dict):
                     hovermode="x",
                     font=dict(
                         size=design.legend_font_size,
+                    ),
+                    legend=dict(
+                        x=design.legend_x_pos,
+                        y=design.legend_y_pos,
+                        traceorder='normal',
+                        font=dict(
+                            size=design.legend_font_size,),
                     ),
                 )
 
@@ -440,7 +459,7 @@ def depth_time_viz(evaluations_combined: Dict):
                     xaxis_title="Circuit Depth",
                     xaxis=dict(tickmode="linear", tick0=1, dtick=1),
                     title=dict(
-                        text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)",
+                        text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)" if design.print_figure_title else "",
                         font=dict(
                             size=design.title_font_size,
                         ),
@@ -448,6 +467,13 @@ def depth_time_viz(evaluations_combined: Dict):
                     hovermode="x",
                     font=dict(
                         size=design.legend_font_size,
+                    ),
+                    legend=dict(
+                        x=design.legend_x_pos,
+                        y=design.legend_y_pos,
+                        traceorder='normal',
+                        font=dict(
+                            size=design.legend_font_size,),
                     ),
                 )
 
