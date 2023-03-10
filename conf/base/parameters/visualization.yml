@@ -1,2 +1,3 @@
 visualization:
-  selected_plots: ["shots_2600_depth_101"]
+  selected_figures: ["shots_2600_depth_101", "shots_2600_qubits_10", "qubits_10_depth_101"]
+  output_folder: "data/08_print"
