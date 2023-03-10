@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import plotly.express as px
 import plotly.io as pio
 
-from typing import Dict
+from typing import Dict, List
 import pandas as pd
 
 from bisect import bisect_left
@@ -183,7 +183,7 @@ def shots_depths_viz(evaluations_combined: Dict):
     return figures
 
 
-def qubits_time_viz(evaluations_combined: Dict):
+def qubits_time_viz(evaluations_combined: Dict, skip_frameworks:List):
     figures = {}
 
     # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
@@ -196,6 +196,9 @@ def qubits_time_viz(evaluations_combined: Dict):
 
     grouped_by_fw = evaluations_combined.groupby("framework")
     for fw, qubit_depth_duration in grouped_by_fw:
+        if fw in skip_frameworks:
+            continue
+
         main_color_sel = next(main_colors_it)
         sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
         framework_name = extract_framework_name_from_id(fw)
@@ -289,7 +292,7 @@ def qubits_time_viz(evaluations_combined: Dict):
     return figures
 
 
-def shots_time_viz(evaluations_combined: Dict):
+def shots_time_viz(evaluations_combined: Dict, skip_frameworks:List):
     figures = {}
 
     # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
@@ -302,6 +305,9 @@ def shots_time_viz(evaluations_combined: Dict):
 
     grouped_by_fw = evaluations_combined.groupby("framework")
     for fw, qubit_depth_duration in grouped_by_fw:
+        if fw in skip_frameworks:
+            continue
+
         main_color_sel = next(main_colors_it)
         sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
         framework_name = extract_framework_name_from_id(fw)
@@ -389,7 +395,7 @@ def shots_time_viz(evaluations_combined: Dict):
     return figures
 
 
-def depth_time_viz(evaluations_combined: Dict):
+def depth_time_viz(evaluations_combined: Dict, skip_frameworks:List):
     figures = {}
 
     # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
@@ -402,6 +408,9 @@ def depth_time_viz(evaluations_combined: Dict):
 
     grouped_by_fw = evaluations_combined.groupby("framework")
     for fw, qubit_depth_duration in grouped_by_fw:
+        if fw in skip_frameworks:
+            continue
+        
         main_color_sel = next(main_colors_it)
         sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
         framework_name = extract_framework_name_from_id(fw)
