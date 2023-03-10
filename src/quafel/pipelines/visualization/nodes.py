@@ -257,9 +257,16 @@ def qubits_time_viz(evaluations_combined: Dict):
                     )
                 )
                 figures[f"shots_{s}_depth_{d}"].update_layout(
-                    yaxis_title=f"Time ({si_time})",
-                    xaxis_title="Num. of Qubits",
-                    xaxis=dict(tickmode="linear", tick0=1, dtick=1),
+                    xaxis=dict(
+                        title="Num. of Qubits",
+                        tickmode="linear",
+                        tick0=1,
+                        dtick=1,
+                        showgrid=False,
+                    ),
+                    yaxis=dict(
+                        title=f"Time ({si_time})"
+                    ),
                     title=dict(
                         text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})" if design.print_figure_title else "",
                         font=dict(
@@ -356,9 +363,10 @@ def shots_time_viz(evaluations_combined: Dict):
                     )
                 )
                 figures[f"qubits_{q}_depth_{d}"].update_layout(
-                    yaxis_title=f"Time ({si_time})",
-                    xaxis_title="Num. of Shots",
-                    xaxis=dict(tickmode="linear", tick0=1, dtick=1),
+                    xaxis=dict(tickmode="linear", tick0=600, dtick=500, title="Num. of Shots",showgrid=False,),
+                    yaxis=dict(
+                        title=f"Time ({si_time})"
+                    ),
                     title=dict(
                         text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})" if design.print_figure_title else "",
                         font=dict(
@@ -455,9 +463,11 @@ def depth_time_viz(evaluations_combined: Dict):
                     )
                 )
                 figures[f"shots_{s}_qubits_{q}"].update_layout(
-                    yaxis_title=f"Time ({si_time})",
-                    xaxis_title="Circuit Depth",
-                    xaxis=dict(tickmode="linear", tick0=1, dtick=1),
+                    xaxis=dict(tickmode="linear", tick0=1, dtick=10, title="Circuit Depth",showgrid=False,),
+                    yaxis=dict(
+                        title=f"Time ({si_time})",
+                        showgrid=False,
+                    ),
                     title=dict(
                         text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)" if design.print_figure_title else "",
                         font=dict(
