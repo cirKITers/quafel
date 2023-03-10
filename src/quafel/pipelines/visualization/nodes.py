@@ -64,7 +64,11 @@ def get_time_scale(pd_time):
 
 
 def extract_framework_name_from_id(identifier):
-    return identifier.replace("fw", "framework").capitalize().replace("_", " ")
+    """
+    Global method to generate display name from class name.
+    E.g.: qiskit_fw -> Qiskit Framework
+    """
+    return identifier.replace("fw", "").capitalize().replace("_", " ")
 
 
 def shots_qubits_viz(evaluations_combined: Dict):
