@@ -112,6 +112,8 @@ def create_pipeline(figures, **kwargs) -> dict:
         outputs={
             **{f: f for f in figures},
         },
+        namespace="visualization",
+
     )
 
     pl_export_visualizations = pipeline(
