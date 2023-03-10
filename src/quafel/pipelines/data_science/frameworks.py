@@ -213,14 +213,14 @@ class qulacs_fw:
 class numpy_fw:
     def __init__(self, qasm_circuit, n_shots):
         self.n_shots = n_shots
-        self.qc = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
-        self.qc.remove_final_measurements()
+        cicruit = qiskit.QuantumCircuit.from_qasm_str(qasm_circuit)
+        cicruit.remove_final_measurements()
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
+        self.qc = Operator(cicruit)
 
     def execute(self) -> None:
         # keine circuits sondern fertige Matrizen
-        matrix = Operator(self.qc)
-        statevector = np.array(matrix)[:, 0]
+        statevector = np.array(self.qc)[:, 0]
         probabilities = np.abs((statevector) ** 2)
         if self.n_shots is not None:
             self.result = np.random.choice(
