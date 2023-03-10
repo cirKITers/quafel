@@ -492,15 +492,10 @@ def depth_time_viz(evaluations_combined: Dict):
 
 def export_selected(selected_figures, output_folder, **figure):
     
-    for name, json_fig in figure.items():
+    for name, fig in figure.items():
         if name in selected_figures:
-            try:
-                fig = json_fig
-            except ValueError:
-                raise RuntimeError(
-                    f"Figure {name} does not contain a valid plotly json figure."
-                )
+            pio.full_figure_for_development(fig, warn=False) # Disable warnings to prevent printing a box at the bottom left of the figure. See this issue: https://github.com/plotly/plotly.py/issues/3469
 
-            fig.write_image(os.path.join(output_folder, f"{name}.pdf"))
+            fig.write_image(os.path.join(output_folder, f"{name}.pdf"), engine="kaleido")
 
     return {}
