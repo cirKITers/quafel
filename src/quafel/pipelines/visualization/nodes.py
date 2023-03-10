@@ -21,10 +21,10 @@ duration_regex = r"duration_\d*"
 
 
 class design:
-    qual_main = px.colors.qualitative.Dark2 #set1
-    qual_second = px.colors.qualitative.Pastel2 #pastel1
+    qual_main = px.colors.qualitative.Dark2  # set1
+    qual_second = px.colors.qualitative.Pastel2  # pastel1
 
-    seq_main = px.colors.sequential.Aggrnyl #pastel1
+    seq_main = px.colors.sequential.Viridis  # pastel1
 
     print_figure_title = False
 
@@ -34,17 +34,19 @@ class design:
     legend_x_pos = 0
     legend_y_pos = 1
 
-    scatter_legend=dict(
-                        x=legend_x_pos,
-                        y=legend_y_pos,
-                        orientation='h',
-                        traceorder='normal',
-                        font=dict(
-                            size=legend_font_size,),
-                    )
+    scatter_legend = dict(
+        x=legend_x_pos,
+        y=legend_y_pos,
+        orientation="h",
+        traceorder="normal",
+        font=dict(
+            size=legend_font_size,
+        ),
+    )
     base_theme = "simple_white"
 
     include_framework_term = False
+
 
 def rgb_to_rgba(rgb_value, alpha):
     """
@@ -54,6 +56,7 @@ def rgb_to_rgba(rgb_value, alpha):
     :return: RGBA Value
     """
     return f"rgba{rgb_value[3:-1]}, {alpha})"
+
 
 def get_time_scale(pd_time):
     n_evals = pd_time.shape[1]
@@ -129,7 +132,9 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 yaxis_title="Circuit Depth",
                 xaxis_title="Num. of Shots",
                 title=dict(
-                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots" if design.print_figure_title else "",
+                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots"
+                    if design.print_figure_title
+                    else "",
                     font=dict(
                         size=design.title_font_size,
                     ),
@@ -183,7 +188,9 @@ def shots_depths_viz(evaluations_combined: Dict):
                 yaxis_title="Num. of Qubits",
                 xaxis_title="Num. of Shots",
                 title=dict(
-                    text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots" if design.print_figure_title else "",
+                    text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots"
+                    if design.print_figure_title
+                    else "",
                     font=dict(
                         size=design.title_font_size,
                     ),
@@ -197,7 +204,7 @@ def shots_depths_viz(evaluations_combined: Dict):
     return figures
 
 
-def qubits_time_viz(evaluations_combined: Dict, skip_frameworks:List):
+def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     figures = {}
 
     # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
@@ -281,11 +288,11 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks:List):
                         dtick=1,
                         showgrid=False,
                     ),
-                    yaxis=dict(
-                        title=f"Time ({si_time})"
-                    ),
+                    yaxis=dict(title=f"Time ({si_time})"),
                     title=dict(
-                        text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})" if design.print_figure_title else "",
+                        text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})"
+                        if design.print_figure_title
+                        else "",
                         font=dict(
                             size=design.title_font_size,
                         ),
@@ -301,7 +308,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks:List):
     return figures
 
 
-def shots_time_viz(evaluations_combined: Dict, skip_frameworks:List):
+def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     figures = {}
 
     # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
@@ -378,12 +385,18 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks:List):
                     )
                 )
                 figures[f"qubits_{q}_depth_{d}"].update_layout(
-                    xaxis=dict(tickmode="linear", tick0=600, dtick=500, title="Num. of Shots",showgrid=False,),
-                    yaxis=dict(
-                        title=f"Time ({si_time})"
+                    xaxis=dict(
+                        tickmode="linear",
+                        tick0=600,
+                        dtick=500,
+                        title="Num. of Shots",
+                        showgrid=False,
                     ),
+                    yaxis=dict(title=f"Time ({si_time})"),
                     title=dict(
-                        text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})" if design.print_figure_title else "",
+                        text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})"
+                        if design.print_figure_title
+                        else "",
                         font=dict(
                             size=design.title_font_size,
                         ),
@@ -399,7 +412,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks:List):
     return figures
 
 
-def depth_time_viz(evaluations_combined: Dict, skip_frameworks:List):
+def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     figures = {}
 
     # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
@@ -476,13 +489,21 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks:List):
                     )
                 )
                 figures[f"shots_{s}_qubits_{q}"].update_layout(
-                    xaxis=dict(tickmode="linear", tick0=1, dtick=10, title="Circuit Depth",showgrid=False,),
+                    xaxis=dict(
+                        tickmode="linear",
+                        tick0=1,
+                        dtick=10,
+                        title="Circuit Depth",
+                        showgrid=False,
+                    ),
                     yaxis=dict(
                         title=f"Time ({si_time})",
                         showgrid=False,
                     ),
                     title=dict(
-                        text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)" if design.print_figure_title else "",
+                        text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)"
+                        if design.print_figure_title
+                        else "",
                         font=dict(
                             size=design.title_font_size,
                         ),
@@ -499,11 +520,14 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks:List):
 
 
 def export_selected(selected_figures, output_folder, **figure):
-    
     for name, fig in figure.items():
         if name in selected_figures:
-            pio.full_figure_for_development(fig, warn=False) # Disable warnings to prevent printing a box at the bottom left of the figure. See this issue: https://github.com/plotly/plotly.py/issues/3469
+            pio.full_figure_for_development(
+                fig, warn=False
+            )  # Disable warnings to prevent printing a box at the bottom left of the figure. See this issue: https://github.com/plotly/plotly.py/issues/3469
 
-            fig.write_image(os.path.join(output_folder, f"{name}.pdf"), engine="kaleido")
+            fig.write_image(
+                os.path.join(output_folder, f"{name}.pdf"), engine="kaleido"
+            )
 
     return {}
