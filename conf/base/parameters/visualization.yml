@@ -1,3 +1,4 @@
 visualization:
   selected_figures: ["shots_2600_depth_101", "shots_2600_qubits_10", "qubits_10_depth_101"]
+  skip_frameworks: ["numpy_fw"]
   output_folder: "data/08_print"
