@@ -108,6 +108,7 @@ class DataCatalogHooks:
         evaluation_matrix = catalog.datasets.data_generation__evaluation_matrix.load()
 
         # generate a list of names that will be used as plots later in the visualization pipeline
+        # If you add new visualization outputs, you must also create the file names here
         names = []
         for f in evaluation_matrix["frameworks"]:
             for q in evaluation_matrix["qubits"]:
@@ -118,6 +119,15 @@ class DataCatalogHooks:
         for d in evaluation_matrix["depths"]:
             for s in evaluation_matrix["shots"]:
                 names.append(f"shots_{s}_depth_{d}")
+
+        for d in evaluation_matrix["depths"]:
+            for q in evaluation_matrix["qubits"]:
+                names.append(f"qubits_{q}_depth_{d}")
+
+        for s in evaluation_matrix["shots"]:
+            for q in evaluation_matrix["qubits"]:
+                names.append(f"shots_{s}_qubits_{q}")
+
 
         # use the dummy dataset to get the version of the current kedro run, so that it matches the ones from the versioned datasets
         version = Version(None, catalog.datasets.dummy_versioned_dataset._version.save)
