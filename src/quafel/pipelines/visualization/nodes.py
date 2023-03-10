@@ -21,10 +21,10 @@ duration_regex = r"duration_\d*"
 
 
 class design:
-    qual_main = px.colors.qualitative.Set1
-    qual_second = px.colors.qualitative.Pastel1
+    qual_main = px.colors.qualitative.Dark2 #set1
+    qual_second = px.colors.qualitative.Pastel2 #pastel1
 
-    seq_main = px.colors.sequential.Plasma
+    seq_main = px.colors.sequential.Aggrnyl #pastel1
 
     print_figure_title = False
 
@@ -35,8 +35,8 @@ class design:
     legend_y_pos = 1
 
     scatter_legend=dict(
-                        # x=legend_x_pos,
-                        # y=legend_y_pos,
+                        x=legend_x_pos,
+                        y=legend_y_pos,
                         orientation='h',
                         traceorder='normal',
                         font=dict(
