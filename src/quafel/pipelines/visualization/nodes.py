@@ -454,16 +454,17 @@ def depth_time_viz(evaluations_combined: Dict):
     return figures
 
 
-def export_selected(figures, selection, output_folder):
-    for name, json_fig in figures.items():
-        if name not in selection:
-            continue
+def export_selected(selected_figures, output_folder, **figure):
+    
+    for name, json_fig in figure.items():
+        if name in selected_figures:
+            try:
+                fig = json_fig
+            except ValueError:
+                raise RuntimeError(
+                    f"Figure {name} does not contain a valid plotly json figure."
+                )
 
-        try:
-            fig = pio.from_json(json_fig)
-        except ValueError:
-            raise RuntimeError(
-                f"Figure {name} does not contain a valid plotly json figure."
-            )
+            fig.write_image(os.path.join(output_folder, f"{name}.pdf"))
 
-        fig.write_image(os.Path.join(output_folder, f"{name}.pdf"))
+    return {}
