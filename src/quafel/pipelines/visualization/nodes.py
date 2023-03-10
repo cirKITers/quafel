@@ -42,7 +42,9 @@ class design:
                         font=dict(
                             size=legend_font_size,),
                     )
-    base_theme = "plotly_white"
+    base_theme = "simple_white"
+
+    include_framework_term = False
 
 def rgb_to_rgba(rgb_value, alpha):
     """
@@ -82,7 +84,10 @@ def extract_framework_name_from_id(identifier):
     Global method to generate display name from class name.
     E.g.: qiskit_fw -> Qiskit Framework
     """
-    return identifier.replace("fw", "").capitalize().replace("_", " ")
+    if design.include_framework_term:
+        return identifier.replace("fw", "framework").capitalize().replace("_", " ")
+    else:
+        return identifier.replace("fw", "").capitalize().replace("_", " ")
 
 
 def shots_qubits_viz(evaluations_combined: Dict):
