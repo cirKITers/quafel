@@ -5,6 +5,7 @@ generated using Kedro 0.18.4
 
 import plotly.graph_objs as go
 import plotly.express as px
+import plotly.io as pio
 
 from typing import Dict
 import pandas as pd
@@ -13,6 +14,8 @@ from bisect import bisect_left
 from math import log10, floor
 
 import numpy as np
+
+import os
 
 duration_regex = r"duration_\d*"
 
@@ -447,3 +450,18 @@ def depth_time_viz(evaluations_combined: Dict):
                 )
 
     return figures
+
+
+def export_selected(figures, selection, output_folder):
+    for name, json_fig in figures.items():
+        if name not in selection:
+            continue
+
+        try:
+            fig = pio.from_json(json_fig)
+        except ValueError:
+            raise RuntimeError(
+                f"Figure {name} does not contain a valid plotly json figure."
+            )
+
+        fig.write_image(os.Path.join(output_folder, f"{name}.pdf"))
