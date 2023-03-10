@@ -39,17 +39,15 @@ def rgb_to_rgba(rgb_value, alpha):
     """
     return f"rgba{rgb_value[3:-1]}, {alpha})"
 
-
-def find_exp(number) -> int:
-    """
-    From https://stackoverflow.com/questions/64183806/extracting-the-exponent-from-scientific-notation
-    """
-    base10 = log10(abs(number))
-    return floor(base10)
-
-
 def get_time_scale(pd_time):
     n_evals = pd_time.shape[1]
+
+    def find_exp(number) -> int:
+        """
+        From https://stackoverflow.com/questions/64183806/extracting-the-exponent-from-scientific-notation
+        """
+        base10 = log10(abs(number))
+        return floor(base10)
 
     mid = np.mean(
         [
