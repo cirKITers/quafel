@@ -32,8 +32,17 @@ class design:
     legend_font_size = 16
 
     legend_x_pos = 0
-    legend_y_pos = 0.1
+    legend_y_pos = 1
 
+    scatter_legend=dict(
+                        # x=legend_x_pos,
+                        # y=legend_y_pos,
+                        orientation='h',
+                        traceorder='normal',
+                        font=dict(
+                            size=legend_font_size,),
+                    )
+    base_theme = "plotly_white"
 
 def rgb_to_rgba(rgb_value, alpha):
     """
@@ -280,13 +289,8 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks:List):
                     font=dict(
                         size=design.legend_font_size,
                     ),
-                    legend=dict(
-                        x=design.legend_x_pos,
-                        y=design.legend_y_pos,
-                        traceorder='normal',
-                        font=dict(
-                            size=design.legend_font_size,),
-                    ),
+                    legend=design.scatter_legend,
+                    template=design.base_theme,
                 )
 
     return figures
@@ -383,13 +387,8 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks:List):
                     font=dict(
                         size=design.legend_font_size,
                     ),
-                    legend=dict(
-                        x=design.legend_x_pos,
-                        y=design.legend_y_pos,
-                        traceorder='normal',
-                        font=dict(
-                            size=design.legend_font_size,),
-                    ),
+                    legend=design.scatter_legend,
+                    template=design.base_theme,
                 )
 
     return figures
@@ -410,7 +409,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks:List):
     for fw, qubit_depth_duration in grouped_by_fw:
         if fw in skip_frameworks:
             continue
-        
+
         main_color_sel = next(main_colors_it)
         sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
         framework_name = extract_framework_name_from_id(fw)
@@ -487,13 +486,8 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks:List):
                     font=dict(
                         size=design.legend_font_size,
                     ),
-                    legend=dict(
-                        x=design.legend_x_pos,
-                        y=design.legend_y_pos,
-                        traceorder='normal',
-                        font=dict(
-                            size=design.legend_font_size,),
-                    ),
+                    legend=design.scatter_legend,
+                    template=design.base_theme,
                 )
 
     return figures
