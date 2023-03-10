@@ -10,6 +10,7 @@ from quafel.pipelines.visualization.nodes import (
     qubits_time_viz,
     depth_time_viz,
     shots_time_viz,
+    export_selected,
 )
 
 
@@ -110,6 +111,30 @@ def create_pipeline(figures, **kwargs) -> dict:
         },
     )
 
+    pl_export_visualizations = pipeline(
+        [
+            *[
+                node(
+                    func=export_selected,
+                    inputs={
+                        "selected_figures":"params:selected_figures",
+                        "output_folder":"params:output_folder",
+                        f:f,
+                    },
+                    outputs={},
+                    tags=["dynamic"],
+                    name=f"export_selected_{f}",
+                )
+                for f in figures
+            ],
+        ],
+        inputs={
+            **{f: f for f in figures},
+        },
+        namespace="visualization",
+
+    )
+
     return {
-        "pl_visualize_evaluations": pl_visualize_evaluations,
+        "pl_visualize_evaluations": pl_visualize_evaluations + pl_export_visualizations
     }
