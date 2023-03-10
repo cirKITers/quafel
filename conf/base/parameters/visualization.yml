@@ -1,4 +1,4 @@
 visualization:
   selected_figures: ["shots_2600_depth_101", "shots_2600_qubits_10", "qubits_10_depth_101", "framework_qiskit_fw_qubits_10", "framework_qiskit_fw_depth_101", "framework_cirq_fw_qubits_10", "framework_cirq_fw_depth_101", "framework_qibo_fw_qubits_10", "framework_qibo_fw_depth_101","framework_pennylane_fw_qubits_10", "framework_pennylane_fw_depth_101",]
-  skip_frameworks: ["numpy_fw"]
+  skip_frameworks: [""] #numpy_fw
   output_folder: "data/08_print"
