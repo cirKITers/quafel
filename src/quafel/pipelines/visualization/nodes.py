@@ -21,6 +21,7 @@ duration_regex = r"duration_\d*"
 
 
 class design:
+    # see https://plotly.com/python/discrete-color/
     qual_main = px.colors.qualitative.Dark2  # set1
     qual_second = px.colors.qualitative.Pastel2  # pastel1
 
@@ -46,6 +47,14 @@ class design:
     base_theme = "simple_white"
 
     include_framework_term = False
+
+    tickangle = -40
+    showgrid = False
+
+    time_tick_type = "log"
+    qubits_tick_type = "linear"
+    shots_tick_type = "log"
+    depth_tick_type = "log"
 
 
 def rgb_to_rgba(rgb_value, alpha):
@@ -128,16 +137,29 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 ]
             )
             figures[f"{fw}_qubits_{q}"].update_layout(
-                yaxis_title="Circuit Depth",
-                xaxis=dict(
-                    type="linear",
+                yaxis=dict(
+                    type=design.depth_tick_type,
                     tickmode="array",
-                    tickvals=duration_sorted_by_depth["shots"],
-                    ticktext=[
-                        f"2^{i}" for i in duration_sorted_by_depth["qubits"].astype(int)
-                    ],
+                    tickvals=duration_sorted_by_depth["depth"].astype(int),
+                    # ticktext=[
+                    #     f"2^{i}"
+                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                    # ],
+                    tickangle=design.tickangle,
+                    title="Circuit Depth",
+                    showgrid=design.showgrid,
+                ),
+                xaxis=dict(
+                    type=design.shots_tick_type,
+                    tickmode="array",
+                    tickvals=duration_sorted_by_depth["shots"].astype(int),
+                    # ticktext=[
+                    #     f"2^{i}"
+                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                    # ],
+                    tickangle=design.tickangle,
                     title="Num. of Shots",
-                    showgrid=False,
+                    showgrid=design.showgrid,
                 ),
                 title=dict(
                     text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots"
@@ -195,16 +217,29 @@ def shots_depths_viz(evaluations_combined: Dict):
                 ]
             )
             figures[f"{fw}_depth_{d}"].update_layout(
-                yaxis_title="Num. of Qubits",
-                xaxis=dict(
-                    type="linear",
+                yaxis=dict(
+                    type=design.qubits_tick_type,
                     tickmode="array",
-                    tickvals=duration_sorted_by_qubit["shots"],
-                    ticktext=[
-                        f"2^{i}" for i in duration_sorted_by_qubit["qubits"].astype(int)
-                    ],
+                    tickvals=duration_sorted_by_qubit["qubits"].astype(int),
+                    # ticktext=[
+                    #     f"2^{i}"
+                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                    # ],
+                    tickangle=design.tickangle,
+                    title="Num. of Qubits",
+                    showgrid=design.showgrid,
+                ),
+                xaxis=dict(
+                    type=design.shots_tick_type,
+                    tickmode="array",
+                    tickvals=duration_sorted_by_qubit["shots"].astype(int),
+                    # ticktext=[
+                    #     f"2^{i}"
+                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                    # ],
+                    tickangle=design.tickangle,
                     title="Num. of Shots",
-                    showgrid=False,
+                    showgrid=design.showgrid,
                 ),
                 title=dict(
                     text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots"
@@ -303,13 +338,22 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 )
                 figures[f"shots_{s}_depth_{d}"].update_layout(
                     xaxis=dict(
+                        type=design.qubits_tick_type,
+                        tickmode="array",
+                        tickvals=duration_sorted_by_qubit["qubits"].astype(int),
+                        # ticktext=[
+                        #     f"2^{i}"
+                        #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                        # ],
+                        tickangle=design.tickangle,
                         title="Num. of Qubits",
-                        tickmode="linear",
-                        tick0=1,
-                        dtick=1,
-                        showgrid=False,
+                        showgrid=design.showgrid,
                     ),
-                    yaxis=dict(title=f"Time ({si_time})", showgrid=False, type="log"),
+                    yaxis=dict(
+                        title=f"Time ({si_time})",
+                        showgrid=design.showgrid,
+                        type=design.time_tick_type,
+                    ),
                     title=dict(
                         text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})"
                         if design.print_figure_title
@@ -409,17 +453,22 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 )
                 figures[f"qubits_{q}_depth_{d}"].update_layout(
                     xaxis=dict(
-                        type="log",
+                        type=design.shots_tick_type,
                         tickmode="array",
                         tickvals=duration_sorted_by_shots["shots"].astype(int),
-                        ticktext=[
-                            f"2^{i}"
-                            for i in duration_sorted_by_shots["qubits"].astype(int)
-                        ],
+                        # ticktext=[
+                        #     f"2^{i}"
+                        #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                        # ],
+                        tickangle=design.tickangle,
                         title="Num. of Shots",
-                        showgrid=False,
+                        showgrid=design.showgrid,
                     ),
-                    yaxis=dict(title=f"Time ({si_time})", type="log", showgrid=False),
+                    yaxis=dict(
+                        title=f"Time ({si_time})",
+                        type=design.time_tick_type,
+                        showgrid=design.showgrid,
+                    ),
                     title=dict(
                         text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})"
                         if design.print_figure_title
@@ -519,16 +568,21 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 )
                 figures[f"shots_{s}_qubits_{q}"].update_layout(
                     xaxis=dict(
-                        tickmode="linear",
-                        tick0=1,
-                        dtick=10,
+                        type=design.depth_tick_type,
+                        tickmode="array",
+                        tickvals=duration_sorted_by_depth["depth"].astype(int),
+                        # ticktext=[
+                        #     f"2^{i}"
+                        #     for i in duration_sorted_by_depth["qubits"].astype(int)
+                        # ],
+                        tickangle=design.tickangle,
                         title="Circuit Depth",
-                        showgrid=False,
+                        showgrid=design.showgrid,
                     ),
                     yaxis=dict(
                         title=f"Time ({si_time})",
-                        showgrid=False,
-                        type="log",
+                        showgrid=design.showgrid,
+                        type=design.time_tick_type,
                     ),
                     title=dict(
                         text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)"
