@@ -1,8 +1,6 @@
 # Final configuration
 
 # data_generation:
-#   qubits: 2
-#   depth: 1
 #   seed: 1111
 
 #   min_qubits: 1
@@ -27,12 +25,10 @@
 # Testing configuration
 
 data_generation:
-  qubits: 2
-  depth: 1
   seed: 1111
 
   min_qubits: 1
-  max_qubits: 8
+  max_qubits: 4
   qubits_increment: 1
   qubits_type: "linear"
 
@@ -41,11 +37,11 @@ data_generation:
   depth_increment: 1
   depth_type: "exp2"
 
-  min_shots: 1
+  min_shots: 5
   max_shots: 8
   shots_increment: 1
   shots_type: "exp2"
 
   skip_combinations: []
 
-  frameworks: ["qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+  frameworks: ["qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
