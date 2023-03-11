@@ -23,25 +23,7 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - MPST",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "Measure - SPMT",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": ["run", "--pipeline", "measure", "--runner", "ThreadRunner", "--async"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "Measure - SPST",
+            "name": "Measure - SP",
             "type": "python",
             "request": "launch",
             "module": "kedro",
@@ -50,7 +32,25 @@
             "justMyCode": true
         },
         {
-            "name": "Visualize - MPST",
+            "name": "Measure - MP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Measure - MT",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "measure", "--runner", "ThreadRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Visualize - MP",
             "type": "python",
             "request": "launch",
             "module": "kedro",
