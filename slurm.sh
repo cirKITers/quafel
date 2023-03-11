@@ -4,7 +4,7 @@
 #SBATCH --job-name=quafel
 # 
 # 
-#SBATCH --ntasks=200
+#SBATCH --ntasks=300
 #
 # expected duration of the job
 #              hh:mm:ss
