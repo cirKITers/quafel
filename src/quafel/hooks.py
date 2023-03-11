@@ -32,6 +32,7 @@ class ProjectHooks:
             for f in tempFiles:
                 os.remove(f)
 
+        if run_params["pipeline_name"] == "measure":
             tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
                 os.remove(f)
@@ -40,6 +41,7 @@ class ProjectHooks:
             for f in tempFiles:
                 os.remove(f)
 
+        if run_params["pipeline_name"] == "visualize":
             tempFiles = glob.glob("data/07_reporting/*.tmp")
             for f in tempFiles:
                 os.remove(f)
@@ -81,7 +83,7 @@ class DataCatalogHooks:
                 "02_intermediate", "05_execution_durations"
             )
             execution_duration_name = (
-                f"data_science.execution_duration_{Path(execution_duration).stem}"
+                f"execution_duration_{Path(execution_duration).stem}"
             )
             input_dataset = CSVDataSet(filepath=execution_duration)
             catalog.add(execution_duration_name, input_dataset)
@@ -92,11 +94,9 @@ class DataCatalogHooks:
 
             # evaluation results
             execution_result = partition.replace(
-                "02_intermediate", "04_execution_result"
+                "02_intermediate", "04_execution_results"
             )
-            execution_result_name = (
-                f"data_science.execution_result_{Path(execution_result).stem}"
-            )
+            execution_result_name = f"execution_result_{Path(execution_result).stem}"
             input_dataset = CSVDataSet(filepath=execution_result)
             catalog.add(execution_result_name, input_dataset)
 

@@ -9,7 +9,9 @@ from typing import Dict
 
 
 def aggregate_evaluations(*args):
-    aggregated_evaluations = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
+    # aggregated_evaluations = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
+
+    aggregated_evaluations = pd.concat(args, axis=1)
 
     return {
         "aggregated_evaluations": aggregated_evaluations,
@@ -23,6 +25,7 @@ def measure_execution_durations(
     framework_id: str,
     **kwargs,
 ):
+    ident = int(list(kwargs.keys())[0])
     try:
         framework = getattr(fw, framework_id)
     except AttributeError:
@@ -30,7 +33,7 @@ def measure_execution_durations(
             f"Framework identifier does not match one of the existing frameworks. Existing frameworks are {fw}"
         )
 
-    framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=n_shots, **kwargs)
+    framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=n_shots)
 
     execution_durations = []
     execution_results = []
@@ -42,8 +45,8 @@ def measure_execution_durations(
         execution_results.append(framework_instance.get_result())
 
     return {
-        "execution_duration": execution_durations,
-        "execution_result": execution_results,
+        "execution_duration": pd.DataFrame({ident: execution_durations}),
+        "execution_result": pd.DataFrame({ident: execution_results}),
     }
 
 
