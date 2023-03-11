@@ -28,16 +28,16 @@ def register_pipelines() -> Dict[str, Pipeline]:
     viz_pipelines = viz.create_pipeline(figures)
 
     return {
-        "__default__": dg_pipelines["pl_generate_evaluation_matrix"]
-        + dg_pipelines["pl_parallel_generate_and_log_circuit"]
+        "__default__": dg_pipelines["pl_generate_evaluation_partitions"]
+        + dg_pipelines["pl_generate_qasm_circuits_splitted"]
         + ds_pipelines["pl_parallel_measure_execution_durations"]
         + viz_pipelines["pl_visualize_evaluations"],
-        "single": dg_pipelines["pl_generate_and_log_circuit"]
+        "single": dg_pipelines["pl_generate_qasm_circuits"]
         + ds_pipelines["pl_measure_execution_durations"],
-        "pre": dg_pipelines["pl_generate_evaluation_matrix"],
-        # "parallel": dg_pipelines["pl_parallel_generate_and_log_circuit"]
-        "parallel": dg_pipelines["pl_generate_and_log_circuit"]
+        "pre": dg_pipelines["pl_generate_evaluation_partitions"],
+        "parallel": dg_pipelines[
+            "pl_generate_qasm_circuits"
+        ]  # pl_generate_qasm_circuits_splitted
         + ds_pipelines["pl_parallel_measure_execution_durations"],
-        # + viz_pipelines["pl_visualize_evaluations"],
         "viz": viz_pipelines["pl_visualize_evaluations"],
     }

@@ -15,23 +15,23 @@ from quafel.pipelines.data_generation.nodes import (
 
 
 def create_pipeline(n_partitions=1, **kwargs) -> dict:
-    nd_log_circuit = node(
-        func=log_circuit,
-        inputs={"qasm_circuit": "qasm_circuit"},
-        outputs={"circuit_image": "circuit_image"},
-    )
+    # nd_log_circuit = node(
+    #     func=log_circuit,
+    #     inputs={"qasm_circuit": "qasm_circuit"},
+    #     outputs={"circuit_image": "circuit_image"},
+    # )
 
-    nd_generate_random_qasm_circuit = node(
-        func=generate_random_qasm_circuit,
-        inputs={
-            "qubits": "params:qubits",
-            "depth": "params:depth",
-            "seed": "params:seed",
-        },
-        outputs={
-            "qasm_circuit": "qasm_circuit",
-        },
-    )
+    # nd_generate_random_qasm_circuit = node(
+    #     func=generate_random_qasm_circuit,
+    #     inputs={
+    #         "qubits": "params:qubits",
+    #         "depth": "params:depth",
+    #         "seed": "params:seed",
+    #     },
+    #     outputs={
+    #         "qasm_circuit": "qasm_circuit",
+    #     },
+    # )
 
     nd_generate_evaluation_matrix = node(
         func=generate_evaluation_matrix,
@@ -67,10 +67,8 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         },
     )
 
-    pl_parallel_generate_and_log_circuit = pipeline(
+    pl_generate_qasm_circuits_splitted = pipeline(
         [
-            # nd_generate_evaluation_matrix,
-            # nd_generate_evaluation_partitions,
             *[
                 node(
                     func=part_generate_random_qasm_circuit,
@@ -96,8 +94,6 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             },
         },
         outputs={
-            # "evaluation_matrix": "evaluation_matrix",
-            # "evaluation_partitions": "evaluation_partitions",
             **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
             **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
             **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
@@ -105,7 +101,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         namespace="data_generation",
     )
 
-    pl_generate_and_log_circuit = pipeline(
+    pl_generate_qasm_circuits = pipeline(
         [
             node(
                 func=full_generate_random_qasm_circuits,
@@ -134,14 +130,14 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         namespace="data_generation",
     )
 
-    pl_generate_evaluation_matrix = pipeline(
+    pl_generate_evaluation_partitions = pipeline(
         [nd_generate_evaluation_matrix, nd_generate_evaluation_partitions],
         outputs={"evaluation_partitions": "evaluation_partitions"},
         namespace="data_generation",
     )
 
     return {
-        "pl_generate_and_log_circuit": pl_generate_and_log_circuit,
-        "pl_generate_evaluation_matrix": pl_generate_evaluation_matrix,
-        "pl_parallel_generate_and_log_circuit": pl_parallel_generate_and_log_circuit,
+        "pl_generate_evaluation_partitions": pl_generate_evaluation_partitions,
+        "pl_generate_qasm_circuits": pl_generate_qasm_circuits,
+        "pl_generate_qasm_circuits_splitted": pl_generate_qasm_circuits_splitted,
     }
