@@ -15,26 +15,26 @@ evaluation_partitions: # example to save results to multiple partitions
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    save_args:
-      index: False
+    # save_args:
+    #   index: False
   path: data/02_intermediate/
   filename_suffix: ".csv"
 
-execution_result_partitions: # example to save results to multiple partitions
+execution_results: # example to save results to multiple partitions
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    save_args:
-      index: False
+    # save_args:
+    #   index: False
   path: data/04_execution_results/
   filename_suffix: ".csv"
 
-execution_duration_partitions: # example to save results to multiple partitions
+execution_durations: # example to save results to multiple partitions
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    save_args:
-      index: False
+    # save_args:
+    #   index: False
   path: data/05_execution_durations/
   filename_suffix: ".csv"
 
@@ -42,8 +42,8 @@ execution_duration_partitions: # example to save results to multiple partitions
 evaluations_combined:
   type: pandas.CSVDataSet
   filepath: data/06_evaluations_combined/evaluations_combined.csv
-  save_args:
-    index: False
+  # save_args:
+  #   index: False
   versioned: true
 
 dummy_versioned_dataset: # example to save results to multiple 
