@@ -27,12 +27,12 @@ class ProjectHooks:
         # If we are running a new experiment setup (e.g. executing the "pre" pipeline), we want to cleanup all the files that are **not** versioned but were used as results in previous runs
         # ----------------------------------------------------------------
 
-        if run_params["pipeline_name"] == "pre":
+        if run_params["pipeline_name"] == "prepare":
             tempFiles = glob.glob("data/02_intermediate/*.csv")
             for f in tempFiles:
                 os.remove(f)
 
-            tempFiles = glob.glob("data/04_execution_result/*.csv")
+            tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
                 os.remove(f)
 
