@@ -309,7 +309,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         dtick=1,
                         showgrid=False,
                     ),
-                    yaxis=dict(title=f"Time ({si_time})"),
+                    yaxis=dict(title=f"Time ({si_time})", showgrid=False, type="log"),
                     title=dict(
                         text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})"
                         if design.print_figure_title
@@ -419,7 +419,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         title="Num. of Shots",
                         showgrid=False,
                     ),
-                    yaxis=dict(title=f"Time ({si_time})"),
+                    yaxis=dict(title=f"Time ({si_time})", type="log", showgrid=False),
                     title=dict(
                         text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})"
                         if design.print_figure_title
@@ -528,6 +528,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     yaxis=dict(
                         title=f"Time ({si_time})",
                         showgrid=False,
+                        type="log",
                     ),
                     title=dict(
                         text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)"
