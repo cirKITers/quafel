@@ -21,18 +21,6 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
     #     outputs={"circuit_image": "circuit_image"},
     # )
 
-    # nd_generate_random_qasm_circuit = node(
-    #     func=generate_random_qasm_circuit,
-    #     inputs={
-    #         "qubits": "params:qubits",
-    #         "depth": "params:depth",
-    #         "seed": "params:seed",
-    #     },
-    #     outputs={
-    #         "qasm_circuit": "qasm_circuit",
-    #     },
-    # )
-
     nd_generate_evaluation_matrix = node(
         func=generate_evaluation_matrix,
         inputs={

@@ -13,20 +13,6 @@ from quafel.pipelines.data_science.nodes import (
 
 
 def create_pipeline(n_partitions=1, **kwargs) -> dict:
-    # nd_measure_execution_durations = node(
-    #     func=measure_execution_durations,
-    #     inputs={
-    #         "evaluations": "params:evaluations",
-    #         "qasm_circuit": "qasm_circuit",
-    #         "n_shots": "params:n_shots",
-    #         "framework_id": "params:framework_identifier",
-    #     },
-    #     outputs={
-    #         "execution_duration": "execution_duration",
-    #         "execution_result": "execution_result",
-    #     },
-    # )
-
     pl_parallel_measure_execution_durations = pipeline(
         [
             *[
@@ -132,16 +118,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         namespace="data_science",
     )
 
-    # pl_measure_execution_durations = pipeline(
-    #     [nd_measure_execution_durations],
-    #     inputs={
-    #         "qasm_circuit": "qasm_circuit",
-    #     },
-    #     namespace="data_science",
-    # )
-
     return {
-        # "pl_measure_execution_durations": pl_measure_execution_durations,
         "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations
         + pl_aggregate_evaluations
         + pl_combine_evaluations,
