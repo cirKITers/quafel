@@ -104,17 +104,22 @@ class DataCatalogHooks:
         # This section ensures that the reporting dictionary always contains the proper output data catalogs so that kedro-viz is happy
         # ----------------------------------------------------------------
 
-        # get the evaluation matrix where information about all the possible combinations is stored
-        evaluation_matrix = catalog.datasets.data_generation__evaluation_matrix.load()
+        try:
+            # get the evaluation matrix where information about all the possible combinations is stored
+            evaluation_matrix = (
+                catalog.datasets.data_generation__evaluation_matrix.load()
+            )
+        except:
+            return
 
         # generate a list of names that will be used as plots later in the visualization pipeline
         # If you add new visualization outputs, you must also create the file names here
         names = []
         for f in evaluation_matrix["frameworks"]:
             for q in evaluation_matrix["qubits"]:
-                names.append(f"framework_{f}_qubits_{q}")
+                names.append(f"{f}_qubits_{q}")
             for d in evaluation_matrix["depths"]:
-                names.append(f"framework_{f}_depth_{d}")
+                names.append(f"{f}_depth_{d}")
 
         for d in evaluation_matrix["depths"]:
             for s in evaluation_matrix["shots"]:
@@ -127,7 +132,6 @@ class DataCatalogHooks:
         for s in evaluation_matrix["shots"]:
             for q in evaluation_matrix["qubits"]:
                 names.append(f"shots_{s}_qubits_{q}")
-
 
         # use the dummy dataset to get the version of the current kedro run, so that it matches the ones from the versioned datasets
         version = Version(None, catalog.datasets.dummy_versioned_dataset._version.save)
