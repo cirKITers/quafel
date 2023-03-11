@@ -57,27 +57,31 @@ def generate_evaluation_matrix(
     min_qubits: int,
     max_qubits: int,
     qubits_increment: int,
+    qubits_type: int,
     min_depth: int,
     max_depth: int,
     depth_increment: int,
+    depth_type: int,
     min_shots: int,
     max_shots: int,
     shots_increment: int,
+    shots_type: int,
     frameworks: List[str],
 ):
-    qubits = [
-        i for i in range(min_qubits, max_qubits + qubits_increment, qubits_increment)
-    ]
-    depths = [i for i in range(min_depth, max_depth + depth_increment, depth_increment)]
-    if shots_increment == "2^n":
-        shots = [
-            2**i
-            for i in range(min_qubits, max_qubits + qubits_increment, qubits_increment)
-        ]
-    else:
-        shots = [
-            i for i in range(min_shots, max_shots + shots_increment, shots_increment)
-        ]
+    def generate_ticks(min_t, max_t, inc_t, type_t="linear"):
+        if type_t == "linear":
+            ticks = [i for i in range(min_t, max_t + inc_t, inc_t)]
+        elif "exp" in type_t:
+            base = int(type_t.split("exp")[1])
+            ticks = [base**i for i in range(min_t, max_t + inc_t, inc_t)]
+        else:
+            raise ValueError("Unknown base specified and type is not linear")
+
+        return ticks
+
+    qubits = generate_ticks(min_qubits, max_qubits, qubits_increment, qubits_type)
+    depths = generate_ticks(min_depth, max_depth, depth_increment, depth_type)
+    shots = generate_ticks(min_shots, max_shots, shots_increment, shots_type)
 
     frameworks = frameworks
 

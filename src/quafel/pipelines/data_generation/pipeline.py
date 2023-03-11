@@ -38,13 +38,16 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             "min_qubits": "params:min_qubits",
             "max_qubits": "params:max_qubits",
             "qubits_increment": "params:qubits_increment",
+            "qubits_type": "params:qubits_type",
             "min_depth": "params:min_depth",
             "max_depth": "params:max_depth",
             "depth_increment": "params:depth_increment",
+            "depth_type": "params:depth_type",
             "min_shots": "params:min_shots",
             "max_shots": "params:max_shots",
             "max_shots": "params:max_shots",
             "shots_increment": "params:shots_increment",
+            "shots_type": "params:shots_type",
             "frameworks": "params:frameworks",
         },
         outputs={
@@ -54,7 +57,10 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
 
     nd_generate_evaluation_partitions = node(
         func=generate_evaluation_partitions,
-        inputs={"evaluation_matrix": "evaluation_matrix"},
+        inputs={
+            "evaluation_matrix": "evaluation_matrix",
+            "skip_combinations": "params:skip_combinations",
+        },
         outputs={
             "evaluation_partitions": "evaluation_partitions",
         },
@@ -91,14 +97,9 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         outputs={
             # "evaluation_matrix": "evaluation_matrix",
             # "evaluation_partitions": "evaluation_partitions",
-            **{
-                f"qasm_circuit_{i}": f"qasm_circuit_{i}"
-                for i in range(n_partitions)
-            },
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
             **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
-            **{
-                f"framework_{i}": f"framework_{i}" for i in range(n_partitions)
-            },
+            **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
         },
         namespace="data_generation",
     )
