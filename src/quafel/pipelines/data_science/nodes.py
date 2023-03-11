@@ -69,6 +69,7 @@ def combine_evaluations(
         execution_durations.items(),
         execution_results.items(),
     ):
+        assert (partition_id == duration_id) and (partition_id == result_id)
         partition_data = partition_load_func()
         duration_data = duration_load_func()
         result_data = result_load_func()
