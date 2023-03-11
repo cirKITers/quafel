@@ -115,11 +115,13 @@ class DataCatalogHooks:
         # generate a list of names that will be used as plots later in the visualization pipeline
         # If you add new visualization outputs, you must also create the file names here
         names = []
-        for f in evaluation_matrix["frameworks"]:
+        for fw in evaluation_matrix["frameworks"]:
             for q in evaluation_matrix["qubits"]:
-                names.append(f"{f}_qubits_{q}")
+                names.append(f"{fw}_qubits_{q}")
             for d in evaluation_matrix["depths"]:
-                names.append(f"{f}_depth_{d}")
+                names.append(f"{fw}_depth_{d}")
+            for s in evaluation_matrix["shots"]:
+                names.append(f"{fw}_shots_{s}")
 
         for d in evaluation_matrix["depths"]:
             for s in evaluation_matrix["shots"]:
@@ -151,5 +153,5 @@ class DataCatalogHooks:
                 pass
 
             # create a .tmp file which we will use later in the pipeline_registry to create node outputs dynamically
-            with open(os.path.join("data/07_reporting/", f"{name}.tmp"), "w") as f:
-                f.write("")
+            with open(os.path.join("data/07_reporting/", f"{name}.tmp"), "w") as fw:
+                fw.write("")
