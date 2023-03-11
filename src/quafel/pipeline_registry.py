@@ -35,7 +35,8 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "single": dg_pipelines["pl_generate_and_log_circuit"]
         + ds_pipelines["pl_measure_execution_durations"],
         "pre": dg_pipelines["pl_generate_evaluation_matrix"],
-        "parallel": dg_pipelines["pl_parallel_generate_and_log_circuit"]
+        # "parallel": dg_pipelines["pl_parallel_generate_and_log_circuit"]
+        "parallel": dg_pipelines["pl_generate_and_log_circuit"]
         + ds_pipelines["pl_parallel_measure_execution_durations"],
         # + viz_pipelines["pl_visualize_evaluations"],
         "viz": viz_pipelines["pl_visualize_evaluations"],

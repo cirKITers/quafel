@@ -8,6 +8,7 @@ from quafel.pipelines.data_generation.nodes import (
     log_circuit,
     generate_random_qasm_circuit,
     part_generate_random_qasm_circuit,
+    full_generate_random_qasm_circuits,
     generate_evaluation_matrix,
     generate_evaluation_partitions,
 )
@@ -106,10 +107,30 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
 
     pl_generate_and_log_circuit = pipeline(
         [
-            nd_generate_random_qasm_circuit,
-            # nd_log_circuit
+            node(
+                func=full_generate_random_qasm_circuits,
+                inputs={
+                    "evaluation_partitions": "evaluation_partitions",
+                    "seed": "params:seed",
+                },
+                outputs={
+                    **{
+                        f"qasm_circuit_{i}": f"qasm_circuit_{i}"
+                        for i in range(n_partitions)
+                    },
+                    **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
+                    **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+                },
+            ),
         ],
-        outputs={"qasm_circuit": "qasm_circuit"},
+        inputs={
+            "evaluation_partitions": "evaluation_partitions",
+        },
+        outputs={
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
+            **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+        },
         namespace="data_generation",
     )
 
