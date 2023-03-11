@@ -51,6 +51,15 @@
         //     "justMyCode": true
         // },
         {
+            "name": "Visualize - SP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "visualize"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Visualize - MP",
             "type": "python",
             "request": "launch",
