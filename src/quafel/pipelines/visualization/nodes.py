@@ -116,7 +116,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
 
             q = int(q)
 
-            figures[f"framework_{fw}_qubits_{q}"] = go.Figure(
+            figures[f"{fw}_qubits_{q}"] = go.Figure(
                 [
                     go.Heatmap(
                         x=duration_sorted_by_depth["shots"].astype(int),
@@ -127,7 +127,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
                     )
                 ]
             )
-            figures[f"framework_{fw}_qubits_{q}"].update_layout(
+            figures[f"{fw}_qubits_{q}"].update_layout(
                 yaxis_title="Circuit Depth",
                 xaxis=dict(
                     type="linear",
@@ -183,7 +183,7 @@ def shots_depths_viz(evaluations_combined: Dict):
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
 
-            figures[f"framework_{fw}_depth_{d}"] = go.Figure(
+            figures[f"{fw}_depth_{d}"] = go.Figure(
                 [
                     go.Heatmap(
                         x=duration_sorted_by_qubit["shots"].astype(int),
@@ -194,7 +194,7 @@ def shots_depths_viz(evaluations_combined: Dict):
                     )
                 ]
             )
-            figures[f"framework_{fw}_depth_{d}"].update_layout(
+            figures[f"{fw}_depth_{d}"].update_layout(
                 yaxis_title="Num. of Qubits",
                 xaxis=dict(
                     type="linear",

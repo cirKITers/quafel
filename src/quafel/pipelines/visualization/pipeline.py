@@ -26,7 +26,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     **{
                         f: f
                         for f in filter(
-                            lambda s: ("framework_" in s) and ("depth_" in s),
+                            lambda s: ("_fw" in s) and ("depth_" in s),
                             figures,
                         )
                     },
@@ -43,7 +43,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     **{
                         f: f
                         for f in filter(
-                            lambda s: ("framework_" in s) and ("qubits_" in s),
+                            lambda s: ("_fw" in s) and ("qubits_" in s),
                             figures,
                         )
                     },
@@ -55,7 +55,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=qubits_time_viz,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "skip_frameworks":"params:skip_frameworks",
+                    "skip_frameworks": "params:skip_frameworks",
                 },
                 outputs={
                     **{
@@ -73,7 +73,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=shots_time_viz,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "skip_frameworks":"params:skip_frameworks",
+                    "skip_frameworks": "params:skip_frameworks",
                 },
                 outputs={
                     **{
@@ -91,7 +91,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=depth_time_viz,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "skip_frameworks":"params:skip_frameworks",
+                    "skip_frameworks": "params:skip_frameworks",
                 },
                 outputs={
                     **{
@@ -113,7 +113,6 @@ def create_pipeline(figures, **kwargs) -> dict:
             **{f: f for f in figures},
         },
         namespace="visualization",
-
     )
 
     pl_export_visualizations = pipeline(
@@ -122,9 +121,9 @@ def create_pipeline(figures, **kwargs) -> dict:
                 node(
                     func=export_selected,
                     inputs={
-                        "selected_figures":"params:selected_figures",
-                        "output_folder":"params:output_folder",
-                        f:f,
+                        "selected_figures": "params:selected_figures",
+                        "output_folder": "params:output_folder",
+                        f: f,
                     },
                     outputs={},
                     tags=["dynamic"],
@@ -137,7 +136,6 @@ def create_pipeline(figures, **kwargs) -> dict:
             **{f: f for f in figures},
         },
         namespace="visualization",
-
     )
 
     return {
