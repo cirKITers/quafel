@@ -48,7 +48,9 @@ class design:
 
     include_framework_term = False
 
-    tickangle = -40
+    qubits_tickangle = 0
+    depth_tickangle = 0
+    shots_tickangle = -40
     showgrid = False
 
     time_tick_type = "log"
@@ -145,7 +147,6 @@ def shots_qubits_viz(evaluations_combined: Dict):
                     #     f"2^{i}"
                     #     for i in duration_sorted_by_shots["qubits"].astype(int)
                     # ],
-                    tickangle=design.tickangle,
                     title="Circuit Depth",
                     showgrid=design.showgrid,
                 ),
@@ -157,7 +158,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
                     #     f"2^{i}"
                     #     for i in duration_sorted_by_shots["qubits"].astype(int)
                     # ],
-                    tickangle=design.tickangle,
+                    tickangle=design.shots_tickangle,
                     title="Num. of Shots",
                     showgrid=design.showgrid,
                 ),
@@ -225,7 +226,6 @@ def shots_depths_viz(evaluations_combined: Dict):
                     #     f"2^{i}"
                     #     for i in duration_sorted_by_shots["qubits"].astype(int)
                     # ],
-                    tickangle=design.tickangle,
                     title="Num. of Qubits",
                     showgrid=design.showgrid,
                 ),
@@ -237,12 +237,87 @@ def shots_depths_viz(evaluations_combined: Dict):
                     #     f"2^{i}"
                     #     for i in duration_sorted_by_shots["qubits"].astype(int)
                     # ],
-                    tickangle=design.tickangle,
+                    tickangle=design.shots_tickangle,
                     title="Num. of Shots",
                     showgrid=design.showgrid,
                 ),
                 title=dict(
                     text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots"
+                    if design.print_figure_title
+                    else "",
+                    font=dict(
+                        size=design.title_font_size,
+                    ),
+                ),
+                hovermode="x",
+                font=dict(
+                    size=design.legend_font_size,
+                ),
+            )
+
+    return figures
+
+
+def depth_qubits_viz(evaluations_combined: Dict):
+    figures = {}
+
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_regex)
+    )
+
+    grouped_by_fw = evaluations_combined.groupby("framework")
+
+    for fw, qubit_depth_duration in grouped_by_fw:
+        framework_name = extract_framework_name_from_id(fw)
+        grouped_by_shots = qubit_depth_duration.groupby("shots")
+
+        for s, shots_duration in grouped_by_shots:
+            duration_sorted_by_depth = shots_duration.sort_values("depth")
+            durations = duration_sorted_by_depth.filter(regex=duration_regex)
+
+            durations *= factor_time
+
+            duration_mean = durations.mean(axis=1)
+
+            s = int(s)
+
+            figures[f"{fw}_shots_{s}"] = go.Figure(
+                [
+                    go.Heatmap(
+                        x=duration_sorted_by_depth["qubits"].astype(int),
+                        y=duration_sorted_by_depth["depth"].astype(int),
+                        z=duration_mean,
+                        colorscale=design.seq_main,
+                        colorbar=dict(title=f"Time ({si_time})"),
+                    )
+                ]
+            )
+            figures[f"{fw}_shots_{s}"].update_layout(
+                yaxis=dict(
+                    type=design.depth_tick_type,
+                    tickmode="array",
+                    tickvals=duration_sorted_by_depth["depth"].astype(int),
+                    # ticktext=[
+                    #     f"2^{i}"
+                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                    # ],
+                    title="Circuit Depth",
+                    showgrid=design.showgrid,
+                ),
+                xaxis=dict(
+                    type=design.qubits_tick_type,
+                    tickmode="array",
+                    tickvals=duration_sorted_by_depth["qubits"].astype(int),
+                    # ticktext=[
+                    #     f"2^{i}"
+                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
+                    # ],
+                    tickangle=design.qubits_tickangle,
+                    title="Num. of Qubits",
+                    showgrid=design.showgrid,
+                ),
+                title=dict(
+                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Qubits"
                     if design.print_figure_title
                     else "",
                     font=dict(
@@ -345,7 +420,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         #     f"2^{i}"
                         #     for i in duration_sorted_by_shots["qubits"].astype(int)
                         # ],
-                        tickangle=design.tickangle,
+                        tickangle=design.qubits_tickangle,
                         title="Num. of Qubits",
                         showgrid=design.showgrid,
                     ),
@@ -460,7 +535,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         #     f"2^{i}"
                         #     for i in duration_sorted_by_shots["qubits"].astype(int)
                         # ],
-                        tickangle=design.tickangle,
+                        tickangle=design.shots_tickangle,
                         title="Num. of Shots",
                         showgrid=design.showgrid,
                     ),
@@ -575,7 +650,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         #     f"2^{i}"
                         #     for i in duration_sorted_by_depth["qubits"].astype(int)
                         # ],
-                        tickangle=design.tickangle,
+                        tickangle=design.depth_tickangle,
                         title="Circuit Depth",
                         showgrid=design.showgrid,
                     ),
