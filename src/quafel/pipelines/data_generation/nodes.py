@@ -91,11 +91,12 @@ def generate_evaluation_matrix(
     }
 
 
-def generate_evaluation_partitions(evaluation_matrix):
+def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
     partitions = {}
     idx = 0
     for f in evaluation_matrix["frameworks"]:
-        for q in evaluation_matrix["qubits"]:
+        if "qubits" in skip_combinations:
+            q = max(evaluation_matrix["qubits"])
             for d in evaluation_matrix["depths"]:
                 for s in evaluation_matrix["shots"]:
                     partitions[f"{idx}"] = {
@@ -105,6 +106,39 @@ def generate_evaluation_partitions(evaluation_matrix):
                         "shots": s,
                     }
                     idx += 1
+        elif "depth" in skip_combinations:
+            d = max(evaluation_matrix["depth"])
+            for q in evaluation_matrix["qubtis"]:
+                for s in evaluation_matrix["shots"]:
+                    partitions[f"{idx}"] = {
+                        "framework": f,
+                        "qubits": q,
+                        "depth": d,
+                        "shots": s,
+                    }
+                    idx += 1
+        elif "shots" in skip_combinations:
+            s = max(evaluation_matrix["shots"])
+            for d in evaluation_matrix["depths"]:
+                for q in evaluation_matrix["qubits"]:
+                    partitions[f"{idx}"] = {
+                        "framework": f,
+                        "qubits": q,
+                        "depth": d,
+                        "shots": s,
+                    }
+                    idx += 1
+        else:
+            for q in evaluation_matrix["qubits"]:
+                for d in evaluation_matrix["depths"]:
+                    for s in evaluation_matrix["shots"]:
+                        partitions[f"{idx}"] = {
+                            "framework": f,
+                            "qubits": q,
+                            "depth": d,
+                            "shots": s,
+                        }
+                        idx += 1
 
     eval_partitions = pd.DataFrame(partitions)
 
