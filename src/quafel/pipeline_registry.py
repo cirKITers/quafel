@@ -29,15 +29,13 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     return {
         "__default__": dg_pipelines["pl_generate_evaluation_partitions"]
-        + dg_pipelines["pl_generate_qasm_circuits_splitted"]
+        + dg_pipelines["pl_generate_qasm_circuits"]
         + ds_pipelines["pl_parallel_measure_execution_durations"]
         + viz_pipelines["pl_visualize_evaluations"],
-        "single": dg_pipelines["pl_generate_qasm_circuits"]
-        + ds_pipelines["pl_measure_execution_durations"],
-        "pre": dg_pipelines["pl_generate_evaluation_partitions"],
-        "parallel": dg_pipelines[
+        "prepare": dg_pipelines["pl_generate_evaluation_partitions"],
+        "measure": dg_pipelines[
             "pl_generate_qasm_circuits"
         ]  # pl_generate_qasm_circuits_splitted
         + ds_pipelines["pl_parallel_measure_execution_durations"],
-        "viz": viz_pipelines["pl_visualize_evaluations"],
+        "visualize": viz_pipelines["pl_visualize_evaluations"],
     }
