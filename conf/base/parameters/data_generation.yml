@@ -49,21 +49,3 @@ data_generation:
   skip_combinations: []
 
   frameworks: ["qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
-
-
-# data_generation:
-#   qubits: 2
-#   depth: 1
-#   seed: 1111
-
-#   min_qubits: 1
-#   max_qubits: 10
-#   qubits_increment: 1
-#   min_depth: 3
-#   max_depth: 4
-#   depth_increment: 1
-#   min_shots: 500
-#   max_shots: 1000
-#   shots_increment: 500
-
-#   frameworks: ["pennylane_fw", "cirq_fw", "qiskit_fw", "qibo_fw", "numpy_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
