@@ -8,6 +8,7 @@ data_generation.evaluation_matrix: # example to save results to multiple partiti
     # save_args:
     #   index: False
   filepath: data/01_raw/dataset.json
+  versioned: true
 
 
 evaluation_partitions: # example to save results to multiple partitions
