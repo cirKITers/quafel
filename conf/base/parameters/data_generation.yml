@@ -22,7 +22,7 @@
 
 #   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
-# Too good to run config
+# Lower your expectations config
 
 data_generation:
   seed: 1111
