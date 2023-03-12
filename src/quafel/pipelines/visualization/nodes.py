@@ -678,7 +678,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     return figures
 
 
-def export_selected(evaluations_combined, selected_figures, output_folder, **figures):
+def export_selected(evaluations_combined, additional_figures, output_folder, **figures):
     max_qubits = evaluations_combined["qubits"].max()
     max_depth = evaluations_combined["depth"].max()
     max_shots = evaluations_combined["shots"].max()
@@ -710,5 +710,8 @@ def export_selected(evaluations_combined, selected_figures, output_folder, **fig
 
         sel = f"{fw}_shots_{max_shots}"
         export(figures[sel], sel, output_folder)
+
+    for add_fig in additional_figures:
+        export(figures[add_fig], add_fig, output_folder)
 
     return {}

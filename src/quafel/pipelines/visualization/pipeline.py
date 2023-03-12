@@ -139,7 +139,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=export_selected,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "selected_figures": "params:selected_figures",
+                    "additional_figures": "params:additional_figures",
                     "output_folder": "params:output_folder",
                     **{
                         f: f
