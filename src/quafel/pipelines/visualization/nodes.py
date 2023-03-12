@@ -678,8 +678,9 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     return figures
 
 
-def export_selected(selected_figures, output_folder, **figure):
-    for name, fig in figure.items():
+def export_selected(evaluations_combined, selected_figures, output_folder, **figures):
+    
+    for name, fig in figures.items():
         if name in selected_figures:
             pio.full_figure_for_development(
                 fig, warn=False

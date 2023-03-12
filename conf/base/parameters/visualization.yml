@@ -8,6 +8,6 @@ visualization:
 
 
 visualization:
-  selected_figures: ["shots_65536_depth_201"]
+  selected_figures: ["shots_4096_depth_256", "shots_4096_qubits_12", "qubits_12_depth_256", "qiskit_fw_depth_101", "qibo_fw_depth_101", "cirq_fw_depth_101", "pennylane_fw_depth_101"]
   skip_frameworks: [""] #numpy_fw
   output_folder: "data/08_print"

@@ -59,14 +59,5 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
-        {
-            "name": "Visualize - MP",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": ["run", "--pipeline", "visualize", "--runner", "ParallelRunner"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
     ]
 }

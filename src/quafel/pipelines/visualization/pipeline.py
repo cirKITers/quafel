@@ -135,22 +135,25 @@ def create_pipeline(figures, **kwargs) -> dict:
 
     pl_export_visualizations = pipeline(
         [
-            *[
-                node(
-                    func=export_selected,
-                    inputs={
-                        "selected_figures": "params:selected_figures",
-                        "output_folder": "params:output_folder",
-                        f: f,
+            node(
+                func=export_selected,
+                inputs={
+                    "evaluations_combined": "evaluations_combined",
+                    "selected_figures": "params:selected_figures",
+                    "output_folder": "params:output_folder",
+                    **{
+                        f: f
+                        for f in figures
                     },
-                    outputs={},
-                    tags=["dynamic"],
-                    name=f"export_selected_{f}",
-                )
-                for f in figures
-            ],
+                },
+                outputs={},
+                tags=["dynamic"],
+                name=f"export_selected",
+            )
+               
         ],
         inputs={
+            "evaluations_combined": "evaluations_combined",
             **{f: f for f in figures},
         },
         namespace="visualization",
