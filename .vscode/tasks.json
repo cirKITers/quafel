@@ -46,9 +46,9 @@
                 "reveal": "never",
                 "panel": "new"
             },
-            "runOptions": {
-                "runOn": "folderOpen"
-            },
+            // "runOptions": {
+            //     "runOn": "folderOpen"
+            // },
             "problemMatcher": []
         },
         {
