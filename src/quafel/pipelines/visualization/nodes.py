@@ -679,15 +679,36 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
 
 
 def export_selected(evaluations_combined, selected_figures, output_folder, **figures):
-    
-    for name, fig in figures.items():
-        if name in selected_figures:
-            pio.full_figure_for_development(
-                fig, warn=False
-            )  # Disable warnings to prevent printing a box at the bottom left of the figure. See this issue: https://github.com/plotly/plotly.py/issues/3469
+    max_qubits = evaluations_combined["qubits"].max()
+    max_depth = evaluations_combined["depth"].max()
+    max_shots = evaluations_combined["shots"].max()
+    frameworks = evaluations_combined["framework"].unique()
 
-            fig.write_image(
-                os.path.join(output_folder, f"{name}.pdf"), engine="kaleido"
-            )
+    def export(fig, name, folder):
+        pio.full_figure_for_development(
+            fig, warn=False
+        )  # Disable warnings to prevent printing a box at the bottom left of the figure. See this issue: https://github.com/plotly/plotly.py/issues/3469
+        pio.kaleido.scope.mathjax = None  # Disable mathjax completely since above did not help. See this issue: https://github.com/plotly/Kaleido/issues/122
+
+        fig.write_image(os.path.join(folder, f"{name}.pdf"), engine="kaleido")
+
+    sel = f"shots_{max_shots}_depth_{max_depth}"
+    export(figures[sel], sel, output_folder)
+
+    sel = f"shots_{max_shots}_qubits_{max_qubits}"
+    export(figures[sel], sel, output_folder)
+
+    sel = f"qubits_{max_qubits}_depth_{max_depth}"
+    export(figures[sel], sel, output_folder)
+
+    for fw in frameworks:
+        sel = f"{fw}_qubits_{max_qubits}"
+        export(figures[sel], sel, output_folder)
+
+        sel = f"{fw}_depth_{max_depth}"
+        export(figures[sel], sel, output_folder)
+
+        sel = f"{fw}_shots_{max_shots}"
+        export(figures[sel], sel, output_folder)
 
     return {}
