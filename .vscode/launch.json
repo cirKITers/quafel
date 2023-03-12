@@ -40,6 +40,15 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "Ct. Measure - MP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "ctmeasure", "--runner", "ParallelRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
         // Multithreading disabled due to issue with qiskit
         // {
         //     "name": "Measure - MT",
