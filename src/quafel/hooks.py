@@ -15,6 +15,12 @@ from kedro.io import DataCatalog
 
 class ProjectHooks:
     @hook_impl
+    def after_context_created(self, context):
+        pass
+
+
+class PipelineHooks:
+    @hook_impl
     def before_pipeline_run(self, run_params: Dict[str, Any], pipeline, catalog):
         """A hook implementation to add a catalog entry
         based on the filename passed to the command line, e.g.:
@@ -32,7 +38,10 @@ class ProjectHooks:
             for f in tempFiles:
                 os.remove(f)
 
-        if run_params["pipeline_name"] == "measure":
+        if (
+            run_params["pipeline_name"] == "measure"
+            or run_params["pipeline_name"] == "prepare"
+        ):
             tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
                 os.remove(f)
