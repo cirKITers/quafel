@@ -57,6 +57,9 @@ class design:
     qubits_tick_type = "linear"
     shots_tick_type = "log"
     depth_tick_type = "log"
+    depth_tick_mode = "array"  # array
+    depth_tick0 = None
+    depth_dtick = None  # np.log10(2)
 
 
 def rgb_to_rgba(rgb_value, alpha):
@@ -141,12 +144,16 @@ def shots_qubits_viz(evaluations_combined: Dict):
             figures[f"{fw}_qubits_{q}"].update_layout(
                 yaxis=dict(
                     type=design.depth_tick_type,
-                    tickmode="array",
-                    tickvals=duration_sorted_by_depth["depth"].astype(int),
+                    tickmode=design.depth_tick_mode,
+                    tickvals=duration_sorted_by_depth["depth"].astype(int)
+                    if design.depth_tick_mode == "array"
+                    else None,
                     # ticktext=[
                     #     f"2^{i}"
                     #     for i in duration_sorted_by_shots["qubits"].astype(int)
                     # ],
+                    tick0=design.depth_tick0,
+                    dtick=design.depth_dtick,
                     title="Circuit Depth",
                     showgrid=design.showgrid,
                 ),
