@@ -3,12 +3,12 @@ from the Kedro defaults. For further information, including these default values
 https://kedro.readthedocs.io/en/stable/kedro_project_setup/settings.html."""
 
 # Instantiated project hooks.
-from quafel.hooks import ProjectHooks, DataCatalogHooks
+from quafel.hooks import ProjectHooks, PipelineHooks, DataCatalogHooks
 from kedro.config import TemplatedConfigLoader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from pathlib import Path
 
-HOOKS = (ProjectHooks(), DataCatalogHooks())
+HOOKS = (ProjectHooks(), PipelineHooks(), DataCatalogHooks())
 
 # Installed plugins for which to disable hook auto-registration.
 # DISABLE_HOOKS_FOR_PLUGINS = ("kedro-viz",)
