@@ -14,7 +14,7 @@ from quafel.pipelines.data_generation.nodes import (
 )
 
 
-def create_pipeline(n_partitions=1, **kwargs) -> dict:
+def create_pipeline(partitions, **kwargs) -> dict:
     # nd_log_circuit = node(
     #     func=log_circuit,
     #     inputs={"qasm_circuit": "qasm_circuit"},
@@ -72,19 +72,19 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                     tags=["dynamic"],
                     name=f"part_generate_random_qasm_circuit_{i}",
                 )
-                for i in range(n_partitions)
+                for i in partitions
             ],
         ],
         inputs={
             **{
                 f"evaluation_partition_{i}": f"data_generation.evaluation_partition_{i}"
-                for i in range(n_partitions)
+                for i in partitions
             },
         },
         outputs={
-            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
-            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
-            **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
+            **{f"framework_{i}": f"framework_{i}" for i in partitions},
         },
         namespace="data_generation",
     )
@@ -98,12 +98,9 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                     "seed": "params:seed",
                 },
                 outputs={
-                    **{
-                        f"qasm_circuit_{i}": f"qasm_circuit_{i}"
-                        for i in range(n_partitions)
-                    },
-                    **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
-                    **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+                    **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
+                    **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
+                    **{f"framework_{i}": f"framework_{i}" for i in partitions},
                 },
             ),
         ],
@@ -111,9 +108,9 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             "evaluation_partitions": "evaluation_partitions",
         },
         outputs={
-            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
-            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
-            **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
+            **{f"framework_{i}": f"framework_{i}" for i in partitions},
         },
         namespace="data_generation",
     )

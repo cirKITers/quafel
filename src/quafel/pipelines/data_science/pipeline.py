@@ -12,7 +12,7 @@ from quafel.pipelines.data_science.nodes import (
 )
 
 
-def create_pipeline(n_partitions=1, **kwargs) -> dict:
+def create_pipeline(partitions, **kwargs) -> dict:
     pl_parallel_measure_execution_durations = pipeline(
         [
             *[
@@ -32,23 +32,19 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
                     tags=["dynamic"],
                     name=f"measure_execution_durations_{i}",
                 )
-                for i in range(n_partitions)
+                for i in partitions
             ],
         ],
         inputs={
-            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in range(n_partitions)},
-            **{f"n_shots_{i}": f"n_shots_{i}" for i in range(n_partitions)},
-            **{f"framework_{i}": f"framework_{i}" for i in range(n_partitions)},
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
+            **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
+            **{f"framework_{i}": f"framework_{i}" for i in partitions},
         },
         outputs={
             **{
-                f"execution_duration_{i}": f"execution_duration_{i}"
-                for i in range(n_partitions)
+                f"execution_duration_{i}": f"execution_duration_{i}" for i in partitions
             },
-            **{
-                f"execution_result_{i}": f"execution_result_{i}"
-                for i in range(n_partitions)
-            },
+            **{f"execution_result_{i}": f"execution_result_{i}" for i in partitions},
         },
         namespace="data_science",
     )
@@ -57,7 +53,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         [
             node(
                 func=aggregate_evaluations,
-                inputs=[f"execution_duration_{i}" for i in range(n_partitions)],
+                inputs=[f"execution_duration_{i}" for i in partitions],
                 outputs={
                     "aggregated_evaluations": "execution_durations",
                 },
@@ -66,7 +62,7 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
             ),
             node(
                 func=aggregate_evaluations,
-                inputs=[f"execution_result_{i}" for i in range(n_partitions)],
+                inputs=[f"execution_result_{i}" for i in partitions],
                 outputs={
                     "aggregated_evaluations": "execution_results",
                 },
@@ -76,13 +72,9 @@ def create_pipeline(n_partitions=1, **kwargs) -> dict:
         ],
         inputs={
             **{
-                f"execution_duration_{i}": f"execution_duration_{i}"
-                for i in range(n_partitions)
+                f"execution_duration_{i}": f"execution_duration_{i}" for i in partitions
             },
-            **{
-                f"execution_result_{i}": f"execution_result_{i}"
-                for i in range(n_partitions)
-            },
+            **{f"execution_result_{i}": f"execution_result_{i}" for i in partitions},
         },
         outputs={
             "execution_results": "execution_results",
