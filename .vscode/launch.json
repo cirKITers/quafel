@@ -68,5 +68,14 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "Print Tests - SP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "print_tests"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
     ]
 }
