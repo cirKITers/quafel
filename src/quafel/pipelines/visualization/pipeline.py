@@ -12,6 +12,7 @@ from quafel.pipelines.visualization.nodes import (
     depth_time_viz,
     shots_time_viz,
     export_selected,
+    extract_tests,
 )
 
 
@@ -133,6 +134,25 @@ def create_pipeline(figures, **kwargs) -> dict:
         namespace="visualization",
     )
 
+    pl_print_tests = pipeline(
+        [
+            node(
+                func=extract_tests,
+                inputs={
+                    "evaluations_combined": "evaluations_combined",
+                },
+                outputs={},
+                tags=["static"],
+                name=f"extract_tests",
+            )
+        ],
+        inputs={
+            "evaluations_combined": "evaluations_combined",
+        },
+        outputs={},
+        namespace="visualization",
+    )
+
     pl_export_visualizations = pipeline(
         [
             node(
@@ -141,16 +161,12 @@ def create_pipeline(figures, **kwargs) -> dict:
                     "evaluations_combined": "evaluations_combined",
                     "additional_figures": "params:additional_figures",
                     "output_folder": "params:output_folder",
-                    **{
-                        f: f
-                        for f in figures
-                    },
+                    **{f: f for f in figures},
                 },
                 outputs={},
                 tags=["dynamic"],
                 name=f"export_selected",
             )
-               
         ],
         inputs={
             "evaluations_combined": "evaluations_combined",
@@ -160,5 +176,6 @@ def create_pipeline(figures, **kwargs) -> dict:
     )
 
     return {
-        "pl_visualize_evaluations": pl_visualize_evaluations + pl_export_visualizations
+        "pl_visualize_evaluations": pl_visualize_evaluations + pl_export_visualizations,
+        "pl_print_tests": pl_print_tests,
     }

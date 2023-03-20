@@ -62,4 +62,5 @@ def register_pipelines() -> Dict[str, Pipeline]:
         ]
         + ds_pipelines["pl_parallel_measure_execution_durations"],
         "visualize": viz_pipelines["pl_visualize_evaluations"],
+        "print_tests": viz_pipelines["pl_print_tests"],
     }
