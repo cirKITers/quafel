@@ -85,8 +85,8 @@ def get_time_scale(pd_time):
 
     mid = np.mean(
         [
-            find_exp(pd_time.min().min() / n_evals),
-            find_exp(pd_time.max().max() / n_evals),
+            find_exp(pd_time.min().min()),
+            find_exp(pd_time.max().max()),
         ]
     ).astype(int)
 
@@ -94,7 +94,7 @@ def get_time_scale(pd_time):
 
     idx = bisect_left(si_time[1], mid)
 
-    return (si_time[0][idx], si_time[2][idx] / n_evals)
+    return (si_time[0][idx], si_time[2][idx])
 
 
 def extract_framework_name_from_id(identifier):
