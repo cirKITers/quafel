@@ -12,12 +12,15 @@ import pandas as pd
 
 from bisect import bisect_left
 from math import log10, floor
+import logging
+
 
 import numpy as np
 
 import os
 
-duration_regex = r"duration_\d*"
+duration_perf_regex = r"duration_perf_\d*"
+duration_proc_regex = r"duration_proc_\d*"
 
 
 class design:
@@ -112,7 +115,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
     si_time, factor_time = get_time_scale(
-        evaluations_combined.filter(regex=duration_regex)
+        evaluations_combined.filter(regex=duration_perf_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -123,7 +126,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
 
         for q, depth_duration in grouped_by_qubit:
             duration_sorted_by_depth = depth_duration.sort_values("depth")
-            durations = duration_sorted_by_depth.filter(regex=duration_regex)
+            durations = duration_sorted_by_depth.filter(regex=duration_perf_regex)
 
             durations *= factor_time
 
@@ -191,7 +194,7 @@ def shots_depths_viz(evaluations_combined: Dict):
     figures = {}
 
     si_time, factor_time = get_time_scale(
-        evaluations_combined.filter(regex=duration_regex)
+        evaluations_combined.filter(regex=duration_perf_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -203,7 +206,7 @@ def shots_depths_viz(evaluations_combined: Dict):
         for d, qubit_duration in grouped_by_depth:
             # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_qubit = qubit_duration.sort_values("qubits")
-            durations = duration_sorted_by_qubit.filter(regex=duration_regex)
+            durations = duration_sorted_by_qubit.filter(regex=duration_perf_regex)
 
             durations *= factor_time
 
@@ -270,7 +273,7 @@ def depth_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
     si_time, factor_time = get_time_scale(
-        evaluations_combined.filter(regex=duration_regex)
+        evaluations_combined.filter(regex=duration_perf_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -281,7 +284,7 @@ def depth_qubits_viz(evaluations_combined: Dict):
 
         for s, shots_duration in grouped_by_shots:
             duration_sorted_by_depth = shots_duration.sort_values("depth")
-            durations = duration_sorted_by_depth.filter(regex=duration_regex)
+            durations = duration_sorted_by_depth.filter(regex=duration_perf_regex)
 
             durations *= factor_time
 
@@ -349,7 +352,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     sec_colors_it = iter(design.qual_second)
 
     si_time, factor_time = get_time_scale(
-        evaluations_combined.filter(regex=duration_regex)
+        evaluations_combined.filter(regex=duration_perf_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -370,7 +373,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_qubit = fw_qubit_duration.sort_values("qubits")
 
-                durations = duration_sorted_by_qubit.filter(regex=duration_regex)
+                durations = duration_sorted_by_qubit.filter(regex=duration_perf_regex)
                 durations *= factor_time
 
                 durations_mean = durations.mean(axis=1)
@@ -465,7 +468,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     sec_colors_it = iter(design.qual_second)
 
     si_time, factor_time = get_time_scale(
-        evaluations_combined.filter(regex=duration_regex)
+        evaluations_combined.filter(regex=duration_perf_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -486,7 +489,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_shots = fw_shots_duration.sort_values("shots")
 
-                durations = duration_sorted_by_shots.filter(regex=duration_regex)
+                durations = duration_sorted_by_shots.filter(regex=duration_perf_regex)
                 durations *= factor_time
 
                 durations_mean = durations.mean(axis=1)
@@ -581,7 +584,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     sec_colors_it = iter(design.qual_second)
 
     si_time, factor_time = get_time_scale(
-        evaluations_combined.filter(regex=duration_regex)
+        evaluations_combined.filter(regex=duration_perf_regex)
     )
 
     grouped_by_fw = evaluations_combined.groupby("framework")
@@ -602,7 +605,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_depth = fw_depth_duration.sort_values("depth")
 
-                durations = duration_sorted_by_depth.filter(regex=duration_regex)
+                durations = duration_sorted_by_depth.filter(regex=duration_perf_regex)
                 durations *= factor_time
 
                 durations_mean = durations.mean(axis=1)
@@ -687,6 +690,35 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 )
 
     return figures
+
+
+def extract_tests(evaluations_combined: Dict):
+    si_time, factor_time = get_time_scale(
+        evaluations_combined.filter(regex=duration_perf_regex)
+    )
+
+    durations_perf = evaluations_combined.filter(regex=duration_perf_regex)
+
+    durations_proc = evaluations_combined.filter(regex=duration_proc_regex)
+
+    n_runs = durations_perf.shape[0]
+    n_evals = durations_perf.shape[1]
+
+    evals_perf_mean = durations_perf.mean(axis=0)
+    evals_proc_mean = durations_proc.mean(axis=0)
+
+    log = logging.getLogger(__name__)
+    log.info(f"Received {n_evals} evaluations and {n_runs} runs")
+    log.info(f"Evaluation mean across all runs (perf timing): {evals_perf_mean.mean()}")
+    log.info(
+        f"Evaluation deviation across all runs (perf timing): {evals_perf_mean.max() - evals_perf_mean.min()}"
+    )
+    log.info(f"Evaluation mean across all runs (proc timing): {evals_proc_mean.mean()}")
+    log.info(
+        f"Evaluation deviation across all runs (proc timing): {evals_proc_mean.max() - evals_proc_mean.min()}"
+    )
+
+    return {}
 
 
 def export_selected(evaluations_combined, additional_figures, output_folder, **figures):
