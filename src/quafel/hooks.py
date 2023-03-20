@@ -12,6 +12,8 @@ import os
 import logging
 from kedro.io import DataCatalog
 
+import time
+
 
 class ProjectHooks:
     @hook_impl
@@ -20,6 +22,10 @@ class ProjectHooks:
 
 
 class PipelineHooks:
+    @property
+    def _logger(self):
+        return logging.getLogger(self.__class__.__name__)
+
     @hook_impl
     def before_pipeline_run(self, run_params: Dict[str, Any], pipeline, catalog):
         """A hook implementation to add a catalog entry
@@ -50,8 +56,15 @@ class PipelineHooks:
             for f in tempFiles:
                 os.remove(f)
 
+        self.start_run = time.time()
+
     @hook_impl
     def after_pipeline_run(self, run_params: Dict[str, Any], pipeline, catalog):
+        self.finish_run = time.time()
+
+        log = logging.getLogger(__name__)
+        log.info(f"Run took {self.finish_run - self.start_run}s")
+
         if run_params["pipeline_name"] == "visualize":
             tempFiles = glob.glob("data/07_reporting/*.tmp")
             for f in tempFiles:
