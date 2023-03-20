@@ -28,8 +28,9 @@ def calculate_n_qubits_from_qasm(qasm_string):
 
 
 class test_fw:
-    time_const = 1 - 9  # use 10ms as minimum sleep time
+    time_const = 1e-9
     constant_sleep = True
+    load = True
 
     def __init__(self, qasm_circuit, n_shots):
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
@@ -42,7 +43,10 @@ class test_fw:
 
     def execute(self) -> None:
         if self.constant_sleep:
-            time.sleep(0.01)
+            if self.load:
+                sum(range(10**6))
+            else:
+                time.sleep(0.01)
         else:
             time.sleep(
                 self.time_const * self.shots * self.depth**2 * self.n_qubits**3
