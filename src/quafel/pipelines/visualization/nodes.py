@@ -54,6 +54,7 @@ class design:
     showgrid = False
 
     time_tick_type = "log"
+    time_dtick = 1
     qubits_tick_type = "linear"
     shots_tick_type = "log"
     depth_tick_type = "log"
@@ -433,8 +434,9 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     ),
                     yaxis=dict(
                         title=f"Time ({si_time})",
-                        showgrid=design.showgrid,
                         type=design.time_tick_type,
+                        dtick=design.time_dtick,
+                        showgrid=design.showgrid,
                     ),
                     title=dict(
                         text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})"
@@ -549,6 +551,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     yaxis=dict(
                         title=f"Time ({si_time})",
                         type=design.time_tick_type,
+                        dtick=design.time_dtick,
                         showgrid=design.showgrid,
                     ),
                     title=dict(
@@ -664,6 +667,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     yaxis=dict(
                         title=f"Time ({si_time})",
                         showgrid=design.showgrid,
+                        dtick=design.time_dtick,
                         type=design.time_tick_type,
                     ),
                     title=dict(
