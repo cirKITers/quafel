@@ -28,7 +28,8 @@ def calculate_n_qubits_from_qasm(qasm_string):
 
 
 class test_fw:
-    time_const = 1e-9
+    time_const = 1 - 9  # use 10ms as minimum sleep time
+    constant_sleep = True
 
     def __init__(self, qasm_circuit, n_shots):
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
@@ -40,7 +41,12 @@ class test_fw:
         self.shots = n_shots
 
     def execute(self) -> None:
-        time.sleep(self.time_const * self.shots * self.depth**2 * self.n_qubits**3)
+        if self.constant_sleep:
+            time.sleep(0.01)
+        else:
+            time.sleep(
+                self.time_const * self.shots * self.depth**2 * self.n_qubits**3
+            )
 
     def get_result(self) -> Dict[str, float]:
         counts = {}
