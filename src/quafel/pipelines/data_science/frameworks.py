@@ -44,7 +44,7 @@ class test_fw:
     def execute(self) -> None:
         if self.constant_sleep:
             if self.load:
-                sum(range(10**6))
+                sum(range(10**8))
             else:
                 time.sleep(0.01)
         else:
