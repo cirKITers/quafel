@@ -24,27 +24,27 @@
 
 # Lower your expectations config
 
-data_generation:
-  seed: 1111
+# data_generation:
+#   seed: 1111
 
-  min_qubits: 1
-  max_qubits: 12
-  qubits_increment: 1
-  qubits_type: "linear"
+#   min_qubits: 1
+#   max_qubits: 12
+#   qubits_increment: 1
+#   qubits_type: "linear"
 
-  min_depth: 1
-  max_depth: 8
-  depth_increment: 1
-  depth_type: "exp2"
+#   min_depth: 1
+#   max_depth: 8
+#   depth_increment: 1
+#   depth_type: "exp2"
 
-  min_shots: 8
-  max_shots: 12
-  shots_increment: 1
-  shots_type: "exp2"
+#   min_shots: 8
+#   max_shots: 12
+#   shots_increment: 1
+#   shots_type: "exp2"
 
-  skip_combinations: []
+#   skip_combinations: []
 
-  frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+#   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
 # Testing configuration
 
@@ -52,20 +52,42 @@ data_generation:
 #   seed: 1111
 
 #   min_qubits: 1
-#   max_qubits: 4
+#   max_qubits: 14
 #   qubits_increment: 1
 #   qubits_type: "linear"
 
-#   min_depth: 1
-#   max_depth: 4
+#   min_depth: 0
+#   max_depth: 8
 #   depth_increment: 1
 #   depth_type: "exp2"
 
-#   min_shots: 5
-#   max_shots: 8
+#   min_shots: 8
+#   max_shots: 14
 #   shots_increment: 1
 #   shots_type: "exp2"
 
 #   skip_combinations: []
 
-#   frameworks: ["qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+#   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+
+data_generation:
+  seed: 1111
+
+  min_qubits: 1
+  max_qubits: 2
+  qubits_increment: 1
+  qubits_type: "linear"
+
+  min_depth: 0
+  max_depth: 4
+  depth_increment: 1
+  depth_type: "exp2"
+
+  min_shots: 0
+  max_shots: 4
+  shots_increment: 1
+  shots_type: "exp2"
+
+  skip_combinations: []
+
+  frameworks: ["test_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
