@@ -35,17 +35,26 @@ def measure_execution_durations(
 
     framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=n_shots)
 
-    execution_durations = []
+    execution_perf_durations = []
+    execution_proc_durations = []
     execution_results = []
     for eval in range(evaluations):
-        start = time.perf_counter()
+        start_perf = time.perf_counter()
+        start_proc = time.process_time()
         framework_instance.execute()
-        end = time.perf_counter()
-        execution_durations.append(end - start)
+        finish_perf = time.perf_counter()
+        finish_proc = time.process_time()
+        execution_perf_durations.append(finish_perf - start_perf)
+        execution_proc_durations.append(finish_proc - start_proc)
         execution_results.append(framework_instance.get_result())
 
     return {
-        "execution_duration": pd.DataFrame({ident: execution_durations}),
+        "execution_duration": pd.DataFrame(
+            {
+                f"perf_{ident}": execution_perf_durations,
+                f"proc_{ident}": execution_proc_durations,
+            }
+        ),
         "execution_result": pd.DataFrame({ident: execution_results}),
     }
 
@@ -80,9 +89,21 @@ def combine_evaluations(
         # TODO: unify somehow with the generation part
         partition_data.index = ["framework", "qubits", "depth", "shots"]
 
-        duration_data.index = [f"duration_{i}" for i in range(len(duration_data))]
+        duration_data_proc = duration_data.filter(regex="proc")
+        duration_data_proc.index = [
+            f"duration_proc_{i}" for i in range(len(duration_data))
+        ]
+        duration_data_proc.columns = [partition_id]
 
-        result_data.index = [f"result_{i}" for i in range(len(duration_data))]
+        duration_data_perf = duration_data.filter(regex="perf")
+        duration_data_perf.index = [
+            f"duration_perf_{i}" for i in range(len(duration_data))
+        ]
+        duration_data_perf.columns = [partition_id]
+
+        duration_data = pd.concat([duration_data_perf, duration_data_proc])
+
+        result_data.index = [f"result_{i}" for i in range(len(result_data))]
 
         combined_partition_duration = pd.concat(
             [partition_data, duration_data, result_data],
