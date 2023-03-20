@@ -50,6 +50,8 @@ class PipelineHooks:
             for f in tempFiles:
                 os.remove(f)
 
+    @hook_impl
+    def after_pipeline_run(self, run_params: Dict[str, Any], pipeline, catalog):
         if run_params["pipeline_name"] == "visualize":
             tempFiles = glob.glob("data/07_reporting/*.tmp")
             for f in tempFiles:
