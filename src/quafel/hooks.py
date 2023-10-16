@@ -14,6 +14,8 @@ from kedro.io import DataCatalog
 
 import time
 
+log = logging.getLogger(__name__)
+
 
 class ProjectHooks:
     @hook_impl
@@ -62,7 +64,6 @@ class PipelineHooks:
     def after_pipeline_run(self, run_params: Dict[str, Any], pipeline, catalog):
         self.finish_run = time.time()
 
-        log = logging.getLogger(__name__)
         log.info(f"Run took {self.finish_run - self.start_run}s")
 
         if run_params["pipeline_name"] == "visualize":
@@ -133,7 +134,8 @@ class DataCatalogHooks:
             evaluation_matrix = (
                 catalog.datasets.data_generation__evaluation_matrix.load()
             )
-        except:
+        except Exception as e:
+            log.exception(e)
             return
 
         # generate a list of names that will be used as plots later in the visualization pipeline
