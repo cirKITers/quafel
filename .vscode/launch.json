@@ -5,22 +5,77 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Test Duration",
+            "name": "Default",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/test_duration.py",
+            "module": "kedro",
+            "args": ["run"],
             "console": "integratedTerminal",
-            "args": ["qibo"],
             "justMyCode": true
         },
         {
-            "name": "Test Duration (Resume)",
+            "name": "Prepare Data",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/test_duration.py",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "prepare"],
             "console": "integratedTerminal",
-            "args": ["real", "--resume"],
             "justMyCode": true
-        }
+        },
+        {
+            "name": "Measure - SP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "measure"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Measure - MP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Ct. Measure - MP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "ctmeasure", "--runner", "ParallelRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        // Multithreading disabled due to issue with qiskit
+        // {
+        //     "name": "Measure - MT",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "module": "kedro",
+        //     "args": ["run", "--pipeline", "measure", "--runner", "ThreadRunner", "--async"],
+        //     "console": "integratedTerminal",
+        //     "justMyCode": true
+        // },
+        {
+            "name": "Visualize - SP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "visualize"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Print Tests - SP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": ["run", "--pipeline", "print_tests"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
     ]
 }

@@ -1,0 +1,4 @@
+visualization:
+  additional_figures: []
+  skip_frameworks: [] #numpy_fw
+  output_folder: "data/08_print"
