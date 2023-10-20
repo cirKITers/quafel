@@ -41,10 +41,13 @@ poetry kedro run
 This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
 To enable this, you must run
 ```
-poetry run kedro run --pipeline pre
+poetry run kedro run --pipeline prepare
 ```
 which will generate a [Partitioned Dataset]() from which a parallel runner can spawn individual processes for each configuration defined by the above mentioned parameters.
 This dataset must be re-generated after tuning those parameters.
+
+**Note that you have to run the `prepare` pipeline each time you change the configuration!**
+
 After doing so, you can run
 ```
 poetry run kedro run --pipeline parallel --runner ParallelRunner
