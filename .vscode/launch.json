@@ -9,7 +9,9 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run"],
+            "args": [
+                "run"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -18,7 +20,11 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "prepare"],
+            "args": [
+                "run",
+                "--pipeline",
+                "prepare"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -27,7 +33,11 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "measure"],
+            "args": [
+                "run",
+                "--pipeline",
+                "measure"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -36,7 +46,14 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
+            "args": [
+                "run",
+                "--pipeline",
+                "measure",
+                "--runner",
+                "quafel.runner.DaskRunner",
+            ],
+            // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -45,7 +62,14 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "ctmeasure", "--runner", "ParallelRunner", "--async"],
+            "args": [
+                "run",
+                "--pipeline",
+                "ctmeasure",
+                "--runner",
+                "ParallelRunner",
+                "--async"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -64,7 +88,11 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "visualize"],
+            "args": [
+                "run",
+                "--pipeline",
+                "visualize"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -73,7 +101,11 @@
             "type": "python",
             "request": "launch",
             "module": "kedro",
-            "args": ["run", "--pipeline", "print_tests"],
+            "args": [
+                "run",
+                "--pipeline",
+                "print_tests"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
