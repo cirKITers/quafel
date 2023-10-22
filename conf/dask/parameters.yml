@@ -1,0 +1,8 @@
+dask_client: 
+  # parameters here are being passed as kwargs to https://distributed.dask.org/en/latest/api.html#client
+  address: 127.0.0.1:8786 # comment out this line if you want to spawn a dask cluster using the parameters below
+
+
+  # and https://distributed.dask.org/en/latest/api.html#cluster
+  # n_workers: 2 # dask-workers can also be started manually instead using 'poetry run dask-worker 127.0.0.1:8786'
+  # scheduler_port: 8786

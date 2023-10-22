@@ -48,6 +48,8 @@
             "module": "kedro",
             "args": [
                 "run",
+                "--env",
+                "dask",
                 "--pipeline",
                 "measure",
                 "--runner",
