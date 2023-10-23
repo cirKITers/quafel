@@ -154,15 +154,15 @@ class PipelineHooks:
 
     @hook_impl
     def on_pipeline_error(self, run_params: Dict[str, Any], pipeline, catalog):
-        tempFiles = glob.glob("data/02_intermediate/*.csv")
-        for f in tempFiles:
-            os.remove(f)
-        tempFiles = glob.glob("data/04_execution_results/*.csv")
-        for f in tempFiles:
-            os.remove(f)
-        tempFiles = glob.glob("data/05_execution_durations/*.csv")
-        for f in tempFiles:
-            os.remove(f)
+        # tempFiles = glob.glob("data/02_intermediate/*.csv")
+        # for f in tempFiles:
+        #     os.remove(f)
+        # tempFiles = glob.glob("data/04_execution_results/*.csv")
+        # for f in tempFiles:
+        #     os.remove(f)
+        # tempFiles = glob.glob("data/05_execution_durations/*.csv")
+        # for f in tempFiles:
+        #     os.remove(f)
         tempFiles = glob.glob("data/07_reporting/*.tmp")
         for f in tempFiles:
             os.remove(f)
