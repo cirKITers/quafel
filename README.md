@@ -14,6 +14,11 @@ poetry install --without dev
 ```
 There is a ```setup.sh``` script in the ```.vscode``` directory for convenience.
 
+If you want to go with Pip instead, run 
+```
+pip install -r src/requirements.in
+```
+
 ***
 
 :construction: only:
@@ -27,6 +32,15 @@ poetry run pytest
 poetry run mkdocs build
 ```
 Again, there is a ```setup_dev.sh``` script in the ```.vscode``` directory for convenience.
+
+With Pip the equivalent is
+```
+pip install -r src/requirements_dev.in
+pre-commit autoupdate
+pre-commit install
+pytest
+mkdocs build
+```
 
 ***
 
