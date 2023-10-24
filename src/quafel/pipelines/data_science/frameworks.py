@@ -77,7 +77,9 @@ class pennylane_fw:
                 "lightning.qubit", wires=range(self.n_qubits), shots=self.n_shots
             )
 
-        self.qml_qasm = qml.from_qasm(qasm_circuit)
+        # Pennylane does not support measurements at the moment
+        qasm_circuit_wo_measurement = re.sub(r"measure.*;\n", "", qasm_circuit)
+        self.qml_qasm = qml.from_qasm(qasm_circuit_wo_measurement)
 
         @qml.qnode(self.backend)
         def circuit():
