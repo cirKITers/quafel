@@ -96,7 +96,8 @@ class PipelineHooks:
                 os.remove(f)
 
         if run_params["pipeline_name"] == "prepare":
-            # Cleanup all previously generated temp files, we will generate them again below
+            # Cleanup all previously generated temp files,
+            # we will generate them again below
             tempFiles = glob.glob("data/07_reporting/*.tmp")
             for f in tempFiles:
                 os.remove(f)

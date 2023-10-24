@@ -53,7 +53,9 @@ def measure_execution_durations(
             execution_proc_durations.append(finish_proc - start_proc)
         except Exception as exp:
             log.error(
-                f"Error executing framework {framework_id} for experiment id {ident}: Execution failed in evaluation {e}: {exp}"
+                f"Error executing framework {framework_id} for experiment id {ident}: \
+                    Execution failed in evaluation {e}: \
+                        {exp}"
             )
             # mark the whole set invalid
             execution_results = [0 for _ in range(evaluations)]
