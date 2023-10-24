@@ -49,6 +49,7 @@ class PipelineHooks:
             # for f in tempFiles:
             #     os.remove(f)
 
+        # cleanup "results" if we are at the beginning our our experiment
         if (
             run_params["pipeline_name"] is None  # Running the Default pipeline
             or run_params["pipeline_name"] == "measure"
@@ -76,7 +77,11 @@ class PipelineHooks:
         #     or run_params["pipeline_name"] == "visualize"
         # ):
 
-        if run_params["pipeline_name"] != "prepare":
+        # only cleanup if the last (visualize) pipeline ran
+        if (
+            run_params["pipeline_name"] is None
+            or run_params["pipeline_name"] == "visualize"
+        ):
             tempFiles = glob.glob("data/02_intermediate/*.csv")
             for f in tempFiles:
                 os.remove(f)
@@ -86,13 +91,15 @@ class PipelineHooks:
             tempFiles = glob.glob("data/05_execution_durations/*.csv")
             for f in tempFiles:
                 os.remove(f)
-
-        # Cleanup all previously generated temp files, we will generate them again below
-        tempFiles = glob.glob("data/07_reporting/*.tmp")
-        for f in tempFiles:
-            os.remove(f)
+            tempFiles = glob.glob("data/07_reporting/*.tmp")
+            for f in tempFiles:
+                os.remove(f)
 
         if run_params["pipeline_name"] == "prepare":
+            # Cleanup all previously generated temp files, we will generate them again below
+            tempFiles = glob.glob("data/07_reporting/*.tmp")
+            for f in tempFiles:
+                os.remove(f)
             # ----------------------------------------------------------------
             # This section ensures that the reporting dictionary always contains the proper output data catalogs so that kedro-viz is happy
             # ----------------------------------------------------------------
