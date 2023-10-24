@@ -98,7 +98,7 @@ class pennylane_fw:
                 counts[bitstring] = 0
 
             else:
-                counts[bitstring] /= self.n_shots
+                counts[bitstring] = counts[bitstring] / self.n_shots
 
         return counts
 
