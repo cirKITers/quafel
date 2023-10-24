@@ -46,48 +46,74 @@
 
 #   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
+# Lower your expectations config even further
+
+data_generation:
+  seed: 1111
+
+  min_qubits: 1
+  max_qubits: 8
+  qubits_increment: 1
+  qubits_type: "linear"
+
+  min_depth: 1
+  max_depth: 8
+  depth_increment: 1
+  depth_type: "exp2"
+
+  min_shots: 8
+  max_shots: 12
+  shots_increment: 1
+  shots_type: "exp2"
+
+  skip_combinations: []
+
+  frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+
 # Testing configuration
 
 # data_generation:
 #   seed: 1111
 
 #   min_qubits: 1
-#   max_qubits: 14
+#   max_qubits: 3
 #   qubits_increment: 1
 #   qubits_type: "linear"
 
-#   min_depth: 0
-#   max_depth: 8
+#   min_depth: 1
+#   max_depth: 3
 #   depth_increment: 1
 #   depth_type: "exp2"
 
 #   min_shots: 8
-#   max_shots: 14
+#   max_shots: 10
 #   shots_increment: 1
 #   shots_type: "exp2"
 
 #   skip_combinations: []
 
-#   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+#   frameworks: ["pennylane_fw", "qiskit_fw", "cirq_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
-data_generation:
-  seed: 1111
+# Dummy configuration
 
-  min_qubits: 1
-  max_qubits: 4
-  qubits_increment: 1
-  qubits_type: "linear"
+# data_generation:
+#   seed: 1111
 
-  min_depth: 0
-  max_depth: 5
-  depth_increment: 1
-  depth_type: "exp2"
+#   min_qubits: 1
+#   max_qubits: 4
+#   qubits_increment: 1
+#   qubits_type: "linear"
 
-  min_shots: 0
-  max_shots: 5
-  shots_increment: 1
-  shots_type: "exp2"
+#   min_depth: 0
+#   max_depth: 5
+#   depth_increment: 1
+#   depth_type: "exp2"
 
-  skip_combinations: []
+#   min_shots: 0
+#   max_shots: 5
+#   shots_increment: 1
+#   shots_type: "exp2"
 
-  frameworks: ["test_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+#   skip_combinations: []
+
+#   frameworks: ["test_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
