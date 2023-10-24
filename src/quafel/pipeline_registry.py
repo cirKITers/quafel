@@ -50,13 +50,14 @@ def register_pipelines() -> Dict[str, Pipeline]:
         + ds_pipelines["pl_parallel_measure_execution_durations"]
         + viz_pipelines["pl_visualize_evaluations"],
         "prepare": dg_pipelines["pl_generate_evaluation_partitions"],
-        "measure": dg_pipelines["pl_generate_evaluation_partitions"]
-        + dg_pipelines[
+        "measure":
+        # dg_pipelines["pl_generate_evaluation_partitions"]
+        dg_pipelines[
             "pl_generate_qasm_circuits"
             # "pl_generate_qasm_circuits_splitted"
         ]
-        + ds_pipelines["pl_parallel_measure_execution_durations"]
-        + viz_pipelines["pl_visualize_evaluations"],
+        + ds_pipelines["pl_parallel_measure_execution_durations"],
+        # + viz_pipelines["pl_visualize_evaluations"],
         # ct measure is the same as the measure pipeline, but we need to tell the hooks that we don't want to delete the existing results
         "ctmeasure": dg_pipelines[
             "pl_generate_qasm_circuits"
