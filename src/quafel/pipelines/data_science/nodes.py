@@ -2,6 +2,9 @@ from . import frameworks as fw
 import time
 import pandas as pd
 from typing import Dict
+import logging
+
+log = logging.getLogger(__name__)
 
 # def execute_circuit(execute_method:callable, n_shots:int, **kwargs):
 #     result = execute_method(shots=n_shots, **kwargs)
@@ -38,14 +41,24 @@ def measure_execution_durations(
     execution_perf_durations = []
     execution_proc_durations = []
     execution_results = []
-    for eval in range(evaluations):
-        start_perf = time.perf_counter()
-        start_proc = time.process_time()
-        framework_instance.execute()
-        finish_perf = time.perf_counter()
-        finish_proc = time.process_time()
-        execution_perf_durations.append(finish_perf - start_perf)
-        execution_proc_durations.append(finish_proc - start_proc)
+
+    for e in range(evaluations):
+        try:
+            start_perf = time.perf_counter()
+            start_proc = time.process_time()
+            framework_instance.execute()
+            finish_perf = time.perf_counter()
+            finish_proc = time.process_time()
+            execution_perf_durations.append(finish_perf - start_perf)
+            execution_proc_durations.append(finish_proc - start_proc)
+        except Exception as exp:
+            log.error(
+                f"Error executing framework {framework_id} for experiment id {ident}: Execution failed in evaluation {e}: {exp}"
+            )
+            # mark the whole set invalid
+            execution_results = [0 for _ in range(evaluations)]
+            break
+
         execution_results.append(framework_instance.get_result())
 
     return {
