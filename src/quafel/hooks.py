@@ -54,7 +54,7 @@ class PipelineHooks:
         if (
             run_params["pipeline_name"] is None  # Running the Default pipeline
             or run_params["pipeline_name"] == "measure"
-            or run_params["pipeline_name"] == "prepare"
+            # or run_params["pipeline_name"] == "prepare"
         ):
             tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
