@@ -1,7 +1,7 @@
 import re
 
 import pennylane as qml
-
+import dask.array as da
 import qiskit
 import numpy as np
 from qiskit.quantum_info import Operator
@@ -44,7 +44,10 @@ class test_fw:
     def execute(self) -> None:
         if self.constant_sleep:
             if self.load:
-                sum(range(10**8))
+                # Following https://tutorial.dask.org/02_array.html#Dask-array-version
+                xd = da.random.normal(10, 0.1, size=(300, 300), chunks=(30, 30))
+                yd = xd.mean(axis=0)
+                yd.compute()
             else:
                 time.sleep(0.01)
         else:
