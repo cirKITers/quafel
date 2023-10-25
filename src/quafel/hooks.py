@@ -54,7 +54,7 @@ class PipelineHooks:
         if (
             run_params["pipeline_name"] is None  # Running the Default pipeline
             or run_params["pipeline_name"] == "measure"
-            # or run_params["pipeline_name"] == "prepare"
+            or run_params["pipeline_name"] == "prepare"
         ):
             tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
@@ -198,9 +198,7 @@ class DataCatalogHooks:
             # ------------------------------------------------------------------
 
             # partition loader
-            evaluation_partitions_name = (
-                f"evaluation_partition_{Path(partition).stem}"
-            )
+            evaluation_partitions_name = f"evaluation_partition_{Path(partition).stem}"
             input_dataset = CSVDataSet(filepath=partition)
             catalog.add(evaluation_partitions_name, input_dataset)
 
@@ -208,12 +206,13 @@ class DataCatalogHooks:
             # Create txt dataset from partitioned dataset for qasm circuits
             # ------------------------------------------------------------------
 
-            # partition loader
-            evaluation_partitions_name = (
-                f"qasm_circuit_{Path(partition).stem}"
-            )
-            input_dataset = TextDataSet(filepath=partition)
-            catalog.add(evaluation_partitions_name, input_dataset)
+            # qasm_circuits loader
+            qasm_circuits = partition.replace(
+                "02_intermediate", "03_qasm_circuits"
+            ).replace(".csv", ".txt")
+            qasm_circuits_name = f"qasm_circuit_{Path(qasm_circuits).stem}"
+            input_dataset = TextDataSet(filepath=qasm_circuits)
+            catalog.add(qasm_circuits_name, input_dataset)
 
             # ------------------------------------------------------------------
             # Create csv dataset from partitioned dataset for evaluation durations
