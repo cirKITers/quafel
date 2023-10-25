@@ -198,7 +198,7 @@ class DataCatalogHooks:
 
             # partition loader
             evaluation_partitions_name = (
-                f"data_generation.evaluation_partition_{Path(partition).stem}"
+                f"evaluation_partition_{Path(partition).stem}"
             )
             input_dataset = CSVDataSet(filepath=partition)
             catalog.add(evaluation_partitions_name, input_dataset)

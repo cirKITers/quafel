@@ -76,8 +76,9 @@ def create_pipeline(partitions, **kwargs) -> dict:
             ],
         ],
         inputs={
+            # note that this dataset is dynamically created in the hooks, so it is not directly available in the catalog
             **{
-                f"evaluation_partition_{i}": f"data_generation.evaluation_partition_{i}"
+                f"evaluation_partition_{i}": f"evaluation_partition_{i}"
                 for i in partitions
             },
         },
