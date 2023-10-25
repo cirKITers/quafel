@@ -205,7 +205,7 @@ class DataCatalogHooks:
             catalog.add(evaluation_partitions_name, input_dataset)
 
             # ------------------------------------------------------------------
-            # Create txt dataset from partitioned dataset for partitions
+            # Create txt dataset from partitioned dataset for qasm circuits
             # ------------------------------------------------------------------
 
             # partition loader
