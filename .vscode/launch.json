@@ -75,6 +75,19 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
+        {
+            "name": "Combine - SP",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": [
+                "run",
+                "--pipeline",
+                "combine"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
         // Multithreading disabled due to issue with qiskit
         // {
         //     "name": "Measure - MT",

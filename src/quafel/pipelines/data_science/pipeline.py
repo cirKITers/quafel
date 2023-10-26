@@ -8,7 +8,6 @@ from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
     aggregate_evaluations,
     combine_evaluations,
-    aggregate_partitions,
 )
 
 
@@ -111,7 +110,7 @@ def create_pipeline(partitions, **kwargs) -> dict:
     )
 
     return {
-        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations
-        + pl_aggregate_evaluations
-        + pl_combine_evaluations,
+        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations,
+        # + pl_aggregate_evaluations
+        "pl_combine_evaluations": pl_combine_evaluations,
     }
