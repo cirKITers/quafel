@@ -6,7 +6,6 @@ generated using Kedro 0.18.3
 from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
-    aggregate_evaluations,
     combine_evaluations,
 )
 
@@ -48,40 +47,6 @@ def create_pipeline(partitions, **kwargs) -> dict:
         namespace="data_science",
     )
 
-    pl_aggregate_evaluations = pipeline(
-        [
-            node(
-                func=aggregate_evaluations,
-                inputs=[f"execution_duration_{i}" for i in partitions],
-                outputs={
-                    "aggregated_evaluations": "execution_durations",
-                },
-                tags=["static"],
-                name=f"aggregate_durations",
-            ),
-            node(
-                func=aggregate_evaluations,
-                inputs=[f"execution_result_{i}" for i in partitions],
-                outputs={
-                    "aggregated_evaluations": "execution_results",
-                },
-                tags=["static"],
-                name=f"aggregate_results",
-            ),
-        ],
-        inputs={
-            **{
-                f"execution_duration_{i}": f"execution_duration_{i}" for i in partitions
-            },
-            **{f"execution_result_{i}": f"execution_result_{i}" for i in partitions},
-        },
-        outputs={
-            "execution_results": "execution_results",
-            "execution_durations": "execution_durations",
-        },
-        namespace="data_science",
-    )
-
     pl_combine_evaluations = pipeline(
         [
             node(
@@ -111,6 +76,5 @@ def create_pipeline(partitions, **kwargs) -> dict:
 
     return {
         "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations,
-        # + pl_aggregate_evaluations
         "pl_combine_evaluations": pl_combine_evaluations,
     }

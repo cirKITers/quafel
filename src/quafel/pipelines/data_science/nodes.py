@@ -6,20 +6,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-# def execute_circuit(execute_method:callable, n_shots:int, **kwargs):
-#     result = execute_method(shots=n_shots, **kwargs)
-#     return result
-
-
-def aggregate_evaluations(*args):
-    # aggregated_evaluations = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
-
-    aggregated_evaluations = pd.concat(args, axis=1)
-
-    return {
-        "aggregated_evaluations": aggregated_evaluations,
-    }
-
 
 def measure_execution_durations(
     evaluations: int,
@@ -72,12 +58,6 @@ def measure_execution_durations(
         ),
         "execution_result": pd.DataFrame({ident: execution_results}),
     }
-
-
-def aggregate_partitions(*args):
-    aggregated = pd.concat(args, axis=1)
-
-    return {"aggregated_partitions": aggregated}
 
 
 def combine_evaluations(
