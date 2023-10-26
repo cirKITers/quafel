@@ -54,8 +54,11 @@ class PipelineHooks:
         if (
             run_params["pipeline_name"] is None  # Running the Default pipeline
             or run_params["pipeline_name"] == "measure"
-            # or run_params["pipeline_name"] == "prepare"
+            or run_params["pipeline_name"] == "prepare"
         ):
+            tempFiles = glob.glob("data/03_qasm_circuits/*.txt")
+            for f in tempFiles:
+                os.remove(f)
             tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
                 os.remove(f)
@@ -84,6 +87,9 @@ class PipelineHooks:
             or run_params["pipeline_name"] == "visualize"
         ):
             tempFiles = glob.glob("data/02_intermediate/*.csv")
+            for f in tempFiles:
+                os.remove(f)
+            tempFiles = glob.glob("data/03_qasm_circuits/*.txt")
             for f in tempFiles:
                 os.remove(f)
             tempFiles = glob.glob("data/04_execution_results/*.csv")
