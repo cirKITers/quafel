@@ -18,10 +18,9 @@ def create_pipeline(partitions, **kwargs) -> dict:
                     func=measure_execution_durations,
                     inputs={
                         "evaluations": "params:evaluations",
-                        "qasm_circuit": f"qasm_circuit_{i}",
-                        "n_shots": f"n_shots_{i}",
-                        "framework_id": f"framework_{i}",
-                        f"{i}": "params:dummy",
+                        f"qasm_circuit_{i}": f"qasm_circuit_{i}",
+                        f"n_shots_{i}": f"n_shots_{i}",
+                        f"framework_id_{i}": f"framework_{i}",
                     },
                     outputs={
                         "execution_duration": f"execution_duration_{i}",

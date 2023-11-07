@@ -3,18 +3,25 @@ import time
 import pandas as pd
 from typing import Dict
 import logging
+import traceback
+import re
 
 log = logging.getLogger(__name__)
 
 
 def measure_execution_durations(
     evaluations: int,
-    qasm_circuit: any,
-    n_shots: int,
-    framework_id: str,
     **kwargs,
 ):
-    ident = int(list(kwargs.keys())[0])
+    ident = int(re.findall(r"\d+", list(kwargs.keys())[0])[-1])
+    for key, value in kwargs.items():
+        if key.startswith("framework_id"):
+            framework_id = value
+        elif key.startswith("qasm_circuit"):
+            qasm_circuit = value
+        elif key.startswith("n_shots"):
+            n_shots = value
+
     try:
         framework = getattr(fw, framework_id)
     except AttributeError:
@@ -37,11 +44,11 @@ def measure_execution_durations(
             finish_proc = time.process_time()
             execution_perf_durations.append(finish_perf - start_perf)
             execution_proc_durations.append(finish_proc - start_proc)
-        except Exception as exp:
+        except Exception:
             log.error(
                 f"Error executing framework {framework_id} for experiment id {ident}: \
                     Execution failed in evaluation {e}: \
-                        {exp}"
+                        {traceback.format_exc()}"
             )
             # mark the whole set invalid
             execution_results = [0 for _ in range(evaluations)]
