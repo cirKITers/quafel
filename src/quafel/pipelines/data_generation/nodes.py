@@ -140,7 +140,7 @@ def _random_circuit(
         gates.extend(gates_4q)
     gates = np.array(
         gates,
-        dtype=[("class", object), ("num_qubits", np.int64), ("num_params", np.int64)],
+        dtype=[("class", object), ("num_qubits", np.int16), ("num_params", np.int32)],
     )
     gates_1q = np.array(gates_1q, dtype=gates.dtype)
 
@@ -164,7 +164,7 @@ def _random_circuit(
         # This reliably draws too much randomness, but it's less expensive than looping over more
         # calls to the rng. After, trim it down by finding the point when we've used all the qubits.
         gate_specs = rng.choice(gates, size=len(qubits))
-        cumulative_qubits = np.cumsum(gate_specs["num_qubits"], dtype=np.int64)
+        cumulative_qubits = np.cumsum(gate_specs["num_qubits"], dtype=np.int16)
         # Efficiently find the point in the list where the total gates would use as many as
         # possible of, but not more than, the number of qubits in the layer.  If there's slack, fill
         # it with 1q gates.
@@ -177,8 +177,8 @@ def _random_circuit(
         # For efficiency in the Python loop, this uses Numpy vectorisation to pre-calculate the
         # indices into the lists of qubits and parameters for every gate, and then suitably
         # randomises those lists.
-        q_indices = np.empty(len(gate_specs) + 1, dtype=np.int64)
-        p_indices = np.empty(len(gate_specs) + 1, dtype=np.int64)
+        q_indices = np.empty(len(gate_specs) + 1, dtype=np.int16)
+        p_indices = np.empty(len(gate_specs) + 1, dtype=np.int16)
         q_indices[0] = p_indices[0] = 0
         np.cumsum(gate_specs["num_qubits"], out=q_indices[1:])
         np.cumsum(gate_specs["num_params"], out=p_indices[1:])
