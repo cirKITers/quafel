@@ -10,7 +10,6 @@ from distributed import Client, as_completed, worker_client
 from kedro.framework.hooks.manager import (
     _create_hook_manager,
     _register_hooks,
-    _register_hooks_setuptools,
 )
 from kedro.framework.project import settings
 from kedro.io import AbstractDataset, DataCatalog
@@ -114,7 +113,6 @@ class DaskRunner(AbstractRunner):
         """
         hook_manager = _create_hook_manager()
         _register_hooks(hook_manager, settings.HOOKS)
-        _register_hooks_setuptools(hook_manager, settings.DISABLE_HOOKS_FOR_PLUGINS)
 
         return run_node(node, catalog, hook_manager, is_async, session_id)
 
