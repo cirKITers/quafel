@@ -42,7 +42,7 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - MP",
+            "name": "Measure - MP - Dask",
             "type": "python",
             "request": "launch",
             "module": "kedro",
@@ -54,6 +54,22 @@
                 "measure",
                 "--runner",
                 "quafel.runner.DaskRunner",
+            ],
+            // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Measure - MP - Custom",
+            "type": "python",
+            "request": "launch",
+            "module": "kedro",
+            "args": [
+                "run",
+                "--pipeline",
+                "measure",
+                "--runner",
+                "quafel.runner.MyParallelRunner",
             ],
             // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
             "console": "integratedTerminal",
