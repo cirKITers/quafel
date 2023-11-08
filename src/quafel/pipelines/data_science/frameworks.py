@@ -297,6 +297,7 @@ class cirq_fw:
 
 class qibo_fw:
     def __init__(self, qasm_circuit, n_shots):
+        qibo.set_backend("numpy")
         self.backend = qibo.get_backend()
         self.n_shots = n_shots
 
