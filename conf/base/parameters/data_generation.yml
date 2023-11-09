@@ -1,26 +1,26 @@
 # Final configuration
 
-# data_generation:
-#   seed: 1111
+data_generation:
+  seed: 1111
 
-#   min_qubits: 1
-#   max_qubits: 20
-#   qubits_increment: 1
-#   qubits_type: "linear"
+  min_qubits: 1
+  max_qubits: 16
+  qubits_increment: 1
+  qubits_type: "linear"
 
-#   min_depth: 1
-#   max_depth: 8
-#   depth_increment: 1
-#   depth_type: "exp2"
+  min_depth: 1
+  max_depth: 10
+  depth_increment: 1
+  depth_type: "exp2"
 
-#   min_shots: 8
-#   max_shots: 16
-#   shots_increment: 1
-#   shots_type: "exp2"
+  min_shots: 8
+  max_shots: 12
+  shots_increment: 1
+  shots_type: "exp2"
 
-#   skip_combinations: []
+  skip_combinations: []
 
-#   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+  frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
 # Lower your expectations config
 
