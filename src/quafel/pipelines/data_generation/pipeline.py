@@ -55,6 +55,12 @@ def create_pipeline(partitions, **kwargs) -> dict:
         },
     )
 
+    pl_generate_evaluation_partitions = pipeline(
+        [nd_generate_evaluation_matrix, nd_generate_evaluation_partitions],
+        outputs={"evaluation_partitions": "evaluation_partitions"},
+        namespace="data_generation",
+    )
+
     pl_generate_qasm_circuits_splitted = pipeline(
         [
             *[
@@ -76,8 +82,9 @@ def create_pipeline(partitions, **kwargs) -> dict:
             ],
         ],
         inputs={
+            # note that this dataset is dynamically created in the hooks, so it is not directly available in the catalog
             **{
-                f"evaluation_partition_{i}": f"data_generation.evaluation_partition_{i}"
+                f"evaluation_partition_{i}": f"evaluation_partition_{i}"
                 for i in partitions
             },
         },
@@ -115,11 +122,7 @@ def create_pipeline(partitions, **kwargs) -> dict:
         namespace="data_generation",
     )
 
-    pl_generate_evaluation_partitions = pipeline(
-        [nd_generate_evaluation_matrix, nd_generate_evaluation_partitions],
-        outputs={"evaluation_partitions": "evaluation_partitions"},
-        namespace="data_generation",
-    )
+    
 
     return {
         "pl_generate_evaluation_partitions": pl_generate_evaluation_partitions,

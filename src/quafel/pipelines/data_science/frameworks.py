@@ -1,7 +1,7 @@
 import re
 
 import pennylane as qml
-
+import dask.array as da
 import qiskit
 import numpy as np
 from qiskit.quantum_info import Operator
@@ -44,7 +44,10 @@ class test_fw:
     def execute(self) -> None:
         if self.constant_sleep:
             if self.load:
-                sum(range(10**8))
+                # Following https://tutorial.dask.org/02_array.html#Dask-array-version
+                xd = da.random.normal(10, 0.1, size=(300, 300), chunks=(30, 30))
+                yd = xd.mean(axis=0)
+                yd.compute()
             else:
                 time.sleep(0.01)
         else:
@@ -77,7 +80,9 @@ class pennylane_fw:
                 "lightning.qubit", wires=range(self.n_qubits), shots=self.n_shots
             )
 
-        self.qml_qasm = qml.from_qasm(qasm_circuit)
+        # Pennylane does not support measurements at the moment
+        qasm_circuit_wo_measurement = re.sub(r"measure.*;\n", "", qasm_circuit)
+        self.qml_qasm = qml.from_qasm(qasm_circuit_wo_measurement)
 
         @qml.qnode(self.backend)
         def circuit():
@@ -98,7 +103,7 @@ class pennylane_fw:
                 counts[bitstring] = 0
 
             else:
-                counts[bitstring] /= self.n_shots
+                counts[bitstring] = counts[bitstring] / self.n_shots
 
         return counts
 
@@ -292,6 +297,7 @@ class cirq_fw:
 
 class qibo_fw:
     def __init__(self, qasm_circuit, n_shots):
+        qibo.set_backend("numpy")
         self.backend = qibo.get_backend()
         self.n_shots = n_shots
 

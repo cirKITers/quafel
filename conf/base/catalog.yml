@@ -20,6 +20,15 @@ evaluation_partitions: # example to save results to multiple partitions
   path: data/02_intermediate/
   filename_suffix: ".csv"
 
+qasm_circuits: # example to save results to multiple partitions
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    # save_args:
+    #   index: False
+  path: data/03_qasm_circuits/
+  filename_suffix: ".txt"
+
 execution_results: # example to save results to multiple partitions
   type: PartitionedDataSet
   dataset:

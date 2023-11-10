@@ -14,6 +14,11 @@ poetry install --without dev
 ```
 There is a ```setup.sh``` script in the ```.vscode``` directory for convenience.
 
+If you want to go with Pip instead, run 
+```
+pip install -r src/requirements.in
+```
+
 ***
 
 :construction: only:
@@ -28,37 +33,58 @@ poetry run mkdocs build
 ```
 Again, there is a ```setup_dev.sh``` script in the ```.vscode``` directory for convenience.
 
+With Pip the equivalent is
+```
+pip install -r src/requirements_dev.in
+pre-commit autoupdate
+pre-commit install
+pytest
+mkdocs build
+```
+
 ***
 
 ## :rocket: Usage
 
 Without any configuration needed, you can execute
 ```
+poetry kedro run --pipeline "prepare"
+```
+followed by
+```
 poetry kedro run
 ```
 (or omit poetry if you're using classical venvs) and a default pipeline should run.
 
-This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
-To enable this, you must run
-```
-poetry run kedro run --pipeline prepare
-```
-which will generate a [Partitioned Dataset]() from which a parallel runner can spawn individual processes for each configuration defined by the above mentioned parameters.
-This dataset must be re-generated after tuning those parameters.
+Note that is required to always run the "prepare" pipeline in advance to any actual processing pipeline.
+This is because of the current implementation relies on dynamically created nodes that are depending on the configuration and therefore requiring two separate pipeline executions.
 
-**Note that you have to run the `prepare` pipeline each time you change the configuration!**
+In summary, the following pipelines exist:
+- "prepare" : generates all possible combinations of configurations based on the current parameter set
+- "measure" : performs the actual time measurement by executing experiments for each of the previously generated configuration
+- "ctmeasure" : continous a previous time measurement
+- "visualize" : gathers all the experiment results and generates some nice plots
 
-After doing so, you can run
+The "default" pipeline covers "measure" and "visualize".
+If you want to run them separately execute
 ```
-poetry run kedro run --pipeline parallel --runner ParallelRunner
+poetry kedro run --pipeline "measure"
+```
+and
+```
+poetry kedro run --pipeline "visualize"
+```
+after running the "prepare" pipeline.
+
+This project can take advantage of multiprocessing using [Dask](dask.org/) to evaluate numerous combinations of *qubits*, *depths* and *shots*.
+To enable this, you can run
+```
+poetry run kedro run --pipeline "measure" --env dask --runner quafel.runner.DaskRunner
 ```
 which will calculate the duration and result for each configuration.
+See [Dask Setup](#runner-dask-setup) for detail on this.
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
-As the files are just named by ids, you might want to execute
-```
-poetry run kedro run --pipeline visualize
-```
-to view those evaluation results.
+
 
 ***
 :construction: only:
@@ -136,3 +162,15 @@ This dictionary is required to contain all combinations of bitstrings that resul
 ```python
 bitstrings = [format(i, f"0{self.n_qubits}b") for i in range (2**self.n_qubits)]
 ```
+
+## :runner: Dask Setup
+
+When running
+```
+poetry run kedro run --pipeline "measure" --env dask --runner quafel.runner.DaskRunner
+```
+without any additional configuration, Kedro creates Dask scheduler and also four worker nodes.
+This behavior can be controlled in [conf/dask/parameters.yml](conf/dask/parameters.yml).
+Setting the address parameter will cause Kedro trying to connect to an existing scheduler at the specified address.
+You create scheduler and $N$ workers by running `.vscode/spawn_n_workers.sh -N` from the root folder of the project.
+Alternatively set `n_workers` in [conf/dask/parameters.yml](conf/dask/parameters.yml) and comment out `address` to specify the number of workers that kedro should spawn.

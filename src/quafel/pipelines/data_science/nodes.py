@@ -2,30 +2,26 @@ from . import frameworks as fw
 import time
 import pandas as pd
 from typing import Dict
+import logging
+import traceback
+import re
 
-# def execute_circuit(execute_method:callable, n_shots:int, **kwargs):
-#     result = execute_method(shots=n_shots, **kwargs)
-#     return result
-
-
-def aggregate_evaluations(*args):
-    # aggregated_evaluations = pd.DataFrame({f"{i}": eval for i, eval in enumerate(args)})
-
-    aggregated_evaluations = pd.concat(args, axis=1)
-
-    return {
-        "aggregated_evaluations": aggregated_evaluations,
-    }
+log = logging.getLogger(__name__)
 
 
 def measure_execution_durations(
     evaluations: int,
-    qasm_circuit: any,
-    n_shots: int,
-    framework_id: str,
     **kwargs,
 ):
-    ident = int(list(kwargs.keys())[0])
+    ident = int(re.findall(r"\d+", list(kwargs.keys())[0])[-1])
+    for key, value in kwargs.items():
+        if key.startswith("framework_id"):
+            framework_id = value
+        elif key.startswith("qasm_circuit"):
+            qasm_circuit = value
+        elif key.startswith("n_shots"):
+            n_shots = value
+
     try:
         framework = getattr(fw, framework_id)
     except AttributeError:
@@ -33,19 +29,31 @@ def measure_execution_durations(
             f"Framework identifier does not match one of the existing frameworks. Existing frameworks are {fw}"
         )
 
-    framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=n_shots)
+    framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=int(n_shots))
 
     execution_perf_durations = []
     execution_proc_durations = []
     execution_results = []
-    for eval in range(evaluations):
-        start_perf = time.perf_counter()
-        start_proc = time.process_time()
-        framework_instance.execute()
-        finish_perf = time.perf_counter()
-        finish_proc = time.process_time()
-        execution_perf_durations.append(finish_perf - start_perf)
-        execution_proc_durations.append(finish_proc - start_proc)
+
+    for e in range(evaluations):
+        try:
+            start_perf = time.perf_counter()
+            start_proc = time.process_time()
+            framework_instance.execute()
+            finish_perf = time.perf_counter()
+            finish_proc = time.process_time()
+            execution_perf_durations.append(finish_perf - start_perf)
+            execution_proc_durations.append(finish_proc - start_proc)
+        except Exception:
+            log.error(
+                f"Error executing framework {framework_id} for experiment id {ident}: \
+                    Execution failed in evaluation {e}: \
+                        {traceback.format_exc()}"
+            )
+            # mark the whole set invalid
+            execution_results = [0 for _ in range(evaluations)]
+            break
+
         execution_results.append(framework_instance.get_result())
 
     return {
@@ -57,12 +65,6 @@ def measure_execution_durations(
         ),
         "execution_result": pd.DataFrame({ident: execution_results}),
     }
-
-
-def aggregate_partitions(*args):
-    aggregated = pd.concat(args, axis=1)
-
-    return {"aggregated_partitions": aggregated}
 
 
 def combine_evaluations(
@@ -81,7 +83,9 @@ def combine_evaluations(
         execution_durations.items(),
         execution_results.items(),
     ):
-        assert (partition_id == duration_id) and (partition_id == result_id)
+        assert (partition_id == duration_id) and (
+            partition_id == result_id
+        ), "Partition identifiers do not match duration and result identifiers."
         partition_data = partition_load_func()
         duration_data = duration_load_func()
         result_data = result_load_func()

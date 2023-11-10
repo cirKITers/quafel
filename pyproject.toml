@@ -14,9 +14,10 @@ cirq = "^1.2.0"
 qibo = "^0.2.1"
 kedro-viz = "6.6.0"
 pennylane-qiskit = "^0.32.0"
-qibojit = "^0.1.0"
 qulacs = "^0.6.2"
 kaleido = "0.2.1"
+distributed = "^2023.10.0"
+bokeh = "^3.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"

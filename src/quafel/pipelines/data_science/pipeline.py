@@ -6,9 +6,7 @@ generated using Kedro 0.18.3
 from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
-    aggregate_evaluations,
     combine_evaluations,
-    aggregate_partitions,
 )
 
 
@@ -20,10 +18,9 @@ def create_pipeline(partitions, **kwargs) -> dict:
                     func=measure_execution_durations,
                     inputs={
                         "evaluations": "params:evaluations",
-                        "qasm_circuit": f"qasm_circuit_{i}",
-                        "n_shots": f"n_shots_{i}",
-                        "framework_id": f"framework_{i}",
-                        f"{i}": "params:dummy",
+                        f"qasm_circuit_{i}": f"qasm_circuit_{i}",
+                        f"n_shots_{i}": f"n_shots_{i}",
+                        f"framework_id_{i}": f"framework_{i}",
                     },
                     outputs={
                         "execution_duration": f"execution_duration_{i}",
@@ -45,40 +42,6 @@ def create_pipeline(partitions, **kwargs) -> dict:
                 f"execution_duration_{i}": f"execution_duration_{i}" for i in partitions
             },
             **{f"execution_result_{i}": f"execution_result_{i}" for i in partitions},
-        },
-        namespace="data_science",
-    )
-
-    pl_aggregate_evaluations = pipeline(
-        [
-            node(
-                func=aggregate_evaluations,
-                inputs=[f"execution_duration_{i}" for i in partitions],
-                outputs={
-                    "aggregated_evaluations": "execution_durations",
-                },
-                tags=["static"],
-                name=f"aggregate_durations",
-            ),
-            node(
-                func=aggregate_evaluations,
-                inputs=[f"execution_result_{i}" for i in partitions],
-                outputs={
-                    "aggregated_evaluations": "execution_results",
-                },
-                tags=["static"],
-                name=f"aggregate_results",
-            ),
-        ],
-        inputs={
-            **{
-                f"execution_duration_{i}": f"execution_duration_{i}" for i in partitions
-            },
-            **{f"execution_result_{i}": f"execution_result_{i}" for i in partitions},
-        },
-        outputs={
-            "execution_results": "execution_results",
-            "execution_durations": "execution_durations",
         },
         namespace="data_science",
     )
@@ -111,7 +74,6 @@ def create_pipeline(partitions, **kwargs) -> dict:
     )
 
     return {
-        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations
-        + pl_aggregate_evaluations
-        + pl_combine_evaluations,
+        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations,
+        "pl_combine_evaluations": pl_combine_evaluations,
     }

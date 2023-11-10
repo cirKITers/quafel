@@ -1,4 +1,5 @@
 from kedro.extras.datasets.pandas import CSVDataSet
+from kedro.extras.datasets.text import TextDataSet
 from kedro.extras.datasets.plotly import JSONDataSet
 from kedro.io import Version
 from kedro.framework.hooks import hook_impl
@@ -49,11 +50,15 @@ class PipelineHooks:
             # for f in tempFiles:
             #     os.remove(f)
 
+        # cleanup "results" if we are at the beginning our our experiment
         if (
             run_params["pipeline_name"] is None  # Running the Default pipeline
             or run_params["pipeline_name"] == "measure"
             or run_params["pipeline_name"] == "prepare"
         ):
+            tempFiles = glob.glob("data/03_qasm_circuits/*.txt")
+            for f in tempFiles:
+                os.remove(f)
             tempFiles = glob.glob("data/04_execution_results/*.csv")
             for f in tempFiles:
                 os.remove(f)
@@ -76,8 +81,15 @@ class PipelineHooks:
         #     or run_params["pipeline_name"] == "visualize"
         # ):
 
-        if run_params["pipeline_name"] != "prepare":
+        # only cleanup if the last (visualize) pipeline ran
+        if (
+            run_params["pipeline_name"] is None
+            or run_params["pipeline_name"] == "visualize"
+        ):
             tempFiles = glob.glob("data/02_intermediate/*.csv")
+            for f in tempFiles:
+                os.remove(f)
+            tempFiles = glob.glob("data/03_qasm_circuits/*.txt")
             for f in tempFiles:
                 os.remove(f)
             tempFiles = glob.glob("data/04_execution_results/*.csv")
@@ -86,13 +98,16 @@ class PipelineHooks:
             tempFiles = glob.glob("data/05_execution_durations/*.csv")
             for f in tempFiles:
                 os.remove(f)
-
-        # Cleanup all previously generated temp files, we will generate them again below
-        tempFiles = glob.glob("data/07_reporting/*.tmp")
-        for f in tempFiles:
-            os.remove(f)
+            tempFiles = glob.glob("data/07_reporting/*.tmp")
+            for f in tempFiles:
+                os.remove(f)
 
         if run_params["pipeline_name"] == "prepare":
+            # Cleanup all previously generated temp files,
+            # we will generate them again below
+            tempFiles = glob.glob("data/07_reporting/*.tmp")
+            for f in tempFiles:
+                os.remove(f)
             # ----------------------------------------------------------------
             # This section ensures that the reporting dictionary always contains the proper output data catalogs so that kedro-viz is happy
             # ----------------------------------------------------------------
@@ -154,15 +169,15 @@ class PipelineHooks:
 
     @hook_impl
     def on_pipeline_error(self, run_params: Dict[str, Any], pipeline, catalog):
-        tempFiles = glob.glob("data/02_intermediate/*.csv")
-        for f in tempFiles:
-            os.remove(f)
-        tempFiles = glob.glob("data/04_execution_results/*.csv")
-        for f in tempFiles:
-            os.remove(f)
-        tempFiles = glob.glob("data/05_execution_durations/*.csv")
-        for f in tempFiles:
-            os.remove(f)
+        # tempFiles = glob.glob("data/02_intermediate/*.csv")
+        # for f in tempFiles:
+        #     os.remove(f)
+        # tempFiles = glob.glob("data/04_execution_results/*.csv")
+        # for f in tempFiles:
+        #     os.remove(f)
+        # tempFiles = glob.glob("data/05_execution_durations/*.csv")
+        # for f in tempFiles:
+        #     os.remove(f)
         tempFiles = glob.glob("data/07_reporting/*.tmp")
         for f in tempFiles:
             os.remove(f)
@@ -189,11 +204,21 @@ class DataCatalogHooks:
             # ------------------------------------------------------------------
 
             # partition loader
-            evaluation_partitions_name = (
-                f"data_generation.evaluation_partition_{Path(partition).stem}"
-            )
+            evaluation_partitions_name = f"evaluation_partition_{Path(partition).stem}"
             input_dataset = CSVDataSet(filepath=partition)
             catalog.add(evaluation_partitions_name, input_dataset)
+
+            # ------------------------------------------------------------------
+            # Create txt dataset from partitioned dataset for qasm circuits
+            # ------------------------------------------------------------------
+
+            # qasm_circuits loader
+            qasm_circuits = partition.replace(
+                "02_intermediate", "03_qasm_circuits"
+            ).replace(".csv", ".txt")
+            qasm_circuits_name = f"qasm_circuit_{Path(qasm_circuits).stem}"
+            input_dataset = TextDataSet(filepath=qasm_circuits)
+            catalog.add(qasm_circuits_name, input_dataset)
 
             # ------------------------------------------------------------------
             # Create csv dataset from partitioned dataset for evaluation durations
