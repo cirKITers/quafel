@@ -289,11 +289,11 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 y=duration_sorted_by_depth["depth"].astype(int),
                 z=duration_mean,
                 z_title=f"Time ({si_time})",
-                x_title="Num. of Shots",
+                x_title="# of Shots",
                 log_x=True,
                 y_title="Circuit Depth",
                 log_y=True,
-                plot_title=f"{framework_name} @ {q} Qubits: Circuit Depth and Num. of Shots",
+                plot_title=f"{framework_name} @ {q} Qubits: Circuit Depth and # of Shots",
             )
 
     return figures
@@ -331,11 +331,11 @@ def shots_depths_viz(evaluations_combined: Dict):
                 y=duration_sorted_by_qubit["qubits"].astype(int),
                 z=duration_mean,
                 z_title=f"Time ({si_time})",
-                x_title="Num. of Shots",
+                x_title="# of Shots",
                 log_x=True,
-                y_title="Num. of Qubits",
+                y_title="# of Qubits",
                 log_y=False,
-                plot_title=f"{framework_name} @ Circuit Depth {d}: Num. of qubits and num. of Shots",
+                plot_title=f"{framework_name} @ Circuit Depth {d}: # of qubits and # of Shots",
             )
 
     return figures
@@ -369,11 +369,11 @@ def depth_qubits_viz(evaluations_combined: Dict):
                 y=duration_sorted_by_depth["depth"].astype(int),
                 z=duration_mean,
                 z_title=f"Time ({si_time})",
-                x_title="Num. of Qubits",
+                x_title="# of Qubits",
                 log_x=False,
                 y_title="Circuit Depth",
                 log_y=True,
-                plot_title=f"{framework_name} @ {s} Shots: Circuit Depth and num. of Qubits",
+                plot_title=f"{framework_name} @ {s} Shots: Circuit Depth and # of Qubits",
             )
 
     return figures
@@ -433,11 +433,11 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y=durations_mean,
                     y_min=durations_min,
                     y_max=durations_max,
-                    x_title="Num. of Qubits",
+                    x_title="# of Qubits",
                     log_x=False,
                     y_title=f"Time ({si_time})",
                     log_y=True,
-                    plot_title=f"Duration per Framework over num. of Qubits @ {s} Shots, Circuit Depth {d}",
+                    plot_title=f"Duration per Framework over # of Qubits @ {s} Shots, Circuit Depth {d}",
                 )
 
     return figures
@@ -497,11 +497,11 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y=durations_mean,
                     y_min=durations_min,
                     y_max=durations_max,
-                    x_title="Num. of Shots",
+                    x_title="# of Shots",
                     log_x=True,
                     y_title=f"Time ({si_time})",
                     log_y=True,
-                    plot_title=f"Duration per Framework over num. of Shots @ {q} Qubits, Circuit Depth {d}",
+                    plot_title=f"Duration per Framework over # of Shots @ {q} Qubits, Circuit Depth {d}",
                 )
 
     return figures
