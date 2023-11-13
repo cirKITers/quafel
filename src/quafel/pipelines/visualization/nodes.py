@@ -378,7 +378,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         showgrid=design.showgrid,
                     ),
                     title=dict(
-                        text=f"Framework simulation duration over num. of qubits ({s} shots, circuit depth {d})"
+                        text=f"Duration per Framework over num. of Qubits @ {s} Shots, Circuit Depth {d}"
                         if design.print_figure_title
                         else "",
                         font=dict(
@@ -494,7 +494,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         showgrid=design.showgrid,
                     ),
                     title=dict(
-                        text=f"Framework simulation duration over num. of shots ({q} qubits, circuit depth {d})"
+                        text=f"Duration per Framework over num. of Shots @ {q} Qubits, Circuit Depth {d}"
                         if design.print_figure_title
                         else "",
                         font=dict(
@@ -610,7 +610,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                         type=design.time_tick_type,
                     ),
                     title=dict(
-                        text=f"Framework simulation duration over circuit depth ({s} shots, {q} qubits)"
+                        text=f"Duration per Framework over Circuit Depth @ {s} Shots, {q} Qubits"
                         if design.print_figure_title
                         else "",
                         font=dict(
