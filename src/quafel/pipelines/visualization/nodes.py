@@ -30,26 +30,36 @@ class design:
 
     seq_main = px.colors.sequential.Viridis  # pastel1
 
+    seq_main_log = lambda N: [
+        [1 / 10**i if i < N - 1 else 0, design.seq_main[i]]
+        for i in reversed(range(min(N, len(design.seq_main))))
+    ]
+    tickvals_0 = 0
+    tickvals_log = lambda N: [
+        10**i if i > 0 else 0 for i in range(min(N, len(design.seq_main)))
+    ]
+
     print_figure_title = False
 
     title_font_size = 18
     legend_font_size = 16
 
-    legend_x_pos = 0
-    legend_y_pos = 1
-
     scatter_legend = dict(
-        x=legend_x_pos,
-        y=legend_y_pos,
-        orientation="h",
+        # x=1,
+        # y=1,
+        orientation="v",
         traceorder="normal",
         font=dict(
             size=legend_font_size,
         ),
+        # yanchor="top",
+        # xanchor="left",
     )
     base_theme = "simple_white"
 
-    include_framework_term = False
+    include_framework_term = (
+        False  # Set to true to get e.g. 'Framework Pennylane' instead of 'Pennylane'
+    )
 
     qubits_tickangle = 0
     depth_tickangle = 0
@@ -64,6 +74,10 @@ class design:
     depth_tick_mode = "array"  # array
     depth_tick0 = None
     depth_dtick = None  # np.log10(2)
+
+    scatter_mode_c = "lines+markers"
+    scatter_mode_hl = "lines"
+    marker_color = dict(color="#444")
 
 
 def rgb_to_rgba(rgb_value, alpha):
@@ -166,6 +180,86 @@ def heatmap_viz(x, y, z, z_title, x_title, y_title, plot_title):
         ),
     )
     return fig
+
+
+def scatter_viz(
+    fig,
+    name,
+    main_color_sel,
+    sec_color_sel,
+    x,
+    y,
+    y_max,
+    y_min,
+    x_title,
+    y_title,
+    plot_title,
+):
+    fig.add_trace(
+        go.Scatter(
+            name=f"{name}",
+            x=x,
+            y=y,
+            mode=design.scatter_mode_c,
+            line=dict(color=main_color_sel),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            name=f"{name} - High",
+            x=x,
+            y=y_max,
+            mode=design.scatter_mode_hl,
+            marker=design.marker_color,
+            line=dict(width=0),
+            showlegend=False,
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            name=f"{name} - Low",
+            x=x,
+            y=y_min,
+            marker=design.marker_color,
+            line=dict(width=0),
+            mode=design.scatter_mode_hl,
+            fillcolor=sec_color_sel,
+            fill="tonexty",
+            showlegend=False,
+        )
+    )
+    fig.update_layout(
+        xaxis=dict(
+            type=design.qubits_tick_type,
+            tickmode="array",
+            tickvals=x,
+            # ticktext=[
+            #     f"2^{i}"
+            #     for i in duration_sorted_by_shots["qubits"].astype(int)
+            # ],
+            tickangle=design.qubits_tickangle,
+            title=x_title,
+            showgrid=design.showgrid,
+        ),
+        yaxis=dict(
+            title=y_title,
+            type=design.time_tick_type,
+            dtick=design.time_dtick,
+            showgrid=design.showgrid,
+        ),
+        title=dict(
+            text=plot_title if design.print_figure_title else "",
+            font=dict(
+                size=design.title_font_size,
+            ),
+        ),
+        hovermode="x",
+        font=dict(
+            size=design.legend_font_size,
+        ),
+        legend=design.scatter_legend,
+        template=design.base_theme,
+    )
 
 
 def shots_qubits_viz(evaluations_combined: Dict):
@@ -325,72 +419,18 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 if f"shots_{s}_depth_{d}" not in figures:
                     figures[f"shots_{s}_depth_{d}"] = go.Figure()
 
-                figures[f"shots_{s}_depth_{d}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name}",
-                        x=duration_sorted_by_qubit["qubits"],
-                        y=durations_mean,
-                        mode=design.scatter_mode_c,
-                        line=dict(color=main_color_sel),
-                    )
-                )
-                figures[f"shots_{s}_depth_{d}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name} - High",
-                        x=duration_sorted_by_qubit["qubits"].astype(int),
-                        y=durations_max,
-                        mode=design.scatter_mode_hl,
-                        marker=design.marker_color,
-                        line=dict(width=0),
-                        showlegend=False,
-                    )
-                )
-                figures[f"shots_{s}_depth_{d}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name} - Low",
-                        x=duration_sorted_by_qubit["qubits"].astype(int),
-                        y=durations_min,
-                        marker=design.marker_color,
-                        line=dict(width=0),
-                        mode=design.scatter_mode_hl,
-                        fillcolor=sec_color_sel,
-                        fill="tonexty",
-                        showlegend=False,
-                    )
-                )
-                figures[f"shots_{s}_depth_{d}"].update_layout(
-                    xaxis=dict(
-                        type=design.qubits_tick_type,
-                        tickmode="array",
-                        tickvals=duration_sorted_by_qubit["qubits"].astype(int),
-                        # ticktext=[
-                        #     f"2^{i}"
-                        #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                        # ],
-                        tickangle=design.qubits_tickangle,
-                        title="Num. of Qubits",
-                        showgrid=design.showgrid,
-                    ),
-                    yaxis=dict(
-                        title=f"Time ({si_time})",
-                        type=design.time_tick_type,
-                        dtick=design.time_dtick,
-                        showgrid=design.showgrid,
-                    ),
-                    title=dict(
-                        text=f"Duration per Framework over num. of Qubits @ {s} Shots, Circuit Depth {d}"
-                        if design.print_figure_title
-                        else "",
-                        font=dict(
-                            size=design.title_font_size,
-                        ),
-                    ),
-                    hovermode="x",
-                    font=dict(
-                        size=design.legend_font_size,
-                    ),
-                    legend=design.scatter_legend,
-                    template=design.base_theme,
+                scatter_viz(
+                    fig=figures[f"shots_{s}_depth_{d}"],
+                    name=f"{framework_name}",
+                    main_color_sel=main_color_sel,
+                    sec_color_sel=sec_color_sel,
+                    x=duration_sorted_by_qubit["qubits"],
+                    y=durations_mean,
+                    y_min=durations_min,
+                    y_max=durations_max,
+                    x_title="Num. of Qubits",
+                    y_title=f"Time ({si_time})",
+                    plot_title=f"Duration per Framework over num. of Qubits @ {s} Shots, Circuit Depth {d}",
                 )
 
     return figures
@@ -441,72 +481,18 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 if f"qubits_{q}_depth_{d}" not in figures:
                     figures[f"qubits_{q}_depth_{d}"] = go.Figure()
 
-                figures[f"qubits_{q}_depth_{d}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name}",
-                        x=duration_sorted_by_shots["shots"].astype(int),
-                        y=durations_mean,
-                        mode=design.scatter_mode_c,
-                        line=dict(color=main_color_sel),
-                    )
-                )
-                figures[f"qubits_{q}_depth_{d}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name} - High",
-                        x=duration_sorted_by_shots["shots"].astype(int),
-                        y=durations_max,
-                        mode=design.scatter_mode_hl,
-                        marker=design.marker_color,
-                        line=dict(width=0),
-                        showlegend=False,
-                    )
-                )
-                figures[f"qubits_{q}_depth_{d}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name} - Low",
-                        x=duration_sorted_by_shots["shots"].astype(int),
-                        y=durations_min,
-                        marker=design.marker_color,
-                        line=dict(width=0),
-                        mode=design.scatter_mode_hl,
-                        fillcolor=sec_color_sel,
-                        fill="tonexty",
-                        showlegend=False,
-                    )
-                )
-                figures[f"qubits_{q}_depth_{d}"].update_layout(
-                    xaxis=dict(
-                        type=design.shots_tick_type,
-                        tickmode="array",
-                        tickvals=duration_sorted_by_shots["shots"].astype(int),
-                        # ticktext=[
-                        #     f"2^{i}"
-                        #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                        # ],
-                        tickangle=design.shots_tickangle,
-                        title="Num. of Shots",
-                        showgrid=design.showgrid,
-                    ),
-                    yaxis=dict(
-                        title=f"Time ({si_time})",
-                        type=design.time_tick_type,
-                        dtick=design.time_dtick,
-                        showgrid=design.showgrid,
-                    ),
-                    title=dict(
-                        text=f"Duration per Framework over num. of Shots @ {q} Qubits, Circuit Depth {d}"
-                        if design.print_figure_title
-                        else "",
-                        font=dict(
-                            size=design.title_font_size,
-                        ),
-                    ),
-                    hovermode="x",
-                    font=dict(
-                        size=design.legend_font_size,
-                    ),
-                    legend=design.scatter_legend,
-                    template=design.base_theme,
+                scatter_viz(
+                    fig=figures[f"qubits_{q}_depth_{d}"],
+                    name=f"{framework_name}",
+                    main_color_sel=main_color_sel,
+                    sec_color_sel=sec_color_sel,
+                    x=duration_sorted_by_shots["shots"].astype(int),
+                    y=durations_mean,
+                    y_min=durations_min,
+                    y_max=durations_max,
+                    x_title="Num. of Shots",
+                    y_title=f"Time ({si_time})",
+                    plot_title=f"Duration per Framework over num. of Shots @ {q} Qubits, Circuit Depth {d}",
                 )
 
     return figures
@@ -557,72 +543,18 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 if f"shots_{s}_qubits_{q}" not in figures:
                     figures[f"shots_{s}_qubits_{q}"] = go.Figure()
 
-                figures[f"shots_{s}_qubits_{q}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name}",
-                        x=duration_sorted_by_depth["depth"].astype(int),
-                        y=durations_mean,
-                        mode=design.scatter_mode_c,
-                        line=dict(color=main_color_sel),
-                    )
-                )
-                figures[f"shots_{s}_qubits_{q}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name} - High",
-                        x=duration_sorted_by_depth["depth"].astype(int),
-                        y=durations_max,
-                        mode=design.scatter_mode_hl,
-                        marker=design.marker_color,
-                        line=dict(width=0),
-                        showlegend=False,
-                    )
-                )
-                figures[f"shots_{s}_qubits_{q}"].add_trace(
-                    go.Scatter(
-                        name=f"{framework_name} - Low",
-                        x=duration_sorted_by_depth["depth"].astype(int),
-                        y=durations_min,
-                        marker=design.marker_color,
-                        line=dict(width=0),
-                        mode=design.scatter_mode_hl,
-                        fillcolor=sec_color_sel,
-                        fill="tonexty",
-                        showlegend=False,
-                    )
-                )
-                figures[f"shots_{s}_qubits_{q}"].update_layout(
-                    xaxis=dict(
-                        type=design.depth_tick_type,
-                        tickmode="array",
-                        tickvals=duration_sorted_by_depth["depth"].astype(int),
-                        # ticktext=[
-                        #     f"2^{i}"
-                        #     for i in duration_sorted_by_depth["qubits"].astype(int)
-                        # ],
-                        tickangle=design.depth_tickangle,
-                        title="Circuit Depth",
-                        showgrid=design.showgrid,
-                    ),
-                    yaxis=dict(
-                        title=f"Time ({si_time})",
-                        showgrid=design.showgrid,
-                        dtick=design.time_dtick,
-                        type=design.time_tick_type,
-                    ),
-                    title=dict(
-                        text=f"Duration per Framework over Circuit Depth @ {s} Shots, {q} Qubits"
-                        if design.print_figure_title
-                        else "",
-                        font=dict(
-                            size=design.title_font_size,
-                        ),
-                    ),
-                    hovermode="x",
-                    font=dict(
-                        size=design.legend_font_size,
-                    ),
-                    legend=design.scatter_legend,
-                    template=design.base_theme,
+                scatter_viz(
+                    fig=figures[f"shots_{s}_depth_{d}"],
+                    name=f"{framework_name}",
+                    main_color_sel=main_color_sel,
+                    sec_color_sel=sec_color_sel,
+                    x=duration_sorted_by_depth["depth"].astype(int),
+                    y=durations_mean,
+                    y_min=durations_min,
+                    y_max=durations_max,
+                    x_title="Circuit Depth",
+                    y_title=f"Time ({si_time})",
+                    plot_title=f"Duration per Framework over Circuit Depth @ {s} Shots, {q} Qubits",
                 )
 
     return figures
