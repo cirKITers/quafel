@@ -28,7 +28,7 @@ class design:
     qual_main = px.colors.qualitative.Dark2  # set1
     qual_second = px.colors.qualitative.Pastel2  # pastel1
 
-    seq_main = px.colors.sequential.Viridis  # pastel1
+    seq_main = px.colors.sequential.thermal  # pastel1
 
     seq_main_log = lambda N: [
         [1 / 10**i if i < N - 1 else 0, design.seq_main[i]]
