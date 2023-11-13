@@ -126,46 +126,44 @@ def extract_framework_name_from_id(identifier):
         return identifier.replace("fw", "").capitalize().replace("_", " ")
 
 
-def heatmap_viz(x, y, z, z_title, x_title, y_title, plot_title):
+def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
     fig = go.Figure(
         [
             go.Heatmap(
-                x=x,
-                y=y,
-                z=z,
-                colorscale=design.seq_main_log(len(z)),
+                x=np.log2(x) if log_x else x,
+                y=np.log2(y) if log_y else y,
+                z=np.log10(z),
+                colorscale=design.seq_main,
                 colorbar=dict(
                     title=z_title,
-                    tick0=design.tickvals_0,
-                    tickmode="array",
-                    tickvals=design.tickvals_log(len(z)),
+                    tickvals=np.log10([z.min(), z.mean(), z.max()]),
+                    ticktext=[f"{z.min():.2}", f"{z.mean():.2}", f"{z.max():.2}"],
                 ),
             )
         ]
     )
     fig.update_layout(
         yaxis=dict(
-            type=design.depth_tick_type,
-            tickmode=design.depth_tick_mode,
-            tickvals=y if design.depth_tick_mode == "array" else None,
-            # ticktext=[
-            #     f"2^{i}"
-            #     for i in duration_sorted_by_shots["qubits"].astype(int)
-            # ],
-            tick0=design.depth_tick0,
-            dtick=design.depth_dtick,
+            type="linear",
+            tickmode=design.heatmap_axis_mode,
+            tickvals=np.log2(y) if log_y else y,
+            ticktext=y if log_y else None,
+            # dtick=np.log2(2) if log_y else 1,
+            tickangle=design.long_ticks_angle
+            if len(str(max(y))) >= design.long_ticks
+            else design.standard_ticks_angle,
             title=y_title,
             showgrid=design.showgrid,
         ),
         xaxis=dict(
-            type=design.shots_tick_type,
-            tickmode="array",
-            tickvals=x,
-            # ticktext=[
-            #     f"2^{i}"
-            #     for i in duration_sorted_by_shots["qubits"].astype(int)
-            # ],
-            tickangle=design.shots_tickangle,
+            type="linear",
+            tickmode=design.heatmap_axis_mode,
+            tickvals=np.log2(x) if log_x else x,
+            ticktext=x if log_x else None,
+            # dtick=np.log2(2) if log_x else 1,
+            tickangle=design.long_ticks_angle
+            if len(str(max(x))) >= design.long_ticks
+            else design.standard_ticks_angle,
             title=x_title,
             showgrid=design.showgrid,
         ),
