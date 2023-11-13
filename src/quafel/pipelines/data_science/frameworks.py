@@ -79,7 +79,7 @@ class pennylane_fw:
                 "default.qubit",
                 wires=range(self.n_qubits),
                 shots=self.n_shots,
-                max_workers=None,
+                max_workers=None,  # restrict subworkers to 1 to prevent issues with MP https://docs.pennylane.ai/en/stable/code/api/pennylane.devices.default_qubit.DefaultQubit.html
             )
         else:  # recommended to be used for > 20 qubits
             self.backend = qml.device(
