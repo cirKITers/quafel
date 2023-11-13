@@ -30,11 +30,6 @@ class design:
 
     seq_main = px.colors.sequential.thermal  # pastel1
 
-    tickvals_0 = 0
-    tickvals_log = lambda N: [
-        10**i if i > 0 else 0 for i in range(min(N, len(design.seq_main)))
-    ]
-
     print_figure_title = False
 
     title_font_size = 18
