@@ -30,12 +30,7 @@ class design:
 
     seq_main = px.colors.sequential.thermal  # pastel1
 
-    tickvals_0 = 0
-    tickvals_log = lambda N: [
-        10**i if i > 0 else 0 for i in range(min(N, len(design.seq_main)))
-    ]
-
-    print_figure_title = False
+    print_figure_title = True
 
     title_font_size = 18
     legend_font_size = 16
@@ -293,7 +288,8 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 log_x=True,
                 y_title="Circuit Depth",
                 log_y=True,
-                plot_title=f"{framework_name} @ {q} Qubits: Circuit Depth and # of Shots",
+                plot_title=f"{framework_name} @ {q} Qubits: "
+                "Circuit Depth and # of Shots",
             )
 
     return figures
@@ -335,7 +331,8 @@ def shots_depths_viz(evaluations_combined: Dict):
                 log_x=True,
                 y_title="# of Qubits",
                 log_y=False,
-                plot_title=f"{framework_name} @ Circuit Depth {d}: # of qubits and # of Shots",
+                plot_title=f"{framework_name} @ Circuit Depth {d}: "
+                "# of qubits and # of Shots",
             )
 
     return figures
@@ -373,7 +370,8 @@ def depth_qubits_viz(evaluations_combined: Dict):
                 log_x=False,
                 y_title="Circuit Depth",
                 log_y=True,
-                plot_title=f"{framework_name} @ {s} Shots: Circuit Depth and # of Qubits",
+                plot_title=f"{framework_name} @ {s} Shots: "
+                "Circuit Depth and # of Qubits",
             )
 
     return figures
@@ -437,7 +435,8 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     log_x=False,
                     y_title=f"Time ({si_time})",
                     log_y=True,
-                    plot_title=f"Duration per Framework over # of Qubits @ {s} Shots, Circuit Depth {d}",
+                    plot_title=f"Duration per Framework over "
+                    "# of Qubits @ {s} Shots, Circuit Depth {d}",
                 )
 
     return figures
@@ -501,7 +500,8 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     log_x=True,
                     y_title=f"Time ({si_time})",
                     log_y=True,
-                    plot_title=f"Duration per Framework over # of Shots @ {q} Qubits, Circuit Depth {d}",
+                    plot_title=f"Duration per Framework over "
+                    "# of Shots @ {q} Qubits, Circuit Depth {d}",
                 )
 
     return figures
@@ -565,7 +565,8 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     log_x=True,
                     y_title=f"Time ({si_time})",
                     log_y=True,
-                    plot_title=f"Duration per Framework over Circuit Depth @ {s} Shots, {q} Qubits",
+                    plot_title=f"Duration per Framework over "
+                    "Circuit Depth @ {s} Shots, {q} Qubits",
                 )
 
     return figures
