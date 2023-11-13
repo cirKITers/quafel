@@ -263,9 +263,13 @@ class qibo_fw:
 class qulacs_fw:
     def __init__(self, qasm_circuit, n_shots):
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
+        # remove measurement operation as it is not supported by qulacs
         qasm_circuit = re.sub("\\nmeasure .*;", "", qasm_circuit)
+        # .. same for cregs
+        # see method description of convert_QASM_to_qulacs_circuit
         qasm_circuit = re.sub("\\ncreg .*;", "", qasm_circuit)
-        self.qc = self.convert_QASM_to_qulacs_circuit(qasm_circuit.split("\n"))
+
+        self.qc = convert_QASM_to_qulacs_circuit(qasm_circuit.split("\n"))
         self.n_shots = n_shots
         self.result = None
 
