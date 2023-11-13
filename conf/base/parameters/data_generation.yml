@@ -20,7 +20,7 @@ data_generation:
 
   skip_combinations: []
 
-  frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+  frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw", "qrisp_fw", "qulacs_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
 # Lower your expectations config
 
