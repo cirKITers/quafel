@@ -544,7 +544,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     figures[f"shots_{s}_qubits_{q}"] = go.Figure()
 
                 scatter_viz(
-                    fig=figures[f"shots_{s}_depth_{d}"],
+                    fig=figures[f"shots_{s}_qubits_{q}"],
                     name=f"{framework_name}",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
