@@ -289,7 +289,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 y_title="Circuit Depth",
                 log_y=True,
                 plot_title=f"{framework_name} @ {q} Qubits: "
-                "Circuit Depth and # of Shots",
+                f"Circuit Depth and # of Shots",
             )
 
     return figures
@@ -332,7 +332,7 @@ def shots_depths_viz(evaluations_combined: Dict):
                 y_title="# of Qubits",
                 log_y=False,
                 plot_title=f"{framework_name} @ Circuit Depth {d}: "
-                "# of qubits and # of Shots",
+                f"# of qubits and # of Shots",
             )
 
     return figures
@@ -371,7 +371,7 @@ def depth_qubits_viz(evaluations_combined: Dict):
                 y_title="Circuit Depth",
                 log_y=True,
                 plot_title=f"{framework_name} @ {s} Shots: "
-                "Circuit Depth and # of Qubits",
+                f"Circuit Depth and # of Qubits",
             )
 
     return figures
@@ -436,7 +436,7 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y_title=f"Time ({si_time})",
                     log_y=True,
                     plot_title=f"Duration per Framework over "
-                    "# of Qubits @ {s} Shots, Circuit Depth {d}",
+                    f"# of Qubits @ {s} Shots, Circuit Depth {d}",
                 )
 
     return figures
@@ -501,7 +501,7 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y_title=f"Time ({si_time})",
                     log_y=True,
                     plot_title=f"Duration per Framework over "
-                    "# of Shots @ {q} Qubits, Circuit Depth {d}",
+                    f"# of Shots @ {q} Qubits, Circuit Depth {d}",
                 )
 
     return figures
@@ -566,7 +566,7 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y_title=f"Time ({si_time})",
                     log_y=True,
                     plot_title=f"Duration per Framework over "
-                    "Circuit Depth @ {s} Shots, {q} Qubits",
+                    f"Circuit Depth @ {s} Shots, {q} Qubits",
                 )
 
     return figures
