@@ -30,7 +30,7 @@ class design:
 
     seq_main = px.colors.sequential.thermal  # pastel1
 
-    print_figure_title = True
+    print_figure_title = False
 
     title_font_size = 18
     legend_font_size = 16
