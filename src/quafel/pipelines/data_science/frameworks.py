@@ -10,6 +10,7 @@ from qiskit.quantum_info import Operator
 # from qulacs import converter as qulacs_converter
 
 import qibo
+import qrisp
 
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
@@ -160,6 +161,28 @@ class qiskit_fw:
 #                 counts[bitstring] = 0
 
 #         return counts
+
+
+class qrisp_fw:
+    def __init__(self, qasm_circuit, n_shots):
+        self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
+
+        self.qc = qrisp.QuantumCircuit.from_qasm_str(qasm_circuit)
+        self.n_shots = n_shots
+        self.result = None
+
+    def execute(self) -> None:
+        self.result = self.qc.run(shots=self.n_shots)
+
+    def get_result(self) -> Dict[str, float]:
+        counts = self.result
+
+        for i in range(2**self.n_qubits):
+            bitstring = format(i, f"0{self.n_qubits}b")
+            if bitstring not in counts.keys():
+                counts[bitstring] = 0
+
+        return counts
 
 
 # class duration_real(duration_qiskit):
