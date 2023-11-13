@@ -61,9 +61,10 @@ class design:
         False  # Set to true to get e.g. 'Framework Pennylane' instead of 'Pennylane'
     )
 
-    qubits_tickangle = 0
-    depth_tickangle = 0
-    shots_tickangle = -40
+    standard_ticks_angle = 0
+    long_ticks_angle = -40
+    long_ticks = 3
+
     showgrid = False
 
     time_tick_type = "log"
