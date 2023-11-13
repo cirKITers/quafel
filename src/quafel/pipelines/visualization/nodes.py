@@ -30,10 +30,6 @@ class design:
 
     seq_main = px.colors.sequential.thermal  # pastel1
 
-    seq_main_log = lambda N: [
-        [1 / 10**i if i < N - 1 else 0, design.seq_main[i]]
-        for i in reversed(range(min(N, len(design.seq_main))))
-    ]
     tickvals_0 = 0
     tickvals_log = lambda N: [
         10**i if i > 0 else 0 for i in range(min(N, len(design.seq_main)))
@@ -191,7 +187,9 @@ def scatter_viz(
     y_max,
     y_min,
     x_title,
+    log_x,
     y_title,
+    log_y,
     plot_title,
 ):
     fig.add_trace(
@@ -229,20 +227,22 @@ def scatter_viz(
     )
     fig.update_layout(
         xaxis=dict(
-            type=design.qubits_tick_type,
-            tickmode="array",
+            type=design.log_tick_type if log_x else design.standard_tick_type,
+            tickmode=design.scatter_axis_mode,
             tickvals=x,
             # ticktext=[
             #     f"2^{i}"
             #     for i in duration_sorted_by_shots["qubits"].astype(int)
             # ],
-            tickangle=design.qubits_tickangle,
+            tickangle=design.long_ticks_angle
+            if len(str(max(x))) >= design.long_ticks
+            else design.standard_ticks_angle,
             title=x_title,
             showgrid=design.showgrid,
         ),
         yaxis=dict(
             title=y_title,
-            type=design.time_tick_type,
+            type=design.log_tick_type if log_y else design.standard_tick_type,
             dtick=design.time_dtick,
             showgrid=design.showgrid,
         ),
@@ -290,7 +290,9 @@ def shots_qubits_viz(evaluations_combined: Dict):
                 z=duration_mean,
                 z_title=f"Time ({si_time})",
                 x_title="Num. of Shots",
+                log_x=True,
                 y_title="Circuit Depth",
+                log_y=True,
                 plot_title=f"{framework_name} @ {q} Qubits: Circuit Depth and Num. of Shots",
             )
 
@@ -330,7 +332,9 @@ def shots_depths_viz(evaluations_combined: Dict):
                 z=duration_mean,
                 z_title=f"Time ({si_time})",
                 x_title="Num. of Shots",
+                log_x=True,
                 y_title="Num. of Qubits",
+                log_y=False,
                 plot_title=f"{framework_name} @ Circuit Depth {d}: Num. of qubits and num. of Shots",
             )
 
@@ -365,8 +369,10 @@ def depth_qubits_viz(evaluations_combined: Dict):
                 y=duration_sorted_by_depth["depth"].astype(int),
                 z=duration_mean,
                 z_title=f"Time ({si_time})",
-                x_title="Num. of Shots",
-                y_title="Num. of Qubits",
+                x_title="Num. of Qubits",
+                log_x=False,
+                y_title="Circuit Depth",
+                log_y=True,
                 plot_title=f"{framework_name} @ {s} Shots: Circuit Depth and num. of Qubits",
             )
 
@@ -428,7 +434,9 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y_min=durations_min,
                     y_max=durations_max,
                     x_title="Num. of Qubits",
+                    log_x=False,
                     y_title=f"Time ({si_time})",
+                    log_y=True,
                     plot_title=f"Duration per Framework over num. of Qubits @ {s} Shots, Circuit Depth {d}",
                 )
 
@@ -490,7 +498,9 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y_min=durations_min,
                     y_max=durations_max,
                     x_title="Num. of Shots",
+                    log_x=True,
                     y_title=f"Time ({si_time})",
+                    log_y=True,
                     plot_title=f"Duration per Framework over num. of Shots @ {q} Qubits, Circuit Depth {d}",
                 )
 
@@ -552,7 +562,9 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                     y_min=durations_min,
                     y_max=durations_max,
                     x_title="Circuit Depth",
+                    log_x=True,
                     y_title=f"Time ({si_time})",
+                    log_y=True,
                     plot_title=f"Duration per Framework over Circuit Depth @ {s} Shots, {q} Qubits",
                 )
 
