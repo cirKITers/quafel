@@ -111,6 +111,63 @@ def extract_framework_name_from_id(identifier):
         return identifier.replace("fw", "").capitalize().replace("_", " ")
 
 
+def heatmap_viz(x, y, z, z_title, x_title, y_title, plot_title):
+    fig = go.Figure(
+        [
+            go.Heatmap(
+                x=x,
+                y=y,
+                z=z,
+                colorscale=design.seq_main_log(len(z)),
+                colorbar=dict(
+                    title=z_title,
+                    tick0=design.tickvals_0,
+                    tickmode="array",
+                    tickvals=design.tickvals_log(len(z)),
+                ),
+            )
+        ]
+    )
+    fig.update_layout(
+        yaxis=dict(
+            type=design.depth_tick_type,
+            tickmode=design.depth_tick_mode,
+            tickvals=y if design.depth_tick_mode == "array" else None,
+            # ticktext=[
+            #     f"2^{i}"
+            #     for i in duration_sorted_by_shots["qubits"].astype(int)
+            # ],
+            tick0=design.depth_tick0,
+            dtick=design.depth_dtick,
+            title=y_title,
+            showgrid=design.showgrid,
+        ),
+        xaxis=dict(
+            type=design.shots_tick_type,
+            tickmode="array",
+            tickvals=x,
+            # ticktext=[
+            #     f"2^{i}"
+            #     for i in duration_sorted_by_shots["qubits"].astype(int)
+            # ],
+            tickangle=design.shots_tickangle,
+            title=x_title,
+            showgrid=design.showgrid,
+        ),
+        title=dict(
+            text=plot_title if design.print_figure_title else "",
+            font=dict(
+                size=design.title_font_size,
+            ),
+        ),
+        hovermode="x",
+        font=dict(
+            size=design.legend_font_size,
+        ),
+    )
+    return fig
+
+
 def shots_qubits_viz(evaluations_combined: Dict):
     figures = {}
 
@@ -134,57 +191,14 @@ def shots_qubits_viz(evaluations_combined: Dict):
 
             q = int(q)
 
-            figures[f"{fw}_qubits_{q}"] = go.Figure(
-                [
-                    go.Heatmap(
-                        x=duration_sorted_by_depth["shots"].astype(int),
-                        y=duration_sorted_by_depth["depth"].astype(int),
-                        z=duration_mean,
-                        colorscale=design.seq_main,
-                        colorbar=dict(title=f"Time ({si_time})"),
-                    )
-                ]
-            )
-            figures[f"{fw}_qubits_{q}"].update_layout(
-                yaxis=dict(
-                    type=design.depth_tick_type,
-                    tickmode=design.depth_tick_mode,
-                    tickvals=duration_sorted_by_depth["depth"].astype(int)
-                    if design.depth_tick_mode == "array"
-                    else None,
-                    # ticktext=[
-                    #     f"2^{i}"
-                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                    # ],
-                    tick0=design.depth_tick0,
-                    dtick=design.depth_dtick,
-                    title="Circuit Depth",
-                    showgrid=design.showgrid,
-                ),
-                xaxis=dict(
-                    type=design.shots_tick_type,
-                    tickmode="array",
-                    tickvals=duration_sorted_by_depth["shots"].astype(int),
-                    # ticktext=[
-                    #     f"2^{i}"
-                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                    # ],
-                    tickangle=design.shots_tickangle,
-                    title="Num. of Shots",
-                    showgrid=design.showgrid,
-                ),
-                title=dict(
-                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Shots"
-                    if design.print_figure_title
-                    else "",
-                    font=dict(
-                        size=design.title_font_size,
-                    ),
-                ),
-                hovermode="x",
-                font=dict(
-                    size=design.legend_font_size,
-                ),
+            figures[f"{fw}_qubits_{q}"] = heatmap_viz(
+                x=duration_sorted_by_depth["shots"].astype(int),
+                y=duration_sorted_by_depth["depth"].astype(int),
+                z=duration_mean,
+                z_title=f"Time ({si_time})",
+                x_title="Num. of Shots",
+                y_title="Circuit Depth",
+                plot_title=f"{framework_name} @ {q} Qubits: Circuit Depth and Num. of Shots",
             )
 
     return figures
@@ -217,53 +231,14 @@ def shots_depths_viz(evaluations_combined: Dict):
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
 
-            figures[f"{fw}_depth_{d}"] = go.Figure(
-                [
-                    go.Heatmap(
-                        x=duration_sorted_by_qubit["shots"].astype(int),
-                        y=duration_sorted_by_qubit["qubits"].astype(int),
-                        z=duration_mean,
-                        colorscale=design.seq_main,
-                        colorbar=dict(title=f"Time ({si_time})"),
-                    )
-                ]
-            )
-            figures[f"{fw}_depth_{d}"].update_layout(
-                yaxis=dict(
-                    type=design.qubits_tick_type,
-                    tickmode="array",
-                    tickvals=duration_sorted_by_qubit["qubits"].astype(int),
-                    # ticktext=[
-                    #     f"2^{i}"
-                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                    # ],
-                    title="Num. of Qubits",
-                    showgrid=design.showgrid,
-                ),
-                xaxis=dict(
-                    type=design.shots_tick_type,
-                    tickmode="array",
-                    tickvals=duration_sorted_by_qubit["shots"].astype(int),
-                    # ticktext=[
-                    #     f"2^{i}"
-                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                    # ],
-                    tickangle=design.shots_tickangle,
-                    title="Num. of Shots",
-                    showgrid=design.showgrid,
-                ),
-                title=dict(
-                    text=f"{framework_name} simulation duration: Num. of qubits and Num. of Shots"
-                    if design.print_figure_title
-                    else "",
-                    font=dict(
-                        size=design.title_font_size,
-                    ),
-                ),
-                hovermode="x",
-                font=dict(
-                    size=design.legend_font_size,
-                ),
+            figures[f"{fw}_depth_{d}"] = heatmap_viz(
+                x=duration_sorted_by_qubit["shots"].astype(int),
+                y=duration_sorted_by_qubit["qubits"].astype(int),
+                z=duration_mean,
+                z_title=f"Time ({si_time})",
+                x_title="Num. of Shots",
+                y_title="Num. of Qubits",
+                plot_title=f"{framework_name} @ Circuit Depth {d}: Num. of qubits and num. of Shots",
             )
 
     return figures
@@ -292,53 +267,14 @@ def depth_qubits_viz(evaluations_combined: Dict):
 
             s = int(s)
 
-            figures[f"{fw}_shots_{s}"] = go.Figure(
-                [
-                    go.Heatmap(
-                        x=duration_sorted_by_depth["qubits"].astype(int),
-                        y=duration_sorted_by_depth["depth"].astype(int),
-                        z=duration_mean,
-                        colorscale=design.seq_main,
-                        colorbar=dict(title=f"Time ({si_time})"),
-                    )
-                ]
-            )
-            figures[f"{fw}_shots_{s}"].update_layout(
-                yaxis=dict(
-                    type=design.depth_tick_type,
-                    tickmode="array",
-                    tickvals=duration_sorted_by_depth["depth"].astype(int),
-                    # ticktext=[
-                    #     f"2^{i}"
-                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                    # ],
-                    title="Circuit Depth",
-                    showgrid=design.showgrid,
-                ),
-                xaxis=dict(
-                    type=design.qubits_tick_type,
-                    tickmode="array",
-                    tickvals=duration_sorted_by_depth["qubits"].astype(int),
-                    # ticktext=[
-                    #     f"2^{i}"
-                    #     for i in duration_sorted_by_shots["qubits"].astype(int)
-                    # ],
-                    tickangle=design.qubits_tickangle,
-                    title="Num. of Qubits",
-                    showgrid=design.showgrid,
-                ),
-                title=dict(
-                    text=f"{framework_name} simulation duration: Circuit Depth and Num. of Qubits"
-                    if design.print_figure_title
-                    else "",
-                    font=dict(
-                        size=design.title_font_size,
-                    ),
-                ),
-                hovermode="x",
-                font=dict(
-                    size=design.legend_font_size,
-                ),
+            figures[f"{fw}_shots_{s}"] = heatmap_viz(
+                x=duration_sorted_by_depth["qubits"].astype(int),
+                y=duration_sorted_by_depth["depth"].astype(int),
+                z=duration_mean,
+                z_title=f"Time ({si_time})",
+                x_title="Num. of Shots",
+                y_title="Num. of Qubits",
+                plot_title=f"{framework_name} @ {s} Shots: Circuit Depth and num. of Qubits",
             )
 
     return figures
