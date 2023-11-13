@@ -267,7 +267,10 @@ class qibo_fw:
 class qulacs_fw:
     def __init__(self, qasm_circuit, n_shots):
         self.n_qubits = calculate_n_qubits_from_qasm(qasm_circuit)
+        # removing measurment operation...
         qasm_circuit = re.sub("\\nmeasure .*;", "", qasm_circuit)
+        # ... and creg operation as they are not supported by qulacs
+        # see `convert_QASM_to_qulacs_circuit` for details.
         qasm_circuit = re.sub("\\ncreg .*;", "", qasm_circuit)
         self.qc = self.convert_QASM_to_qulacs_circuit(qasm_circuit.split("\n"))
         self.n_shots = n_shots
@@ -292,14 +295,19 @@ class qulacs_fw:
     def convert_QASM_to_qulacs_circuit(
         self, input_strs: List[str], *, remap_remove: bool = False
     ) -> QualcsQuantumCircuit:
+        """
+        Copied from https://github.com/qulacs/qulacs/blob/2750414e8e1ebc61064207158dd8b0e618708ad4/pysrc/qulacs/converter/qasm_converter.py#L120 # noqa
+        Only difference is the missing bracket for the u2 parsing
+
+        convert QASM List[str] to qulacs QuantumCircuit.
+
+        constraints: qreg must be named q, and creg cannot be used.
+        """
         FIXED_POINT_PATTERN = r"[+-]?\d+(?:\.\d*)?|\.\d+"
         FLOATING_POINT_PATTERN = r"[eE][-+]?\d+"
         GENERAL_NUMBER_PATTERN = (
             rf"(?:{FIXED_POINT_PATTERN})(?:{FLOATING_POINT_PATTERN})?"  # noqa
         )
-
-        # convert QASM List[str] to qulacs QuantumCircuit.
-        # constraints: qreg must be named q, and creg cannot be used.
 
         mapping: List[int] = []
 
