@@ -69,12 +69,12 @@ class design:
 
     time_tick_type = "log"
     time_dtick = 1
-    qubits_tick_type = "linear"
-    shots_tick_type = "log"
-    depth_tick_type = "log"
-    depth_tick_mode = "array"  # array
-    depth_tick0 = None
-    depth_dtick = None  # np.log10(2)
+
+    log_tick_type = "log"
+    standard_tick_type = "linear"
+
+    heatmap_axis_mode = "array"
+    scatter_axis_mode = "array"
 
     scatter_mode_c = "lines+markers"
     scatter_mode_hl = "lines"
