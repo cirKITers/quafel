@@ -48,43 +48,41 @@ mkdocs build
 
 Without any configuration needed, you can execute
 ```
-poetry kedro run --pipeline "prepare"
+kedro run --pipeline prepare
 ```
 followed by
 ```
-poetry kedro run
+kedro run
 ```
-(or omit poetry if you're using classical venvs) and a default pipeline should run.
+and a default pipeline should run. In this and following examples the leading `poetry run` is omitted for simplicity.
 
 Note that is required to always run the "prepare" pipeline in advance to any actual processing pipeline.
 This is because of the current implementation relies on dynamically created nodes that are depending on the configuration and therefore requiring two separate pipeline executions.
 
 In summary, the following pipelines exist:
 - "prepare" : generates all possible combinations of configurations based on the current parameter set
-- "measure" : performs the actual time measurement by executing experiments for each of the previously generated configuration
-- "ctmeasure" : continous a previous time measurement
-- "visualize" : gathers all the experiment results and generates some nice plots
+- `measure` : performs the actual time measurement by executing experiments for each of the previously generated configuration with the ability to parallelize processing
+- `ctmeasure`` : continous a previous time measurement
+- `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
+- `visualize` : takes the combined experiment results and generates some nice plots
 
-The "default" pipeline covers "measure" and "visualize".
-If you want to run them separately execute
-```
-poetry kedro run --pipeline "measure"
-```
-and
-```
-poetry kedro run --pipeline "visualize"
-```
-after running the "prepare" pipeline.
+The "default" pipeline covers `measure`, `combine` and `visualize`.
+You can run them separately by specifying the pipeline name.
 
 This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
-To enable this, you can run
+To use this, you have to explicitly call the individual pipelines.
+In summary this will look as follows:
 ```
-poetry run kedro run --pipeline "measure" --env dask --runner quafel.runner.MyParallelRunner
+kedro run --pipeline prepare
+kedro run --pipeline measure --env dask --runner quafel.runner.MyParallelRunner
+kedro run --pipeline combine
+kedro run --pipeline visualize
 ```
 which will calculate the duration and result for each configuration.
 
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
 
+Note that if you want to re-run e.g. the `visualize` pipeline, you have to re-run the `prepare` pipeline as well!.
 
 ***
 :construction: only:
@@ -177,7 +175,7 @@ bitstrings = [format(i, f"0{self.n_qubits}b") for i in range (2**self.n_qubits)]
 
 When running
 ```
-poetry run kedro run --pipeline "measure" --env dask --runner quafel.runner.DaskRunner
+poetry run kedro run --pipeline `measure` --env dask --runner quafel.runner.DaskRunner
 ```
 without any additional configuration, Kedro creates Dask scheduler and also four worker nodes.
 This behavior can be controlled in [conf/dask/parameters.yml](conf/dask/parameters.yml).
