@@ -19,9 +19,8 @@ If you want to go with Pip instead, run
 pip install -r src/requirements.in
 ```
 
-***
-
-:construction: only:
+<details>
+<summary>:construction: only:</summary>
 
 If you considere building docs, running tests and commiting to the project, run:
 ```
@@ -41,8 +40,7 @@ pre-commit install
 pytest
 mkdocs build
 ```
-
-***
+</details>
 
 ## Usage :rocket: 
 
@@ -62,7 +60,7 @@ This is because of the current implementation relies on dynamically created node
 In summary, the following pipelines exist:
 - "prepare" : generates all possible combinations of configurations based on the current parameter set
 - `measure` : performs the actual time measurement by executing experiments for each of the previously generated configuration with the ability to parallelize processing
-- `ctmeasure`` : continous a previous time measurement
+- `ctmeasure` : continous a previous time measurement
 - `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
 - `visualize` : takes the combined experiment results and generates some nice plots
 
@@ -84,12 +82,10 @@ For details on the output, see the [Data Structure Section](#floppy_disk-data-st
 
 Note that if you want to re-run e.g. the `visualize` pipeline, you have to re-run the `prepare` pipeline as well!.
 
-***
-:construction: only:
-
+<details>
+<summary>:construction: only:</summary>
 Checkout the pre-defined VSCode tasks if you want to develop on the project.
-
-***
+</details>
 
 ## Configuration :wrench:
 
