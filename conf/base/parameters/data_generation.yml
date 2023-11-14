@@ -52,12 +52,12 @@ data_generation:
 #   seed: 1111
 
 #   min_qubits: 1
-#   max_qubits: 8
+#   max_qubits: 5
 #   qubits_increment: 1
 #   qubits_type: "linear"
 
 #   min_depth: 1
-#   max_depth: 8
+#   max_depth: 5
 #   depth_increment: 1
 #   depth_type: "exp2"
 
@@ -68,7 +68,7 @@ data_generation:
 
 #   skip_combinations: []
 
-#   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
+#   frameworks: ["cirq_fw", "pennylane_fw", "qiskit_fw", "qibo_fw", "qrisp_fw", "qulacs_fw"] # "test_fw", "pennylane_fw", "qiskit_fw", "cirq_fw", "numpy_fw", "qibo_fw"
 
 # Testing configuration
 
