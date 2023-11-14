@@ -140,7 +140,7 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
 
 Note that all datasets that are not marked as "**versioned**" will be overwritten on the next run!
 
-## Adding new frameworks :construction:
+## Adding new frameworks :heavy_plus_sign:
 
 New frameworks can easily be added by editing the [frameworks.py](src/quafel/pipelines/data_science/frameworks.py) file.
 Frameworks are defined by classes following the ```NAME_fw``` naming template where ```NAME``` should be replaced by the framework to be implemented.
