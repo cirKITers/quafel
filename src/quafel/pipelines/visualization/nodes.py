@@ -87,7 +87,7 @@ def get_time_scale(pd_time):
 
     def find_exp(number) -> int:
         """
-        From https://stackoverflow.com/questions/64183806/extracting-the-exponent-from-scientific-notation
+        From https://stackoverflow.com/questions/64183806/extracting-the-exponent-from-scientific-notation # noqa
         """
         base10 = log10(abs(number))
         return floor(base10)
@@ -309,7 +309,6 @@ def shots_depths_viz(evaluations_combined: Dict):
         grouped_by_depth = qubit_depth_duration.groupby("depth")
 
         for d, qubit_duration in grouped_by_depth:
-            # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
             duration_sorted_by_qubit = qubit_duration.sort_values("qubits")
             durations = duration_sorted_by_qubit.filter(regex=duration_perf_regex)
 
@@ -380,7 +379,8 @@ def depth_qubits_viz(evaluations_combined: Dict):
 def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     figures = {}
 
-    # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
+    # those two color sets are well suited as they correspond regarding
+    # their color value but differ from their luminosity and saturation values
     main_colors_it = iter(design.qual_main)
     sec_colors_it = iter(design.qual_second)
 
@@ -403,7 +403,6 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
             grouped_by_shots = qubit_shots_duration.groupby("shots")
 
             for s, fw_qubit_duration in grouped_by_shots:
-                # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_qubit = fw_qubit_duration.sort_values("qubits")
 
                 durations = duration_sorted_by_qubit.filter(regex=duration_perf_regex)
@@ -445,7 +444,8 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
 def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     figures = {}
 
-    # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
+    # those two color sets are well suited as they correspond regarding
+    # their color value but differ from their luminosity and saturation values
     main_colors_it = iter(design.qual_main)
     sec_colors_it = iter(design.qual_second)
 
@@ -468,7 +468,6 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
             grouped_by_qubits = qubit_shots_duration.groupby("qubits")
 
             for q, fw_shots_duration in grouped_by_qubits:
-                # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_shots = fw_shots_duration.sort_values("shots")
 
                 durations = duration_sorted_by_shots.filter(regex=duration_perf_regex)
@@ -510,7 +509,8 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
 def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     figures = {}
 
-    # those two color sets are well suited as they correspond regarding their color value but differ from their luminosity and saturation values
+    # those two color sets are well suited as they correspond regarding
+    # their color value but differ from their luminosity and saturation values
     main_colors_it = iter(design.qual_main)
     sec_colors_it = iter(design.qual_second)
 
@@ -533,7 +533,6 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
             grouped_by_shots = depth_shots_duration.groupby("shots")
 
             for s, fw_depth_duration in grouped_by_shots:
-                # grouped_by_shots_sorted_by_depth = depth_duration.sort_values('2').groupby('3')
                 duration_sorted_by_depth = fw_depth_duration.sort_values("depth")
 
                 durations = duration_sorted_by_depth.filter(regex=duration_perf_regex)
@@ -608,12 +607,16 @@ def export_selected(evaluations_combined, additional_figures, output_folder, **f
     frameworks = evaluations_combined["framework"].unique()
 
     def export(fig, name, folder):
-        pio.full_figure_for_development(
-            fig, warn=False
-        )  # Disable warnings to prevent printing a box at the bottom left of the figure. See this issue: https://github.com/plotly/plotly.py/issues/3469
-        pio.kaleido.scope.mathjax = None  # Disable mathjax completely since above did not help. See this issue: https://github.com/plotly/Kaleido/issues/122
+        # Disable warnings to prevent printing a box at the bottom left of the figure.
+        # See this issue: https://github.com/plotly/plotly.py/issues/3469
+        pio.full_figure_for_development(fig, warn=False)
+        # Disable mathjax completely since above did not help.
+        # See this issue: https://github.com/plotly/Kaleido/issues/122
+        pio.kaleido.scope.mathjax = None
 
         fig.write_image(os.path.join(folder, f"{name}.pdf"), engine="kaleido")
+        # set scale=3 to increase resolution in resulting plots
+        fig.write_image(os.path.join(folder, f"{name}.png"), engine="kaleido", scale=3)
 
     sel = f"shots_{max_shots}_depth_{max_depth}"
     export(figures[sel], sel, output_folder)
