@@ -29,21 +29,21 @@ def register_pipelines() -> Dict[str, Pipeline]:
     existing_results = [
         Path(f).stem for f in glob.glob("data/04_execution_results/*.csv")
     ]
-    existing_circuits = [
-        Path(f).stem for f in glob.glob("data/04_execution_results/*.csv")
-    ]
+    # existing_circuits = [
+    #     Path(f).stem for f in glob.glob("data/03_qasm_circuits/*.txt")
+    # ]
 
     # get the intersection of the durations and results
     existing_evals = [m for m in existing_durations if m in existing_results]
     # .. and the intersection of all partitions
     eval_partitions = [p for p in all_partitions if p not in existing_evals]
-    circuit_partitions = [p for p in all_partitions if p not in existing_circuits]
+    # circuit_partitions = [p for p in all_partitions if p not in existing_circuits]
 
     # gather all the .tmp files to create figures output
     tmp_files = [Path(f).stem for f in glob.glob("data/07_reporting/*.tmp")]
 
     # pass only the number of partitions we want to generate circuits for
-    dg_pipelines = dg.create_pipeline(partitions=circuit_partitions)
+    dg_pipelines = dg.create_pipeline(partitions=eval_partitions)
     # pass only the number of partitions we want to evaluate (this would be equal to all partitions in an initial run or in case we don't want to restore existing results)
     ds_pipelines = ds.create_pipeline(partitions=eval_partitions)
     viz_pipelines = viz.create_pipeline(figures=tmp_files)
