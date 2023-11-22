@@ -127,8 +127,8 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
   - Result formats are unified as a dictionary with the keys containing the binary bit representation of the measured qubit and the normalized counts as values.
   - Results are zero padded, so it is ensured that also state combinations with $0$ probability are represented.
 - [data/05_execution_durations](data/05_execution_durations/):
-  - Raw duration for the simulation of the job with the corresponding id.
-  - Duration is only measured for the execution of the simulator
+  - Duration for the simulation of the job with the corresponding id
+  - Duration is only measured for the execution of the simulator using `perf_counter` and `process_time`
 - [data/06_evaluations_combined](data/06_evaluations_combined/):
   - **Versioned** dataset containing the combined information of both, the input parameters (```framework```, ```qubits```, ```depth```, ```shots```), the measured duration and the simulator results
 - [data/07_reportings](data/07_reporting):
