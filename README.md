@@ -54,17 +54,17 @@ kedro run
 ```
 and a default pipeline should run. In this and following examples the leading `poetry run` is omitted for simplicity.
 
-Note that is required to always run the "prepare" pipeline in advance to any actual processing pipeline.
+Note that is required to always run the `prepare` pipeline in advance to any actual processing pipeline.
 This is because of the current implementation relies on dynamically created nodes that are depending on the configuration and therefore requiring two separate pipeline executions.
 
 In summary, the following pipelines exist:
-- "prepare" : generates all possible combinations of configurations based on the current parameter set
+- `prepare` : generates all possible combinations of configurations based on the current parameter set
 - `measure` : performs the actual time measurement by executing experiments for each of the previously generated configuration with the ability to parallelize processing
 - `ctmeasure` : continous a previous time measurement
 - `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
 - `visualize` : takes the combined experiment results and generates some nice plots
 
-The "default" pipeline covers `measure`, `combine` and `visualize`.
+The `default` pipeline covers `measure`, `combine` and `visualize`.
 You can run them separately by specifying the pipeline name.
 
 This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
