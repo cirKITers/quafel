@@ -6,7 +6,7 @@ Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffl
 
 *This project follows the [Kedro Framework](https://kedro.org/) approach.*
 
-## :hammer: Setup
+## Setup :hammer:
 
 Straight, **without development packages**, you can execute the following command, assuming you have [Poetry](https://python-poetry.org/) installed:
 ```
