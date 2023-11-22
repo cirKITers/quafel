@@ -62,7 +62,7 @@ In summary, the following pipelines exist:
 - `measure` : performs the actual time measurement by executing experiments for each of the previously generated configurations with the ability to parallelize processing
 - `ctmeasure` : continous a previous time measurement
 - `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
-- `visualize` : takes the combined experiment results and generates some nice plots
+- `visualize` : takes the combined experiment results and generates your plots
 
 The `default` pipeline covers `measure`, `combine` and `visualize`.
 You can run them separately by specifying the pipeline name.
