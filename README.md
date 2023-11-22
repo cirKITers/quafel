@@ -59,7 +59,7 @@ This is because of the current implementation relies on dynamically created node
 
 In summary, the following pipelines exist:
 - `prepare` : generates all possible combinations of configurations based on the current parameter set
-- `measure` : performs the actual time measurement by executing experiments for each of the previously generated configuration with the ability to parallelize processing
+- `measure` : performs the actual time measurement by executing experiments for each of the previously generated configurations with the ability to parallelize processing
 - `ctmeasure` : continous a previous time measurement
 - `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
 - `visualize` : takes the combined experiment results and generates some nice plots
@@ -127,9 +127,8 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
   - Result formats are unified as a dictionary with the keys containing the binary bit representation of the measured qubit and the normalized counts as values.
   - Results are zero padded, so it is ensured that also state combinations with $0$ probability are represented.
 - [data/05_execution_durations](data/05_execution_durations/):
-  - Duration for the simulation of the job with the corresponding id.
+  - Raw duration for the simulation of the job with the corresponding id.
   - Duration is only measured for the execution of the simulator
-  - Combining and post-processing results (to obtain the dictionary representation) is not involved
 - [data/06_evaluations_combined](data/06_evaluations_combined/):
   - **Versioned** dataset containing the combined information of both, the input parameters (```framework```, ```qubits```, ```depth```, ```shots```), the measured duration and the simulator results
 - [data/07_reportings](data/07_reporting):
