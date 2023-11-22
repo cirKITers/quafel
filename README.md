@@ -67,16 +67,19 @@ In summary, the following pipelines exist:
 The `default` pipeline covers `measure`, `combine` and `visualize`.
 You can run them separately by specifying the pipeline name.
 
-This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots*.
-To use this, you have to explicitly call the individual pipelines.
-In summary this will look as follows:
+This project can take advantage of multiprocessing to evaluate numerous combinations of *qubits*, *depths* and *shots* in parallel in the `measure` pipeline.
+To use this, you should explicitly call the individual pipelines.
+In summary the whole experiment will then look as follows:
 ```
 kedro run --pipeline prepare
-kedro run --pipeline measure --env dask --runner quafel.runner.MyParallelRunner
+kedro run --pipeline measure --runner quafel.runner.MyParallelRunner
 kedro run --pipeline combine
 kedro run --pipeline visualize
 ```
-which will calculate the duration and result for each configuration.
+
+Here, only the pipeline `measure` will utilize multiprocessing and the rest will run single process.
+We recommend this approach since there is no advantage by running the other pipelines in parallel as well.
+Of course, you can run the `measure` pipeline in a single process as well by omitting the `--runner` option.
 
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
 
