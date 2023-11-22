@@ -165,15 +165,3 @@ This dictionary is required to contain all combinations of bitstrings that resul
 ```python
 bitstrings = [format(i, f"0{self.n_qubits}b") for i in range (2**self.n_qubits)]
 ```
-<!-- 
-## :runner: Dask Setup
-
-When running
-```
-poetry run kedro run --pipeline `measure` --env dask --runner quafel.runner.DaskRunner
-```
-without any additional configuration, Kedro creates Dask scheduler and also four worker nodes.
-This behavior can be controlled in [conf/dask/parameters.yml](conf/dask/parameters.yml).
-Setting the address parameter will cause Kedro trying to connect to an existing scheduler at the specified address.
-You create scheduler and $N$ workers by running `.vscode/spawn_n_workers.sh -N` from the root folder of the project.
-Alternatively set `n_workers` in [conf/dask/parameters.yml](conf/dask/parameters.yml) and comment out `address` to specify the number of workers that kedro should spawn. -->
