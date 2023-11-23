@@ -60,7 +60,7 @@ This is because of the current implementation relies on dynamically created node
 In summary, the following pipelines exist:
 - `prepare` : generates all possible combinations of configurations based on the current parameter set
 - `measure` : performs the actual time measurement by executing experiments for each of the previously generated configurations with the ability to parallelize processing
-- `ctmeasure` : if the `measure` pipeline failed of was cancelled, use this pipeline to resume
+- `ctmeasure` : if the `measure` pipeline failed or was cancelled, use this pipeline to resume
 - `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
 - `visualize` : takes the combined experiment results and generates your plots
 
