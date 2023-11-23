@@ -83,7 +83,7 @@ Of course, you can run the `measure` pipeline in a single process as well by omi
 
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
 
-Note that if you want to re-run e.g. the `visualize` pipeline, you have to re-run the `prepare` pipeline as well!.
+Note that if you want to re-run e.g. the `visualize` pipeline, you have to re-run the `prepare` pipeline as well.
 This is because intermediate data containing information about the partitions is being deleted after the `visualize` pipeline of an experimant successfully ran.
 This constraint will be removed in future releases.
 
