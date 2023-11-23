@@ -123,7 +123,7 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
 - [data/01_raw](data/01_raw):
   - **Versioned** [Evaluation Matrix](data/01_raw/dataset.json) containing all valid values for ```frameworks```, ```qubits```, ```depths```, and ```shots``` as specified in the [data_generation.yml](conf/base/parameters/data_generation.yml) file.
 - [data/02_intermediate](data/02_intermediate):
-  - Evaluation Partitions split into single ```.csv``` files.
+  - Evaluation partitions split into single ```.csv``` files.
   - The number of partitions depend on the configuration.
 - [data/03_qasm_circuits](data/03_qasm_circuits/):
   - A QASM circuit for each partition.
