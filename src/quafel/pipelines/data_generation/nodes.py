@@ -195,7 +195,7 @@ def _random_circuit(
 
 
 def generate_random_qasm_circuit(qubits: int, depth: int, seed: int):
-    qc = _random_circuit(qubits, depth, max_operands=3, measure=True, seed=seed)
+    qc = _random_circuit(qubits, depth, max_operands=2, measure=True, seed=seed)
     return {"qasm_circuit": qc.qasm()}
 
 
