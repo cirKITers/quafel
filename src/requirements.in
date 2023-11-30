@@ -1,12 +1,13 @@
 kedro
-kedro-viz
 pennylane
-pennylane-qiskit
 qiskit
 cirq
 qibo
-qibojit
+kedro-viz
+pennylane-qiskit
 qulacs
 kaleido
 distributed
 bokeh
+qrisp
+plotly
