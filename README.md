@@ -4,7 +4,7 @@ Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffl
 
 ![Overview](docs/overview.png)
 
-See [our poster](https://bwsyncandshare.kit.edu/s/CdnD6MEsNwYgJMd) contributed to the QTML23 for more details.
+See [our poster](https://bwsyncandshare.kit.edu/s/CdnD6MEsNwYgJMd) contributed to the [QTML23](https://indico.cern.ch/event/1288979/) for more details.
 
 
 ## Setup :hammer:
