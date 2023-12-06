@@ -4,10 +4,12 @@ Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffl
 
 ![Overview](docs/overview.png)
 
-*This project follows the [Kedro Framework](https://kedro.org/) approach.*
+See [our poster](https://bwsyncandshare.kit.edu/s/CdnD6MEsNwYgJMd) contributed to the [QTML23](https://indico.cern.ch/event/1288979/) for more details.
+
 
 ## Setup :hammer:
 
+This project follows the [Kedro Framework](https://kedro.org/) approach.
 Straight, **without development packages**, you can execute the following command, assuming you have [Poetry](https://python-poetry.org/) installed:
 ```
 poetry install --without dev
