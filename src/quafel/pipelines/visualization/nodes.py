@@ -41,8 +41,6 @@ class design:
         font=dict(
             size=legend_font_size,
         ),
-        # yanchor="top",
-        # xanchor="left",
     )
     base_theme = "simple_white"
 
@@ -137,7 +135,6 @@ def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
             tickmode=design.heatmap_axis_mode,
             tickvals=np.log2(y) if log_y else y,
             ticktext=y if log_y else None,
-            # dtick=np.log2(2) if log_y else 1,
             tickangle=design.long_ticks_angle
             if len(str(max(y))) >= design.long_ticks
             else design.standard_ticks_angle,
@@ -149,7 +146,6 @@ def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
             tickmode=design.heatmap_axis_mode,
             tickvals=np.log2(x) if log_x else x,
             ticktext=x if log_x else None,
-            # dtick=np.log2(2) if log_x else 1,
             tickangle=design.long_ticks_angle
             if len(str(max(x))) >= design.long_ticks
             else design.standard_ticks_angle,
@@ -223,10 +219,6 @@ def scatter_viz(
             type=design.log_tick_type if log_x else design.standard_tick_type,
             tickmode=design.scatter_axis_mode,
             tickvals=x,
-            # ticktext=[
-            #     f"2^{i}"
-            #     for i in duration_sorted_by_shots["qubits"].astype(int)
-            # ],
             tickangle=design.long_ticks_angle
             if len(str(max(x))) >= design.long_ticks
             else design.standard_ticks_angle,
