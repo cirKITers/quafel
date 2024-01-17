@@ -36,8 +36,6 @@ class design:
     legend_font_size = 16
 
     scatter_legend = dict(
-        # x=1,
-        # y=1,
         orientation="v",
         traceorder="normal",
         font=dict(
