@@ -28,7 +28,7 @@ class design:
     qual_main = px.colors.qualitative.Dark2  # set1
     qual_second = px.colors.qualitative.Pastel2  # pastel1
 
-    seq_main = px.colors.sequential.thermal  # pastel1
+    seq_main = px.colors.sequential.thermal  # alternative: pastel1
 
     print_figure_title = False
 
@@ -36,15 +36,11 @@ class design:
     legend_font_size = 16
 
     scatter_legend = dict(
-        # x=1,
-        # y=1,
         orientation="v",
         traceorder="normal",
         font=dict(
             size=legend_font_size,
         ),
-        # yanchor="top",
-        # xanchor="left",
     )
     base_theme = "simple_white"
 
@@ -72,7 +68,7 @@ class design:
     marker_color = dict(color="#444")
 
 
-def rgb_to_rgba(rgb_value, alpha):
+def rgb_to_rgba(rgb_value: str, alpha: float):
     """
     Adds the alpha channel to an RGB Value and returns it as an RGBA Value
     :param rgb_value: Input RGB Value
@@ -82,8 +78,13 @@ def rgb_to_rgba(rgb_value, alpha):
     return f"rgba{rgb_value[3:-1]}, {alpha})"
 
 
-def get_time_scale(pd_time):
-    n_evals = pd_time.shape[1]
+def get_time_scale(pd_time: pd.array):
+    """This method takes an array of timestamps and finds the
+    approriate time scale as well as the corresponding (exponential) factor.
+
+    Args:
+        pd_time (pd.array): pandas array of timestamps
+    """
 
     def find_exp(number) -> int:
         """
@@ -117,7 +118,17 @@ def extract_framework_name_from_id(identifier):
         return identifier.replace("fw", "").capitalize().replace("_", " ")
 
 
-def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
+def heatmap_viz(
+    x: np.ndarray,
+    y: np.ndarray,
+    z: np.ndarray,
+    z_title: str,
+    x_title: str,
+    log_x: bool,
+    y_title: str,
+    log_y: bool,
+    plot_title: str,
+):
     fig = go.Figure(
         [
             go.Heatmap(
@@ -139,10 +150,11 @@ def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
             tickmode=design.heatmap_axis_mode,
             tickvals=np.log2(y) if log_y else y,
             ticktext=y if log_y else None,
-            # dtick=np.log2(2) if log_y else 1,
-            tickangle=design.long_ticks_angle
-            if len(str(max(y))) >= design.long_ticks
-            else design.standard_ticks_angle,
+            tickangle=(
+                design.long_ticks_angle
+                if len(str(max(y))) >= design.long_ticks
+                else design.standard_ticks_angle
+            ),
             title=y_title,
             showgrid=design.showgrid,
         ),
@@ -151,10 +163,11 @@ def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
             tickmode=design.heatmap_axis_mode,
             tickvals=np.log2(x) if log_x else x,
             ticktext=x if log_x else None,
-            # dtick=np.log2(2) if log_x else 1,
-            tickangle=design.long_ticks_angle
-            if len(str(max(x))) >= design.long_ticks
-            else design.standard_ticks_angle,
+            tickangle=(
+                design.long_ticks_angle
+                if len(str(max(x))) >= design.long_ticks
+                else design.standard_ticks_angle
+            ),
             title=x_title,
             showgrid=design.showgrid,
         ),
@@ -173,19 +186,19 @@ def heatmap_viz(x, y, z, z_title, x_title, log_x, y_title, log_y, plot_title):
 
 
 def scatter_viz(
-    fig,
-    name,
-    main_color_sel,
-    sec_color_sel,
-    x,
-    y,
-    y_max,
-    y_min,
-    x_title,
-    log_x,
-    y_title,
-    log_y,
-    plot_title,
+    fig: go.Figure,
+    name: str,
+    main_color_sel: str,
+    sec_color_sel: str,
+    x: np.ndarray,
+    y: np.ndarray,
+    y_max: np.ndarray,
+    y_min: np.ndarray,
+    x_title: str,
+    log_x: bool,
+    y_title: str,
+    log_y: bool,
+    plot_title: str,
 ):
     fig.add_trace(
         go.Scatter(
@@ -225,13 +238,11 @@ def scatter_viz(
             type=design.log_tick_type if log_x else design.standard_tick_type,
             tickmode=design.scatter_axis_mode,
             tickvals=x,
-            # ticktext=[
-            #     f"2^{i}"
-            #     for i in duration_sorted_by_shots["qubits"].astype(int)
-            # ],
-            tickangle=design.long_ticks_angle
-            if len(str(max(x))) >= design.long_ticks
-            else design.standard_ticks_angle,
+            tickangle=(
+                design.long_ticks_angle
+                if len(str(max(x))) >= design.long_ticks
+                else design.standard_ticks_angle
+            ),
             title=x_title,
             showgrid=design.showgrid,
         ),
