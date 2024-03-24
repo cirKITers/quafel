@@ -152,7 +152,8 @@ def _random_circuit(
         q_indices[0] = p_indices[0] = 0
         np.cumsum(gate_specs["num_qubits"], out=q_indices[1:])
         np.cumsum(gate_specs["num_params"], out=p_indices[1:])
-        parameters = rng.uniform(0, 2 * np.pi, size=p_indices[-1])
+        # parameters = rng.uniform(0, 2 * np.pi, size=p_indices[-1])
+        parameters = ParameterVector(f"p_{layer_number}", p_indices[-1])
         rng.shuffle(qubits)
 
         # We've now generated everything we're going to need.  Now just to add everything.  The
@@ -201,7 +202,7 @@ def _random_circuit(
     if measure:
         qc.measure(qc.qubits, cr)
 
-    return qc, parameters
+    return qc
 
 
 def generate_random_qasm_circuit(
@@ -218,10 +219,20 @@ def generate_random_qasm_circuit(
     Returns:
         A dictionary with the key 'qasm_circuit' containing the QASM string and the key 'parameters' containing a list of parameters.
     """
-    qc, parameters = _random_circuit(
-        qubits, depth, max_operands=2, measure=True, seed=seed
+    qc = _random_circuit(qubits, depth, max_operands=2, measure=True, seed=seed)
+
+    rng = np.random.default_rng(seed)
+
+    # generate all the parameters of the circuit in one go
+    parameter_values = rng.uniform(0, 2 * np.pi, size=len(qc.parameters))
+
+    # bind the parameters to the circuit
+    bound_circuit = qc.assign_parameters(
+        {p: v for p, v in zip(qc.parameters, parameter_values)}
     )
-    return {"qasm_circuit": qc.qasm(), "parameters": parameters}
+
+    # return the bound circuit and the parameterizable circuit
+    return {"qasm_circuit": bound_circuit.qasm(), "circuit": qc}
 
 
 def generate_evaluation_matrix(
