@@ -1,5 +1,10 @@
-from qiskit.circuit import ClassicalRegister, QuantumCircuit, CircuitInstruction
-from qiskit.circuit import Reset
+from qiskit.circuit import (
+    ClassicalRegister,
+    QuantumCircuit,
+    CircuitInstruction,
+    ParameterVector,
+    Reset,
+)
 from qiskit.circuit.library import standard_gates
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.quantum_info import partial_trace
@@ -58,7 +63,7 @@ def part_generate_random_qasm_circuit(partition, seed=100):
         "qasm_circuit": result["qasm_circuit"],
         "n_shots": shots,
         "framework": framework,
-        "parameters": result["parameters"],
+        "circuit": result["circuit"],
     }
 
 
@@ -120,8 +125,6 @@ def _random_circuit(
         cr = ClassicalRegister(num_qubits, "c")
         qc.add_register(cr)
 
-    if seed is None:
-        seed = np.random.randint(0, np.iinfo(np.int32).max)
     rng = np.random.default_rng(seed)
 
     qubits = np.array(qc.qubits, dtype=object, copy=True)
@@ -294,7 +297,7 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
                     idx += 1
         elif "depth" in skip_combinations:
             d = max(evaluation_matrix["depth"])
-            for q in evaluation_matrix["qubtis"]:
+            for q in evaluation_matrix["qubits"]:
                 for s in evaluation_matrix["shots"]:
                     partitions[f"{idx}"] = {
                         "framework": f,
@@ -331,15 +334,16 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
     return {"evaluation_partitions": eval_partitions}
 
 
-def calculate_entangling_capability(qasm_circuit, parameters, samples, seed):
+def calculate_entangling_capability(
+    circuit: QuantumCircuit, samples: int, seed: int
+) -> Dict[str, float]:
     """
     Calculate the entangling capability of a quantum circuit.
     The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
     Implementation inspiration from https://obliviateandsurrender.github.io/blogs/expr.html
 
     Args:
-        qasm_circuit (str): The QASM circuit representation as a string.
-        parameters (ndarray): The parameters used in the circuit.
+        circuit (QuantumCircuit): The quantum circuit.
         samples (int): The number of samples to generate.
         seed (int): The seed for the random number generator.
 
@@ -387,13 +391,11 @@ def calculate_entangling_capability(qasm_circuit, parameters, samples, seed):
 
     rng = np.random.default_rng(seed=seed)
 
-    qasm_circuit = QuantumCircuit.from_qasm_str(qasm_circuit)
-
     # TODO: propagate precision to kedro parameters
     entangling_capability = meyer_wallach(
-        circuit=qasm_circuit,
+        circuit=circuit,
         samples=samples,
-        params_shape=parameters.shape,
+        params_shape=len(circuit.parameters),
         precision=5,
         rng=rng,
     )
@@ -401,19 +403,21 @@ def calculate_entangling_capability(qasm_circuit, parameters, samples, seed):
     return {"entangling_capability": entangling_capability}
 
 
-def calculate_expressibility(qasm_circuit, parameters, samples, seed):
+def calculate_expressibility(
+    circuit: QuantumCircuit, samples: int, seed: int
+) -> Dict[str, float]:
     """
     Calculate the expressibility of a PQC circuit using a randomized estimation scheme.
     The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
     Implementation inspiration from https://obliviateandsurrender.github.io/blogs/expr.html
 
     Args:
-        qasm_circuit (str): The QASM string representing the quantum circuit
-        parameters (np.ndarray): An array of parameters for the PQC circuit
+        circuit (QuantumCircuit): The PQC circuit to be analyzed
         samples (int): The number of samples to use for estimation
         seed (int): The seed for the random number generator
+
     Returns:
-        dict: A dictionary containing the expressibility value
+        Dict[str, float]: A dictionary containing the expressibility value
     """
 
     def random_haar_unitary(n_qubits: int, rng) -> np.ndarray:
@@ -504,17 +508,16 @@ def calculate_expressibility(qasm_circuit, parameters, samples, seed):
 
     rng = np.random.default_rng(seed=seed)
 
-    qasm_circuit = QuantumCircuit.from_qasm_str(qasm_circuit)
-    n_qubits = qasm_circuit.num_qubits
+    n_qubits = circuit.num_qubits
 
     # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
     # TODO: propagate precision to kedro parameters
     expressibility = np.linalg.norm(
         haar_integral(n_qubits=n_qubits, samples=samples, rng=rng)
         - pqc_integral(
-            circuit=qasm_circuit,
+            circuit=circuit,
             samples=samples,
-            params_shape=parameters.shape,
+            params_shape=len(circuit.parameters),
             precision=5,
             rng=rng,
         ),
