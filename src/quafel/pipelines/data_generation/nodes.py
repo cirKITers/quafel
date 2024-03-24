@@ -49,10 +49,14 @@ def part_generate_random_qasm_circuit(partition, seed=100):
     qubits = int(partition[partition.columns[0]][1])
     depth = int(partition[partition.columns[0]][2])
     shots = int(partition[partition.columns[0]][3])
+
+    result = generate_random_qasm_circuit(qubits, depth, seed)
+
     return {
-        **generate_random_qasm_circuit(qubits, depth, seed),
+        "qasm_circuit": result["qasm_circuit"],
         "n_shots": shots,
         "framework": framework,
+        "parameters": result["parameters"],
     }
 
 
