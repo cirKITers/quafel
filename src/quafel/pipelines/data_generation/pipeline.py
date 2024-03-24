@@ -11,6 +11,8 @@ from quafel.pipelines.data_generation.nodes import (
     full_generate_random_qasm_circuits,
     generate_evaluation_matrix,
     generate_evaluation_partitions,
+    calculate_expressibility,
+    calculate_entangling_capability,
 )
 
 
@@ -74,9 +76,44 @@ def create_pipeline(partitions, **kwargs) -> dict:
                         "qasm_circuit": f"qasm_circuit_{i}",
                         "n_shots": f"n_shots_{i}",
                         "framework": f"framework_{i}",
+                        "parameters": f"parameters_{i}",
                     },
                     tags=["dynamic"],
                     name=f"part_generate_random_qasm_circuit_{i}",
+                )
+                for i in partitions
+            ],
+            *[
+                node(
+                    func=calculate_expressibility,
+                    inputs={
+                        "qasm_circuit": f"qasm_circuit_{i}",
+                        "parameters": f"parameters_{i}",
+                        "samples": "params:samples",
+                        "seed": "params:seed",
+                    },
+                    outputs={
+                        "expressibility": f"expressibility_{i}",
+                    },
+                    tags=["dynamic"],
+                    name=f"calculate_expressibility_{i}",
+                )
+                for i in partitions
+            ],
+            *[
+                node(
+                    func=calculate_entangling_capability,
+                    inputs={
+                        "qasm_circuit": f"qasm_circuit_{i}",
+                        "parameters": f"parameters_{i}",
+                        "samples": "params:samples",
+                        "seed": "params:seed",
+                    },
+                    outputs={
+                        "entangling_capability": f"entangling_capability_{i}",
+                    },
+                    tags=["dynamic"],
+                    name=f"calculate_entangling_capability_{i}",
                 )
                 for i in partitions
             ],
@@ -92,6 +129,11 @@ def create_pipeline(partitions, **kwargs) -> dict:
             **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
             **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
             **{f"framework_{i}": f"framework_{i}" for i in partitions},
+            **{f"expressibility_{i}": f"expressibility_{i}" for i in partitions},
+            **{
+                f"entangling_capability_{i}": f"entangling_capability_{i}"
+                for i in partitions
+            },
         },
         namespace="data_generation",
     )
@@ -121,8 +163,6 @@ def create_pipeline(partitions, **kwargs) -> dict:
         },
         namespace="data_generation",
     )
-
-    
 
     return {
         "pl_generate_evaluation_partitions": pl_generate_evaluation_partitions,
