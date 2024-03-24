@@ -310,5 +310,5 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
                         idx += 1
 
     eval_partitions = pd.DataFrame(partitions)
-
+    log.info(f"Generated {len(eval_partitions.shape[1])} partitions")
     return {"evaluation_partitions": eval_partitions}
