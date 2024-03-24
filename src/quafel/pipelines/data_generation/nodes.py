@@ -195,12 +195,27 @@ def _random_circuit(
     if measure:
         qc.measure(qc.qubits, cr)
 
-    return qc
+    return qc, parameters
 
 
-def generate_random_qasm_circuit(qubits: int, depth: int, seed: int):
-    qc = _random_circuit(qubits, depth, max_operands=2, measure=True, seed=seed)
-    return {"qasm_circuit": qc.qasm()}
+def generate_random_qasm_circuit(
+    qubits: int, depth: int, seed: int
+) -> Dict[str, List[float]]:
+    """
+    Generate a random quantum circuit as a QASM string and a list of parameters.
+
+    Args:
+        qubits: Number of qubits.
+        depth: Number of gate layers.
+        seed: Random seed.
+
+    Returns:
+        A dictionary with the key 'qasm_circuit' containing the QASM string and the key 'parameters' containing a list of parameters.
+    """
+    qc, parameters = _random_circuit(
+        qubits, depth, max_operands=2, measure=True, seed=seed
+    )
+    return {"qasm_circuit": qc.qasm(), "parameters": parameters}
 
 
 def generate_evaluation_matrix(
