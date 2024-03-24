@@ -2,9 +2,11 @@ from qiskit.circuit import ClassicalRegister, QuantumCircuit, CircuitInstruction
 from qiskit.circuit import Reset
 from qiskit.circuit.library import standard_gates
 from qiskit.circuit.exceptions import CircuitError
+from qiskit.quantum_info import partial_trace
+from qiskit import Aer, execute
 import numpy as np
 
-from typing import List
+from typing import List, Dict
 import pandas as pd
 
 import logging
@@ -316,3 +318,197 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
     eval_partitions = pd.DataFrame(partitions)
     log.info(f"Generated {eval_partitions.shape[1]} partitions")
     return {"evaluation_partitions": eval_partitions}
+
+
+def calculate_entangling_capability(qasm_circuit, parameters, samples, seed):
+    """
+    Calculate the entangling capability of a quantum circuit.
+    The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
+    Implementation inspiration from https://obliviateandsurrender.github.io/blogs/expr.html
+
+    Args:
+        qasm_circuit (str): The QASM circuit representation as a string.
+        parameters (ndarray): The parameters used in the circuit.
+        samples (int): The number of samples to generate.
+        seed (int): The seed for the random number generator.
+
+    Returns:
+        dict: A dictionary containing the entangling capability value.
+    """
+
+    def meyer_wallach(circuit, samples, params_shape, precision, rng):
+        mw_measure = np.zeros(samples, dtype=complex)
+
+        # outer sum of the MW measure; iterate over set of parameters
+        for sample in range(samples):
+            # FIXME: unify the range for parameters in the circuit
+            # generation method and the sampling here
+            params = rng.uniform(0, 2 * np.pi, params_shape)
+            bound_circuit = circuit.bind_parameters(params)
+            # execute the PQC circuit with the current set of parameters
+            result = execute(
+                bound_circuit, backend=Aer.get_backend("statevector_simulator")
+            ).result()
+
+            # extract the statevector from the simulation result
+            U = result.get_statevector(bound_circuit, decimals=precision).data.reshape(
+                -1, 1
+            )
+
+            # generate a list from [0..num_qubits-1]
+            # we need that later to trace out the corresponding qubits
+            qb = list(range(circuit.num_qubits))
+            # initialize the inner sum which corresponds to the entropy
+            entropy = 0
+
+            # inner sum of the MW measure
+            for j in range(circuit.num_qubits):
+                # density of the jth qubit after tracing out the rest
+                density = partial_trace(U, qb[:j] + qb[j + 1 :]).data
+                # trace of the density matrix
+                entropy += np.trace(density**2)
+
+            # inverse of the normalized entropy is the MW for the current sample of parameters
+            mw_measure[sample] = 1 - entropy / circuit.num_qubits
+
+        # final normalization according to formula
+        return 2 * np.sum(mw_measure).real / sample
+
+    rng = np.random.default_rng(seed=seed)
+
+    qasm_circuit = QuantumCircuit.from_qasm_str(qasm_circuit)
+
+    # TODO: propagate precision to kedro parameters
+    entangling_capability = meyer_wallach(
+        circuit=qasm_circuit,
+        samples=samples,
+        params_shape=parameters.shape,
+        precision=5,
+        rng=rng,
+    )
+
+    return {"entangling_capability": entangling_capability}
+
+
+def calculate_expressibility(qasm_circuit, parameters, samples, seed):
+    """
+    Calculate the expressibility of a PQC circuit using a randomized estimation scheme.
+    The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
+    Implementation inspiration from https://obliviateandsurrender.github.io/blogs/expr.html
+
+    Args:
+        qasm_circuit (str): The QASM string representing the quantum circuit
+        parameters (np.ndarray): An array of parameters for the PQC circuit
+        samples (int): The number of samples to use for estimation
+        seed (int): The seed for the random number generator
+    Returns:
+        dict: A dictionary containing the expressibility value
+    """
+
+    def random_haar_unitary(n_qubits: int, rng) -> np.ndarray:
+        """
+        Generate a random unitary matrix in the Haar measure
+
+        Args:
+            n_qubits (int): The number of qubits in the system
+
+        Returns:
+            np.ndarray: A 2^n x 2^n unitary matrix representing a random
+                unitary in the Haar measure on the unitary group U(2^n)
+        """
+        N = 2**n_qubits
+
+        # Generate uniformly sampled random complex numbers
+        Z = rng.normal(size=(N, N)) + 1.0j * rng.normal(size=(N, N))
+        # Do a QR decomposition
+        [Q, R] = np.linalg.qr(Z)
+        # Allow D following unitary matrix constraints
+        D = np.diag(np.diagonal(R) / np.abs(np.diagonal(R)))
+        # Composite the Haar Unitary
+        return np.dot(Q, D)
+
+    def haar_integral(n_qubits: int, samples: int, rng) -> np.ndarray:
+        """
+        Compute the Haar integral for a given number of samples
+
+        Args:
+            n_qubits (int): The number of qubits in the system
+            samples (int): The number of samples to use for estimation
+
+        Returns:
+            np.ndarray: A 2^n x 2^n array representing the max expressibility
+        """
+        N = 2**n_qubits
+
+        Z = np.zeros((N, N), dtype=complex)
+
+        zero_state = np.zeros(N, dtype=complex)
+        zero_state[0] = 1
+
+        # A = np.kron(zero_state, np.ones((1, samples)))
+        # Z += np.matmul(A, random_haar_unitary(n_qubits).T.reshape(-1, samples))
+
+        for _ in range(samples):
+            A = np.matmul(zero_state, random_haar_unitary(n_qubits, rng)).reshape(-1, 1)
+            Z += np.kron(A, A.conj().T)
+        return Z / samples
+
+    def pqc_integral(circuit, samples, params_shape, precision, rng):
+        """
+        Compute the entangling capability of a PQC circuit using a randomized
+        estimation scheme
+
+        Args:
+            circuit (QuantumCircuit): The PQC circuit to be analyzed
+            samples (int): The number of samples to use for estimation
+            params_shape (tuple): The shape of the array of parameters to be
+                used in the circuit simulation
+
+        Returns:
+            np.ndarray: A 2^n x 2^n array representing the expressibility of the PQC circuit, where n is the number of qubits in
+                the circuit
+        """
+        N = 2**circuit.num_qubits
+        Z = np.zeros((N, N), dtype=complex)
+
+        for _ in range(samples):
+            # FIXME: unify the range for parameters in the circuit
+            # generation method and the sampling here
+            params = rng.uniform(0, 2 * np.pi, params_shape)
+            bound_circuit = circuit.bind_parameters(params)
+            # execute the PQC circuit with the current set of parameters
+            # ansatz = circuit(params, circuit.num_qubits)
+            result = execute(
+                bound_circuit, backend=Aer.get_backend("statevector_simulator")
+            ).result()
+
+            # extract the statevector from the simulation result
+            U = result.get_statevector(bound_circuit, decimals=precision).data.reshape(
+                -1, 1
+            )
+
+            # accumulate the contribution to the expressibility
+            Z += np.kron(U, U.conj().T)  # type: ignore
+        return Z / samples
+
+    rng = np.random.default_rng(seed=seed)
+
+    qasm_circuit = QuantumCircuit.from_qasm_str(qasm_circuit)
+    n_qubits = qasm_circuit.num_qubits
+
+    # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
+    # TODO: propagate precision to kedro parameters
+    expressibility = np.linalg.norm(
+        haar_integral(n_qubits=n_qubits, samples=samples, rng=rng)
+        - pqc_integral(
+            circuit=qasm_circuit,
+            samples=samples,
+            params_shape=parameters.shape,
+            precision=5,
+            rng=rng,
+        ),
+    )
+
+    return {
+        "expressibility": expressibility,
+    }
