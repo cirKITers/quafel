@@ -7,6 +7,10 @@ import numpy as np
 from typing import List
 import pandas as pd
 
+import logging
+
+log = logging.getLogger(__name__)
+
 
 def log_circuit(qasm_circuit):
     return {"circuit_image": None}
