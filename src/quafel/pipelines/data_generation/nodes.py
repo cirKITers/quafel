@@ -523,3 +523,16 @@ def calculate_expressibility(qasm_circuit, parameters, samples, seed):
     return {
         "expressibility": expressibility,
     }
+
+
+def combine_measures(
+    expressibility: float, entangling_capability: float
+) -> List[float]:
+    return {
+        "measure": pd.DataFrame(
+            {
+                "expressibility": [expressibility],
+                "entangling_capability": [entangling_capability],
+            }
+        )
+    }
