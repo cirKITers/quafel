@@ -1,4 +1,5 @@
 """Project pipelines."""
+
 from typing import Dict
 
 from kedro.framework.project import find_pipelines
@@ -50,7 +51,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     return {
         "__default__": dg_pipelines["pl_generate_evaluation_partitions"]
-        + dg_pipelines["pl_generate_qasm_circuits"]
+        + dg_pipelines["pl_generate_qasm_circuits_splitted"]
         + ds_pipelines["pl_parallel_measure_execution_durations"]
         + viz_pipelines["pl_visualize_evaluations"],
         "prepare": dg_pipelines["pl_generate_evaluation_partitions"],
