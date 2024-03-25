@@ -25,10 +25,10 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     # get all existing durations and results. The hooks run prior to this, so in case we don't want to restore existing results, we should find empty directories
     existing_durations = [
-        Path(f).stem for f in glob.glob("data/05_execution_durations/*.csv")
+        Path(f).stem for f in glob.glob("data/06_execution_durations/*.csv")
     ]
     existing_results = [
-        Path(f).stem for f in glob.glob("data/04_execution_results/*.csv")
+        Path(f).stem for f in glob.glob("data/05_execution_results/*.csv")
     ]
     # existing_circuits = [
     #     Path(f).stem for f in glob.glob("data/03_qasm_circuits/*.txt")
@@ -41,7 +41,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     # circuit_partitions = [p for p in all_partitions if p not in existing_circuits]
 
     # gather all the .tmp files to create figures output
-    tmp_files = [Path(f).stem for f in glob.glob("data/07_reporting/*.tmp")]
+    tmp_files = [Path(f).stem for f in glob.glob("data/08_reporting/*.tmp")]
 
     # pass only the number of partitions we want to generate circuits for
     dg_pipelines = dg.create_pipeline(partitions=eval_partitions)
