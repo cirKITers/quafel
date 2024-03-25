@@ -220,7 +220,8 @@ def generate_random_qasm_circuit(
         seed: Random seed.
 
     Returns:
-        A dictionary with the key 'qasm_circuit' containing the QASM string and the key 'parameters' containing a list of parameters.
+        A dictionary with the key 'qasm_circuit' containing the QASM string and
+        the key 'parameters' containing a list of parameters.
     """
     qc = _random_circuit(qubits, depth, max_operands=2, measure=True, seed=seed)
 
@@ -340,7 +341,8 @@ def calculate_entangling_capability(
     """
     Calculate the entangling capability of a quantum circuit.
     The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
-    Implementation inspiration from https://obliviateandsurrender.github.io/blogs/expr.html
+    Implementation inspiration from
+    https://obliviateandsurrender.github.io/blogs/expr.html
 
     Args:
         circuit (QuantumCircuit): The quantum circuit.
@@ -383,7 +385,8 @@ def calculate_entangling_capability(
 
             # fixes accumulating decimals that would otherwise lead to a MW > 1
             entropy = min((entropy.real / circuit.num_qubits), 1)
-            # inverse of the normalized entropy is the MW for the current sample of parameters
+            # inverse of the normalized entropy is the MW
+            # for the current sample of parameters
             mw_measure[sample] = 1 - entropy
         # final normalization according to formula
         return 2 * np.sum(mw_measure).real / samples
@@ -406,9 +409,11 @@ def calculate_expressibility(
     circuit: QuantumCircuit, samples_per_parameter: int, seed: int
 ) -> Dict[str, float]:
     """
-    Calculate the expressibility of a PQC circuit using a randomized estimation scheme.
+    Calculate the expressibility of a PQC circuit using
+    a randomized estimation scheme.
     The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
-    Implementation inspiration from https://obliviateandsurrender.github.io/blogs/expr.html
+    Implementation inspiration from
+    https://obliviateandsurrender.github.io/blogs/expr.html
 
     Args:
         circuit (QuantumCircuit): The PQC circuit to be analyzed
@@ -479,8 +484,8 @@ def calculate_expressibility(
                 used in the circuit simulation
 
         Returns:
-            np.ndarray: A 2^n x 2^n array representing the expressibility of the PQC circuit, where n is the number of qubits in
-                the circuit
+            np.ndarray: A 2^n x 2^n array representing the expressibility
+            of the PQC circuit, where n is the number of qubits in the circuit
         """
         N = 2**circuit.num_qubits
         Z = np.zeros((N, N), dtype=complex)
