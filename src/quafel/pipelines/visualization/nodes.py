@@ -21,6 +21,8 @@ import os
 
 duration_perf_regex = r"duration_perf_\d*"
 duration_proc_regex = r"duration_proc_\d*"
+expressibility_regex = r"expressibility"
+entangling_capability = r"entangling_capability"
 
 
 class design:
@@ -192,47 +194,49 @@ def scatter_viz(
     sec_color_sel: str,
     x: np.ndarray,
     y: np.ndarray,
-    y_max: np.ndarray,
-    y_min: np.ndarray,
     x_title: str,
     log_x: bool,
     y_title: str,
     log_y: bool,
     plot_title: str,
+    y_max: np.ndarray = None,
+    y_min: np.ndarray = None,
+    secondary_y: bool = False,
 ):
     fig.add_trace(
         go.Scatter(
-            name=f"{name}",
+            name=f"{name}" if not secondary_y else "",
             x=x,
             y=y,
             mode=design.scatter_mode_c,
-            line=dict(color=main_color_sel),
+            line=dict(color=main_color_sel, dash="dash" if secondary_y else "solid"),
         )
     )
-    fig.add_trace(
-        go.Scatter(
-            name=f"{name} - High",
-            x=x,
-            y=y_max,
-            mode=design.scatter_mode_hl,
-            marker=design.marker_color,
-            line=dict(width=0),
-            showlegend=False,
+    if y_max is not None and y_min is not None:
+        fig.add_trace(
+            go.Scatter(
+                name=f"{name} - High",
+                x=x,
+                y=y_max,
+                mode=design.scatter_mode_hl,
+                marker=design.marker_color,
+                line=dict(width=0),
+                showlegend=False,
+            )
         )
-    )
-    fig.add_trace(
-        go.Scatter(
-            name=f"{name} - Low",
-            x=x,
-            y=y_min,
-            marker=design.marker_color,
-            line=dict(width=0),
-            mode=design.scatter_mode_hl,
-            fillcolor=sec_color_sel,
-            fill="tonexty",
-            showlegend=False,
+        fig.add_trace(
+            go.Scatter(
+                name=f"{name} - Low",
+                x=x,
+                y=y_min,
+                marker=design.marker_color,
+                line=dict(width=0),
+                mode=design.scatter_mode_hl,
+                fillcolor=sec_color_sel,
+                fill="tonexty",
+                showlegend=False,
+            )
         )
-    )
     fig.update_layout(
         xaxis=dict(
             type=design.log_tick_type if log_x else design.standard_tick_type,
@@ -290,7 +294,7 @@ def shots_qubits_viz(evaluations_combined: Dict):
 
             q = int(q)
 
-            figures[f"{fw}_qubits_{q}"] = heatmap_viz(
+            figures[f"{fw}_qubits_{q}_time"] = heatmap_viz(
                 x=duration_sorted_by_depth["shots"].astype(int),
                 y=duration_sorted_by_depth["depth"].astype(int),
                 z=duration_mean,
@@ -332,7 +336,7 @@ def shots_depths_viz(evaluations_combined: Dict):
             # for s, duration in grouped_by_shots_sorted_by_depth:
             #     image.append(duration['4'].to_numpy())
 
-            figures[f"{fw}_depth_{d}"] = heatmap_viz(
+            figures[f"{fw}_depth_{d}_time"] = heatmap_viz(
                 x=duration_sorted_by_qubit["shots"].astype(int),
                 y=duration_sorted_by_qubit["qubits"].astype(int),
                 z=duration_mean,
@@ -371,7 +375,7 @@ def depth_qubits_viz(evaluations_combined: Dict):
 
             s = int(s)
 
-            figures[f"{fw}_shots_{s}"] = heatmap_viz(
+            figures[f"{fw}_shots_{s}_time"] = heatmap_viz(
                 x=duration_sorted_by_depth["qubits"].astype(int),
                 y=duration_sorted_by_depth["depth"].astype(int),
                 z=duration_mean,
@@ -429,11 +433,11 @@ def qubits_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 # for s, duration in grouped_by_shots_sorted_by_depth:
                 #     image.append(duration['4'].to_numpy())
 
-                if f"shots_{s}_depth_{d}" not in figures:
-                    figures[f"shots_{s}_depth_{d}"] = go.Figure()
+                if f"shots_{s}_depth_{d}_time" not in figures:
+                    figures[f"shots_{s}_depth_{d}_time"] = go.Figure()
 
                 scatter_viz(
-                    fig=figures[f"shots_{s}_depth_{d}"],
+                    fig=figures[f"shots_{s}_depth_{d}_time"],
                     name=f"{framework_name}",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
@@ -494,11 +498,11 @@ def shots_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 # for s, duration in grouped_by_shots_sorted_by_depth:
                 #     image.append(duration['4'].to_numpy())
 
-                if f"qubits_{q}_depth_{d}" not in figures:
-                    figures[f"qubits_{q}_depth_{d}"] = go.Figure()
+                if f"qubits_{q}_depth_{d}_time" not in figures:
+                    figures[f"qubits_{q}_depth_{d}_time"] = go.Figure()
 
                 scatter_viz(
-                    fig=figures[f"qubits_{q}_depth_{d}"],
+                    fig=figures[f"qubits_{q}_depth_{d}_time"],
                     name=f"{framework_name}",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
@@ -559,11 +563,11 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
                 # for s, duration in grouped_by_shots_sorted_by_depth:
                 #     image.append(duration['4'].to_numpy())
 
-                if f"shots_{s}_qubits_{q}" not in figures:
-                    figures[f"shots_{s}_qubits_{q}"] = go.Figure()
+                if f"shots_{s}_qubits_{q}_time" not in figures:
+                    figures[f"shots_{s}_qubits_{q}_time"] = go.Figure()
 
                 scatter_viz(
-                    fig=figures[f"shots_{s}_qubits_{q}"],
+                    fig=figures[f"shots_{s}_qubits_{q}_time"],
                     name=f"{framework_name}",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
@@ -851,23 +855,32 @@ def export_selected(evaluations_combined, additional_figures, output_folder, **f
         # set scale=3 to increase resolution in resulting plots
         fig.write_image(os.path.join(folder, f"{name}.png"), engine="kaleido", scale=3)
 
-    sel = f"shots_{max_shots}_depth_{max_depth}"
+    sel = f"shots_{max_shots}_depth_{max_depth}_time"
     export(figures[sel], sel, output_folder)
 
-    sel = f"shots_{max_shots}_qubits_{max_qubits}"
+    sel = f"shots_{max_shots}_qubits_{max_qubits}_time"
     export(figures[sel], sel, output_folder)
 
-    sel = f"qubits_{max_qubits}_depth_{max_depth}"
+    sel = f"qubits_{max_qubits}_depth_{max_depth}_time"
+    export(figures[sel], sel, output_folder)
+
+    sel = f"shots_{max_shots}_depth_{max_depth}_measures"
+    export(figures[sel], sel, output_folder)
+
+    sel = f"shots_{max_shots}_qubits_{max_qubits}_measures"
+    export(figures[sel], sel, output_folder)
+
+    sel = f"qubits_{max_qubits}_depth_{max_depth}_measures"
     export(figures[sel], sel, output_folder)
 
     for fw in frameworks:
-        sel = f"{fw}_qubits_{max_qubits}"
+        sel = f"{fw}_qubits_{max_qubits}_time"
         export(figures[sel], sel, output_folder)
 
-        sel = f"{fw}_depth_{max_depth}"
+        sel = f"{fw}_depth_{max_depth}_time"
         export(figures[sel], sel, output_folder)
 
-        sel = f"{fw}_shots_{max_shots}"
+        sel = f"{fw}_shots_{max_shots}_time"
         export(figures[sel], sel, output_folder)
 
     for add_fig in additional_figures:

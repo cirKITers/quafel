@@ -132,23 +132,26 @@ class PipelineHooks:
             names = []
             for fw in evaluation_matrix["frameworks"]:
                 for q in evaluation_matrix["qubits"]:
-                    names.append(f"{fw}_qubits_{q}")
+                    names.append(f"{fw}_qubits_{q}_time")
                 for d in evaluation_matrix["depths"]:
-                    names.append(f"{fw}_depth_{d}")
+                    names.append(f"{fw}_depth_{d}_time")
                 for s in evaluation_matrix["shots"]:
-                    names.append(f"{fw}_shots_{s}")
-
-            for d in evaluation_matrix["depths"]:
-                for s in evaluation_matrix["shots"]:
-                    names.append(f"shots_{s}_depth_{d}")
-
-            for d in evaluation_matrix["depths"]:
-                for q in evaluation_matrix["qubits"]:
-                    names.append(f"qubits_{q}_depth_{d}")
+                    names.append(f"{fw}_shots_{s}_time")
 
             for s in evaluation_matrix["shots"]:
+                for d in evaluation_matrix["depths"]:
+                    names.append(f"shots_{s}_depth_{d}_time")
+                    names.append(f"shots_{s}_depth_{d}_measures")
+
+            for d in evaluation_matrix["depths"]:
                 for q in evaluation_matrix["qubits"]:
-                    names.append(f"shots_{s}_qubits_{q}")
+                    names.append(f"qubits_{q}_depth_{d}_time")
+                    names.append(f"qubits_{q}_depth_{d}_measures")
+
+            for q in evaluation_matrix["qubits"]:
+                for s in evaluation_matrix["shots"]:
+                    names.append(f"shots_{s}_qubits_{q}_time")
+                    names.append(f"shots_{s}_qubits_{q}_measures")
 
             # use the dummy dataset to get the version of the current kedro run, so that it matches the ones from the versioned datasets
             version = Version(
