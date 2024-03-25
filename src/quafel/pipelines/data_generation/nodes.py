@@ -121,7 +121,7 @@ def _random_circuit(
 
     qc = QuantumCircuit(num_qubits)
 
-    if measure or conditional:
+    if conditional:
         cr = ClassicalRegister(num_qubits, "c")
         qc.add_register(cr)
 
@@ -202,8 +202,8 @@ def _random_circuit(
                     )
                 )
 
-    if measure:
-        qc.measure(qc.qubits, cr)
+    # if measure:
+    #     qc.measure(qc.qubits, cr)
 
     return qc
 
@@ -212,7 +212,9 @@ def generate_random_qasm_circuit(
     qubits: int, depth: int, seed: int
 ) -> Dict[str, List[float]]:
     """
-    Generate a random quantum circuit as a QASM string and a list of parameters.
+    Generate a random quantum circuit and its representation as a QASM string.
+    Note that the QASM circuit differs from the original circuit in such a way
+    that all qubits are being measured.
 
     Args:
         qubits: Number of qubits.
@@ -221,9 +223,9 @@ def generate_random_qasm_circuit(
 
     Returns:
         A dictionary with the key 'qasm_circuit' containing the QASM string and
-        the key 'parameters' containing a list of parameters.
+        the key 'circuit' containing the Qiskit circuit object.
     """
-    qc = _random_circuit(qubits, depth, max_operands=2, measure=True, seed=seed)
+    qc = _random_circuit(qubits, depth, max_operands=2, seed=seed)
 
     rng = np.random.default_rng(seed)
 
@@ -234,6 +236,8 @@ def generate_random_qasm_circuit(
     bound_circuit = qc.assign_parameters(
         {p: v for p, v in zip(qc.parameters, parameter_values)}
     )
+    # measure all of the bound circuit
+    bound_circuit.measure_all()
 
     # return the bound circuit and the parameterizable circuit
     return {"qasm_circuit": bound_circuit.qasm(), "circuit": qc}
