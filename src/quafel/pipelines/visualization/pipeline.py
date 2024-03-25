@@ -143,7 +143,6 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=depth_measures_viz,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "skip_frameworks": "params:skip_frameworks",
                 },
                 outputs={
                     **{
@@ -163,7 +162,6 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=shots_measures_viz,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "skip_frameworks": "params:skip_frameworks",
                 },
                 outputs={
                     **{
@@ -183,7 +181,6 @@ def create_pipeline(figures, **kwargs) -> dict:
                 func=qubits_measures_viz,
                 inputs={
                     "evaluations_combined": "evaluations_combined",
-                    "skip_frameworks": "params:skip_frameworks",
                 },
                 outputs={
                     **{

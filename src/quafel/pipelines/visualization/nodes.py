@@ -203,24 +203,14 @@ def scatter_viz(
     plot_title: str,
     y_max: np.ndarray = None,
     y_min: np.ndarray = None,
-    secondary_y: bool = False,
 ):
     fig.add_trace(
         go.Scatter(
             name=f"{name}",
-            legendgroup=f"{name}" if fig._grid_ref is not None else None,
-            showlegend=False if secondary_y else True,
             x=x,
             y=y,
             mode=design.scatter_mode_c,
             line=dict(color=main_color_sel),
-        ),
-        # providing secondary (as bool) will yield an attribute error
-        # secondary_y=secondary_y if fig._grid_ref is not None else None,
-        **(
-            dict(row=1, col=2 if secondary_y else 1)
-            if fig._grid_ref is not None
-            else dict()
         ),
     )
     if y_max is not None and y_min is not None:
@@ -233,11 +223,6 @@ def scatter_viz(
                 marker=design.marker_color,
                 line=dict(width=0),
                 showlegend=False,
-            ),
-            **(
-                dict(row=1, col=1 if secondary_y else 2)
-                if fig._grid_ref is not None
-                else dict()
             ),
         )
         fig.add_trace(
@@ -252,14 +237,8 @@ def scatter_viz(
                 fill="tonexty",
                 showlegend=False,
             ),
-            **(
-                dict(row=1, col=1 if secondary_y else 2)
-                if fig._grid_ref is not None
-                else dict()
-            ),
         )
     fig.update_layout(
-        width=1200 if fig._grid_ref is not None else 800,
         xaxis=dict(
             type=design.log_tick_type if log_x else design.standard_tick_type,
             tickmode=design.scatter_axis_mode,
@@ -272,22 +251,6 @@ def scatter_viz(
             title=x_title,
             showgrid=design.showgrid,
         ),
-        xaxis2=(
-            dict(
-                type=design.log_tick_type if log_x else design.standard_tick_type,
-                tickmode=design.scatter_axis_mode,
-                tickvals=x,
-                tickangle=(
-                    design.long_ticks_angle
-                    if len(str(max(x))) >= design.long_ticks
-                    else design.standard_ticks_angle
-                ),
-                title=x_title,
-                showgrid=design.showgrid,
-            )
-            if secondary_y
-            else dict()
-        ),
         yaxis=(
             dict(
                 title=y_title,
@@ -295,18 +258,6 @@ def scatter_viz(
                 dtick=design.time_dtick if log_y else None,
                 showgrid=design.showgrid,
             )
-            if not secondary_y
-            else dict()
-        ),
-        yaxis2=(
-            dict(
-                title=y_title,
-                type=design.log_tick_type if log_y else None,
-                dtick=design.time_dtick if log_y else None,
-                showgrid=design.showgrid,
-            )
-            if secondary_y
-            else dict()
         ),
         title=dict(
             text=plot_title if design.print_figure_title else "",
@@ -638,236 +589,206 @@ def depth_time_viz(evaluations_combined: Dict, skip_frameworks: List):
     return figures
 
 
-def qubits_measures_viz(evaluations_combined: Dict, skip_frameworks: List):
+def qubits_measures_viz(evaluations_combined: Dict) -> Dict[str, go.Figure]:
+    """Returns a dictionary of subplots, where the keys are of the form
+    'shots_<n>_depth_<m>_measures', where <n> and <m> are the shot number and
+    circuit depth, respectively. Each subplot shows the mean expressibility
+    and mean entangling capability (over all qubits) of each framework for a
+    given shot number and circuit depth.
+
+    Args:
+        evaluations_combined (Dict): A dataframe containing the evaluations.
+
+    Returns:
+        Dict[str, Figure]: A dictionary of subplots, where the keys are of the
+            form 'shots_<n>_depth_<m>_measures', and the values are subplots
+            objects.
+    """
+
     figures = {}
 
-    # those two color sets are well suited as they correspond regarding
-    # their color value but differ from their luminosity and saturation values
-    main_colors_it = iter(design.qual_main)
-    sec_colors_it = iter(design.qual_second)
+    grouped_by_depth = evaluations_combined.groupby("depth")
 
-    grouped_by_fw = evaluations_combined.groupby("framework")
-    for fw, qubit_depth_duration in grouped_by_fw:
-        if fw in skip_frameworks:
-            continue
+    for d, qubit_shots_duration in grouped_by_depth:
+        grouped_by_shots = qubit_shots_duration.groupby("shots")
 
-        main_color_sel = next(main_colors_it)
-        sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
-        framework_name = extract_framework_name_from_id(fw)
+        for s, fw_qubit_duration in grouped_by_shots:
+            duration_sorted_by_qubit = fw_qubit_duration.sort_values("qubits")
 
-        grouped_by_depth = qubit_depth_duration.groupby("depth")
+            expressiblities = duration_sorted_by_qubit.filter(
+                regex=expressibility_regex
+            ).mean(axis=1)
+            entangling_capabilities = duration_sorted_by_qubit.filter(
+                regex=entangling_capability
+            ).mean(axis=1)
 
-        for d, qubit_shots_duration in grouped_by_depth:
-            grouped_by_shots = qubit_shots_duration.groupby("shots")
+            d = int(d)
+            s = int(s)
 
-            for s, fw_qubit_duration in grouped_by_shots:
-                duration_sorted_by_qubit = fw_qubit_duration.sort_values("qubits")
+            figures[f"shots_{s}_depth_{d}_measures"] = go.Figure()
 
-                expressiblities = duration_sorted_by_qubit.filter(
-                    regex=expressibility_regex
-                ).mean(axis=1)
-                entangling_capabilities = duration_sorted_by_qubit.filter(
-                    regex=entangling_capability
-                ).mean(axis=1)
+            scatter_viz(
+                fig=figures[f"shots_{s}_depth_{d}_measures"],
+                name=f"Entangling Capability",
+                main_color_sel=design.qual_main[0],
+                sec_color_sel=rgb_to_rgba(design.qual_second[0], 0.2),
+                x=duration_sorted_by_qubit["qubits"],
+                y=entangling_capabilities,
+                x_title="# of Qubits",
+                log_x=False,
+                y_title=f"Measures",
+                log_y=False,
+                plot_title=f"Measures per Framework over "
+                f"# of Qubits @ {s} Shots, Circuit Depth {d}",
+            )
 
-                d = int(d)
-                s = int(s)
-                # image = []
-                # for s, duration in grouped_by_shots_sorted_by_depth:
-                #     image.append(duration['4'].to_numpy())
-
-                if f"shots_{s}_depth_{d}_measures" not in figures:
-                    figures[f"shots_{s}_depth_{d}_measures"] = make_subplots(
-                        rows=1,
-                        cols=2,
-                        # specs=[[{"secondary_y": True}]]
-                    )
-
-                scatter_viz(
-                    fig=figures[f"shots_{s}_depth_{d}_measures"],
-                    name=f"{framework_name}",
-                    main_color_sel=main_color_sel,
-                    sec_color_sel=sec_color_sel,
-                    x=duration_sorted_by_qubit["qubits"],
-                    y=expressiblities,
-                    x_title="# of Qubits",
-                    log_x=False,
-                    y_title=f"Expressibility",
-                    log_y=False,
-                    plot_title=f"Measures per Framework over "
-                    f"# of Qubits @ {s} Shots, Circuit Depth {d}",
-                )
-
-                scatter_viz(
-                    fig=figures[f"shots_{s}_depth_{d}_measures"],
-                    name=f"{framework_name}",
-                    main_color_sel=main_color_sel,
-                    sec_color_sel=sec_color_sel,
-                    x=duration_sorted_by_qubit["qubits"],
-                    y=entangling_capabilities,
-                    x_title="# of Qubits",
-                    log_x=False,
-                    y_title=f"Entangling Capability",
-                    log_y=True,
-                    plot_title=f"Measures per Framework over "
-                    f"# of Qubits @ {s} Shots, Circuit Depth {d}",
-                    secondary_y=True,
-                )
+            scatter_viz(
+                fig=figures[f"shots_{s}_depth_{d}_measures"],
+                name=f"Expressibility",
+                main_color_sel=design.qual_main[1],
+                sec_color_sel=rgb_to_rgba(design.qual_second[1], 0.2),
+                x=duration_sorted_by_qubit["qubits"],
+                y=expressiblities,
+                x_title="# of Qubits",
+                log_x=False,
+                y_title=f"Measures",
+                log_y=False,
+                plot_title=f"Measures per Framework over "
+                f"# of Qubits @ {s} Shots, Circuit Depth {d}",
+            )
 
     return figures
 
 
-def shots_measures_viz(evaluations_combined: Dict, skip_frameworks: List):
+def shots_measures_viz(evaluations_combined: Dict):
+    """
+    Visualizes measures based on shots and depth.
+
+    Parameters:
+    - evaluations_combined: a dictionary containing evaluations
+
+    Returns:
+    - figures: a dictionary containing the visualizations
+    """
     figures = {}
 
-    # those two color sets are well suited as they correspond regarding
-    # their color value but differ from their luminosity and saturation values
-    main_colors_it = iter(design.qual_main)
-    sec_colors_it = iter(design.qual_second)
+    grouped_by_depth = evaluations_combined.groupby("depth")
 
-    grouped_by_fw = evaluations_combined.groupby("framework")
-    for fw, qubit_depth_duration in grouped_by_fw:
-        if fw in skip_frameworks:
-            continue
+    for d, qubit_shots_duration in grouped_by_depth:
+        grouped_by_qubits = qubit_shots_duration.groupby("qubits")
 
-        main_color_sel = next(main_colors_it)
-        sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
-        framework_name = extract_framework_name_from_id(fw)
+        for q, fw_shots_duration in grouped_by_qubits:
+            duration_sorted_by_shots = fw_shots_duration.sort_values("shots")
 
-        grouped_by_depth = qubit_depth_duration.groupby("depth")
+            expressiblities = duration_sorted_by_shots.filter(
+                regex=expressibility_regex
+            ).mean(axis=1)
+            entangling_capabilities = duration_sorted_by_shots.filter(
+                regex=entangling_capability
+            ).mean(axis=1)
 
-        for d, qubit_shots_duration in grouped_by_depth:
-            grouped_by_qubits = qubit_shots_duration.groupby("qubits")
+            q = int(q)
+            d = int(d)
 
-            for q, fw_shots_duration in grouped_by_qubits:
-                duration_sorted_by_shots = fw_shots_duration.sort_values("shots")
+            figures[f"qubits_{q}_depth_{d}_measures"] = go.Figure()
 
-                expressiblities = duration_sorted_by_shots.filter(
-                    regex=expressibility_regex
-                ).mean(axis=1)
-                entangling_capabilities = duration_sorted_by_shots.filter(
-                    regex=entangling_capability
-                ).mean(axis=1)
+            scatter_viz(
+                fig=figures[f"qubits_{q}_depth_{d}_measures"],
+                name=f"Entangling Capability",
+                main_color_sel=design.qual_main[0],
+                sec_color_sel=rgb_to_rgba(design.qual_second[0], 0.2),
+                x=duration_sorted_by_shots["shots"].astype(int),
+                y=entangling_capabilities,
+                x_title="# of Shots",
+                log_x=True,
+                y_title=f"Measures",
+                log_y=False,
+                plot_title=f"Measures per Framework over "
+                f"# of Shots @ {q} Qubits, Circuit Depth {d}",
+            )
 
-                q = int(q)
-                d = int(d)
-                # image = []
-                # for s, duration in grouped_by_shots_sorted_by_depth:
-                #     image.append(duration['4'].to_numpy())
-
-                if f"qubits_{q}_depth_{d}_measures" not in figures:
-                    figures[f"qubits_{q}_depth_{d}_measures"] = make_subplots(
-                        rows=1,
-                        cols=2,
-                        # specs=[[{"secondary_y": True}]]
-                    )
-
-                scatter_viz(
-                    fig=figures[f"qubits_{q}_depth_{d}_measures"],
-                    name=f"{framework_name}",
-                    main_color_sel=main_color_sel,
-                    sec_color_sel=sec_color_sel,
-                    x=duration_sorted_by_shots["shots"].astype(int),
-                    y=expressiblities,
-                    x_title="# of Shots",
-                    log_x=True,
-                    y_title=f"Expressibility",
-                    log_y=False,
-                    plot_title=f"Measures per Framework over "
-                    f"# of Shots @ {q} Qubits, Circuit Depth {d}",
-                )
-
-                scatter_viz(
-                    fig=figures[f"qubits_{q}_depth_{d}_measures"],
-                    name=f"{framework_name}",
-                    main_color_sel=main_color_sel,
-                    sec_color_sel=sec_color_sel,
-                    x=duration_sorted_by_shots["shots"].astype(int),
-                    y=entangling_capabilities,
-                    x_title="# of Shots",
-                    log_x=True,
-                    y_title=f"Entangling Capability",
-                    log_y=True,
-                    plot_title=f"Measures per Framework over "
-                    f"# of Shots @ {q} Qubits, Circuit Depth {d}",
-                    secondary_y=True,
-                )
+            scatter_viz(
+                fig=figures[f"qubits_{q}_depth_{d}_measures"],
+                name=f"Expressibility",
+                main_color_sel=design.qual_main[1],
+                sec_color_sel=rgb_to_rgba(design.qual_second[1], 0.2),
+                x=duration_sorted_by_shots["shots"].astype(int),
+                y=expressiblities,
+                x_title="# of Shots",
+                log_x=True,
+                y_title=f"Measures",
+                log_y=False,
+                plot_title=f"Measures per Framework over "
+                f"# of Shots @ {q} Qubits, Circuit Depth {d}",
+            )
 
     return figures
 
 
-def depth_measures_viz(evaluations_combined: Dict, skip_frameworks: List):
+def depth_measures_viz(evaluations_combined: Dict):
+    """
+    Generates visualizations of measures for different qubits and
+    shots based on the provided evaluations.
+
+    Parameters:
+    - evaluations_combined (Dict): A dictionary containing
+    evaluations combined by qubits and shots.
+
+    Returns:
+    - figures (Dict): A dictionary containing visualizations of
+    measures for different qubits and shots.
+    """
     figures = {}
 
-    # those two color sets are well suited as they correspond regarding
-    # their color value but differ from their luminosity and saturation values
-    main_colors_it = iter(design.qual_main)
-    sec_colors_it = iter(design.qual_second)
+    grouped_by_qubits = evaluations_combined.groupby("qubits")
 
-    grouped_by_fw = evaluations_combined.groupby("framework")
-    for fw, qubit_depth_duration in grouped_by_fw:
-        if fw in skip_frameworks:
-            continue
+    for q, depth_shots_duration in grouped_by_qubits:
+        grouped_by_shots = depth_shots_duration.groupby("shots")
 
-        main_color_sel = next(main_colors_it)
-        sec_color_sel = rgb_to_rgba(next(sec_colors_it), 0.2)
-        framework_name = extract_framework_name_from_id(fw)
+        for s, fw_depth_duration in grouped_by_shots:
+            duration_sorted_by_depth = fw_depth_duration.sort_values("depth")
 
-        grouped_by_qubits = qubit_depth_duration.groupby("qubits")
+            expressiblities = duration_sorted_by_depth.filter(
+                regex=expressibility_regex
+            ).mean(axis=1)
+            entangling_capabilities = duration_sorted_by_depth.filter(
+                regex=entangling_capability
+            ).mean(axis=1)
 
-        for q, depth_shots_duration in grouped_by_qubits:
-            grouped_by_shots = depth_shots_duration.groupby("shots")
+            q = int(q)
+            s = int(s)
 
-            for s, fw_depth_duration in grouped_by_shots:
-                duration_sorted_by_depth = fw_depth_duration.sort_values("depth")
+            figures[f"shots_{s}_qubits_{q}_measures"] = go.Figure()
 
-                expressiblities = duration_sorted_by_depth.filter(
-                    regex=expressibility_regex
-                ).mean(axis=1)
-                entangling_capabilities = duration_sorted_by_depth.filter(
-                    regex=entangling_capability
-                ).mean(axis=1)
+            scatter_viz(
+                fig=figures[f"shots_{s}_qubits_{q}_measures"],
+                name=f"Entangling Capability",
+                main_color_sel=design.qual_main[0],
+                sec_color_sel=rgb_to_rgba(design.qual_second[0], 0.2),
+                x=duration_sorted_by_depth["depth"].astype(int),
+                y=entangling_capabilities,
+                x_title="Circuit Depth",
+                log_x=True,
+                y_title=f"Measures",
+                log_y=False,
+                plot_title=f"Measures per Framework over "
+                f"Circuit Depth @ {s} Shots, {q} Qubits",
+            )
 
-                q = int(q)
-                s = int(s)
-
-                if f"shots_{s}_qubits_{q}_measures" not in figures:
-                    figures[f"shots_{s}_qubits_{q}_measures"] = make_subplots(
-                        rows=1,
-                        cols=2,
-                        # specs=[[{"secondary_y": True}]]
-                    )
-
-                scatter_viz(
-                    fig=figures[f"shots_{s}_qubits_{q}_measures"],
-                    name=f"{framework_name}",
-                    main_color_sel=main_color_sel,
-                    sec_color_sel=sec_color_sel,
-                    x=duration_sorted_by_depth["depth"].astype(int),
-                    y=expressiblities,
-                    x_title="Circuit Depth",
-                    log_x=True,
-                    y_title=f"Expressibility",
-                    log_y=False,
-                    plot_title=f"Measures per Framework over "
-                    f"Circuit Depth @ {s} Shots, {q} Qubits",
-                )
-
-                scatter_viz(
-                    fig=figures[f"shots_{s}_qubits_{q}_measures"],
-                    name=f"{framework_name}",
-                    main_color_sel=main_color_sel,
-                    sec_color_sel=sec_color_sel,
-                    x=duration_sorted_by_depth["depth"].astype(int),
-                    y=entangling_capabilities,
-                    x_title="Circuit Depth",
-                    log_x=True,
-                    y_title=f"Entangling Capability",
-                    log_y=True,
-                    plot_title=f"Measures per Framework over "
-                    f"Circuit Depth @ {s} Shots, {q} Qubits",
-                    secondary_y=True,
-                )
+            scatter_viz(
+                fig=figures[f"shots_{s}_qubits_{q}_measures"],
+                name=f"Expressibility",
+                main_color_sel=design.qual_main[1],
+                sec_color_sel=rgb_to_rgba(design.qual_second[1], 0.2),
+                x=duration_sorted_by_depth["depth"].astype(int),
+                y=expressiblities,
+                x_title="Circuit Depth",
+                log_x=True,
+                y_title=f"Measures",
+                log_y=False,
+                plot_title=f"Measures per Framework over "
+                f"Circuit Depth @ {s} Shots, {q} Qubits",
+            )
 
     return figures
 
