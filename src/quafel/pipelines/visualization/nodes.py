@@ -6,6 +6,7 @@ generated using Kedro 0.18.4
 import plotly.graph_objs as go
 import plotly.express as px
 import plotly.io as pio
+from plotly.subplots import make_subplots
 
 from typing import Dict, List
 import pandas as pd
@@ -43,6 +44,14 @@ class design:
         font=dict(
             size=legend_font_size,
         ),
+    )
+    scatter_legend_secondary = dict(
+        orientation="v",
+        traceorder="normal",
+        font=dict(
+            size=legend_font_size,
+        ),
+        x=1.2,
     )
     base_theme = "simple_white"
 
@@ -205,12 +214,14 @@ def scatter_viz(
 ):
     fig.add_trace(
         go.Scatter(
-            name=f"{name}" if not secondary_y else "",
+            name=f"{name}",
             x=x,
             y=y,
             mode=design.scatter_mode_c,
             line=dict(color=main_color_sel, dash="dash" if secondary_y else "solid"),
-        )
+        ),
+        # providing secondary (as bool) will yield an attribute error
+        secondary_y=secondary_y if fig._grid_ref is not None else None,
     )
     if y_max is not None and y_min is not None:
         fig.add_trace(
@@ -222,7 +233,8 @@ def scatter_viz(
                 marker=design.marker_color,
                 line=dict(width=0),
                 showlegend=False,
-            )
+            ),
+            secondary_y=secondary_y if fig._grid_ref is not None else None,
         )
         fig.add_trace(
             go.Scatter(
@@ -235,7 +247,8 @@ def scatter_viz(
                 fillcolor=sec_color_sel,
                 fill="tonexty",
                 showlegend=False,
-            )
+            ),
+            secondary_y=secondary_y if fig._grid_ref is not None else None,
         )
     fig.update_layout(
         xaxis=dict(
@@ -250,11 +263,25 @@ def scatter_viz(
             title=x_title,
             showgrid=design.showgrid,
         ),
-        yaxis=dict(
-            title=y_title,
-            type=design.log_tick_type if log_y else design.standard_tick_type,
-            dtick=design.time_dtick,
-            showgrid=design.showgrid,
+        yaxis=(
+            dict(
+                title=y_title,
+                type=design.log_tick_type if log_y else None,
+                dtick=design.time_dtick if log_y else None,
+                showgrid=design.showgrid,
+            )
+            if not secondary_y
+            else dict()
+        ),
+        yaxis2=(
+            dict(
+                title=y_title,
+                type=design.log_tick_type if log_y else None,
+                dtick=design.time_dtick if log_y else None,
+                showgrid=design.showgrid,
+            )
+            if secondary_y
+            else dict()
         ),
         title=dict(
             text=plot_title if design.print_figure_title else "",
@@ -266,7 +293,11 @@ def scatter_viz(
         font=dict(
             size=design.legend_font_size,
         ),
-        legend=design.scatter_legend,
+        legend=(
+            design.scatter_legend
+            if not secondary_y
+            else design.scatter_legend_secondary
+        ),
         template=design.base_theme,
     )
 
@@ -625,33 +656,35 @@ def qubits_measures_viz(evaluations_combined: Dict, skip_frameworks: List):
                 #     image.append(duration['4'].to_numpy())
 
                 if f"shots_{s}_depth_{d}_measures" not in figures:
-                    figures[f"shots_{s}_depth_{d}_measures"] = go.Figure()
+                    figures[f"shots_{s}_depth_{d}_measures"] = make_subplots(
+                        specs=[[{"secondary_y": True}]]
+                    )
 
                 scatter_viz(
                     fig=figures[f"shots_{s}_depth_{d}_measures"],
-                    name=f"{framework_name}",
+                    name=f"{framework_name} - Expr.",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
                     x=duration_sorted_by_qubit["qubits"],
                     y=expressiblities,
                     x_title="# of Qubits",
                     log_x=False,
-                    y_title=f"Measures",
-                    log_y=True,
+                    y_title=f"Expressibility (Expr.)",
+                    log_y=False,
                     plot_title=f"Measures per Framework over "
                     f"# of Qubits @ {s} Shots, Circuit Depth {d}",
                 )
 
                 scatter_viz(
                     fig=figures[f"shots_{s}_depth_{d}_measures"],
-                    name=f"{framework_name}",
+                    name=f"{framework_name} - Ent.",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
                     x=duration_sorted_by_qubit["qubits"],
                     y=entangling_capabilities,
                     x_title="# of Qubits",
                     log_x=False,
-                    y_title=f"Measures",
+                    y_title=f"Entangling Capability (Ent.)",
                     log_y=True,
                     plot_title=f"Measures per Framework over "
                     f"# of Qubits @ {s} Shots, Circuit Depth {d}",
@@ -700,33 +733,35 @@ def shots_measures_viz(evaluations_combined: Dict, skip_frameworks: List):
                 #     image.append(duration['4'].to_numpy())
 
                 if f"qubits_{q}_depth_{d}_measures" not in figures:
-                    figures[f"qubits_{q}_depth_{d}_measures"] = go.Figure()
+                    figures[f"qubits_{q}_depth_{d}_measures"] = make_subplots(
+                        specs=[[{"secondary_y": True}]]
+                    )
 
                 scatter_viz(
                     fig=figures[f"qubits_{q}_depth_{d}_measures"],
-                    name=f"{framework_name}",
+                    name=f"{framework_name} - Expr.",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
                     x=duration_sorted_by_shots["shots"].astype(int),
                     y=expressiblities,
                     x_title="# of Shots",
                     log_x=True,
-                    y_title=f"Measures",
-                    log_y=True,
+                    y_title=f"Expressibility (Expr.)",
+                    log_y=False,
                     plot_title=f"Measures per Framework over "
                     f"# of Shots @ {q} Qubits, Circuit Depth {d}",
                 )
 
                 scatter_viz(
                     fig=figures[f"qubits_{q}_depth_{d}_measures"],
-                    name=f"{framework_name}",
+                    name=f"{framework_name} - Ent.",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
                     x=duration_sorted_by_shots["shots"].astype(int),
                     y=entangling_capabilities,
                     x_title="# of Shots",
                     log_x=True,
-                    y_title=f"Measures",
+                    y_title=f"Entangling Capability (Ent.)",
                     log_y=True,
                     plot_title=f"Measures per Framework over "
                     f"# of Shots @ {q} Qubits, Circuit Depth {d}",
@@ -772,33 +807,35 @@ def depth_measures_viz(evaluations_combined: Dict, skip_frameworks: List):
                 s = int(s)
 
                 if f"shots_{s}_qubits_{q}_measures" not in figures:
-                    figures[f"shots_{s}_qubits_{q}_measures"] = go.Figure()
+                    figures[f"shots_{s}_qubits_{q}_measures"] = make_subplots(
+                        specs=[[{"secondary_y": True}]]
+                    )
 
                 scatter_viz(
                     fig=figures[f"shots_{s}_qubits_{q}_measures"],
-                    name=f"{framework_name}",
+                    name=f"{framework_name} - Expr.",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
                     x=duration_sorted_by_depth["depth"].astype(int),
                     y=expressiblities,
                     x_title="Circuit Depth",
                     log_x=True,
-                    y_title=f"Measures",
-                    log_y=True,
+                    y_title=f"Expressibility (Expr.)",
+                    log_y=False,
                     plot_title=f"Measures per Framework over "
                     f"Circuit Depth @ {s} Shots, {q} Qubits",
                 )
 
                 scatter_viz(
                     fig=figures[f"shots_{s}_qubits_{q}_measures"],
-                    name=f"{framework_name}",
+                    name=f"{framework_name} - Ent.",
                     main_color_sel=main_color_sel,
                     sec_color_sel=sec_color_sel,
                     x=duration_sorted_by_depth["depth"].astype(int),
                     y=entangling_capabilities,
                     x_title="Circuit Depth",
                     log_x=True,
-                    y_title=f"Measures",
+                    y_title=f"Entangling Capability (Ent.)",
                     log_y=True,
                     plot_title=f"Measures per Framework over "
                     f"Circuit Depth @ {s} Shots, {q} Qubits",
