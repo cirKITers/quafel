@@ -335,7 +335,7 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
 
 
 def calculate_entangling_capability(
-    circuit: QuantumCircuit, samples: int, seed: int
+    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
 ) -> Dict[str, float]:
     """
     Calculate the entangling capability of a quantum circuit.
@@ -344,7 +344,7 @@ def calculate_entangling_capability(
 
     Args:
         circuit (QuantumCircuit): The quantum circuit.
-        samples (int): The number of samples to generate.
+        samples_per_parameter (int): The number of samples to generate.
         seed (int): The seed for the random number generator.
 
     Returns:
@@ -394,7 +394,7 @@ def calculate_entangling_capability(
     # TODO: propagate precision to kedro parameters
     entangling_capability = meyer_wallach(
         circuit=circuit,
-        samples=samples,
+        samples=samples_per_parameter * len(circuit.parameters),
         params_shape=len(circuit.parameters),
         precision=5,
         rng=rng,
@@ -404,7 +404,7 @@ def calculate_entangling_capability(
 
 
 def calculate_expressibility(
-    circuit: QuantumCircuit, samples: int, seed: int
+    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
 ) -> Dict[str, float]:
     """
     Calculate the expressibility of a PQC circuit using a randomized estimation scheme.
@@ -413,7 +413,7 @@ def calculate_expressibility(
 
     Args:
         circuit (QuantumCircuit): The PQC circuit to be analyzed
-        samples (int): The number of samples to use for estimation
+        samples_per_parameter (int): The number of samples to use for estimation
         seed (int): The seed for the random number generator
 
     Returns:
@@ -513,10 +513,10 @@ def calculate_expressibility(
     # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
     # TODO: propagate precision to kedro parameters
     expressibility = np.linalg.norm(
-        haar_integral(n_qubits=n_qubits, samples=samples, rng=rng)
+        haar_integral(n_qubits=n_qubits, samples=samples_per_parameter, rng=rng)
         - pqc_integral(
             circuit=circuit,
-            samples=samples,
+            samples=samples_per_parameter * len(circuit.parameters),
             params_shape=len(circuit.parameters),
             precision=5,
             rng=rng,

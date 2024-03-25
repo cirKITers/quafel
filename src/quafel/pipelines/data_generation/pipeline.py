@@ -89,7 +89,7 @@ def create_pipeline(partitions, **kwargs) -> dict:
                     func=calculate_expressibility,
                     inputs={
                         "circuit": f"circuit_{i}",
-                        "samples": "params:samples",
+                        "samples_per_parameter": "params:samples_per_parameter",
                         "seed": "params:seed",
                     },
                     outputs={
@@ -105,7 +105,7 @@ def create_pipeline(partitions, **kwargs) -> dict:
                     func=calculate_entangling_capability,
                     inputs={
                         "circuit": f"circuit_{i}",
-                        "samples": "params:samples",
+                        "samples_per_parameter": "params:samples_per_parameter",
                         "seed": "params:seed",
                     },
                     outputs={
