@@ -2,6 +2,8 @@
 
 data_generation:
   seed: 1111
+  # samples for calculating the expressibility and entangling capability
+  samples_per_parameter: 10
 
   min_qubits: 1
   max_qubits: 16
@@ -26,6 +28,9 @@ data_generation:
 
 # data_generation:
 #   seed: 1111
+#   samples for calculating the expressibility and entangling capability
+#   samples_per_parameter: 10
+
 
 #   min_qubits: 1
 #   max_qubits: 12
@@ -50,6 +55,8 @@ data_generation:
 
 # data_generation:
 #   seed: 1111
+#   samples for calculating the expressibility and entangling capability
+#   samples_per_parameter: 10
 
 #   min_qubits: 1
 #   max_qubits: 5
@@ -74,6 +81,8 @@ data_generation:
 
 # data_generation:
 #   seed: 1111
+#   samples for calculating the expressibility and entangling capability
+#   samples_per_parameter: 10
 
 #   min_qubits: 1
 #   max_qubits: 3
@@ -98,6 +107,8 @@ data_generation:
 
 # data_generation:
 #   seed: 1111
+#   # samples for calculating the expressibility and entangling capability
+#   samples_per_parameter: 10
 
 #   min_qubits: 1
 #   max_qubits: 4
