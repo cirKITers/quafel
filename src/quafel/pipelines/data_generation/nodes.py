@@ -71,11 +71,30 @@ def _random_circuit(
     num_qubits,
     depth,
     max_operands=2,
-    measure=True,
     conditional=False,
     reset=False,
     seed=None,
 ):
+    """
+    Generates a random quantum circuit with the number of qubits
+    and circuit depth provided.
+
+    The generating method will favor multi-qubit gates.
+
+    Parameterized gates will have UNBOUND parameters, thus it is
+    required to bind them before the circuit can be evaluated.
+
+    Args:
+        num_qubits (int): Number of qubits.
+        depth (int): Depth of the circuit.
+        max_operands (int, optional): Maximum number of operands. Defaults to 2.
+        conditional (bool, optional): Whether the circuit is conditional. Defaults to False.
+        reset (bool, optional): Whether to reset the circuit. Defaults to False.
+        seed (int, optional): Seed for random number generation. Defaults to None.
+
+    Returns:
+        QuantumCircuit: The generated quantum circuit.
+    """
     if num_qubits == 0:
         return QuantumCircuit()
     if max_operands < 1 or max_operands > 4:
@@ -347,6 +366,17 @@ def calculate_entangling_capability(
     The strategy is taken from https://doi.org/10.48550/arXiv.1905.10876
     Implementation inspiration from
     https://obliviateandsurrender.github.io/blogs/expr.html
+
+    Sanity Check; The following circuit should yield an entangling capability of 1.
+    qc = QuantumCircuit(2)
+    qc.h(0)
+    qc.cx(0,1)
+    qc.rx(*ParameterVector("x", 1), 0)
+
+    Note that if qubits are being measured, this will return almost zero
+    because the statevector simulator cannot work on collapsed states.
+
+    If the circuit doesn't contain parameterizable operations, nan is returned.
 
     Args:
         circuit (QuantumCircuit): The quantum circuit.
