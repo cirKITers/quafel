@@ -124,6 +124,66 @@ def create_pipeline(figures, **kwargs) -> dict:
                 tags=["static"],
                 name=f"depth_time_viz",
             ),
+            node(
+                func=depth_measures_viz,
+                inputs={
+                    "evaluations_combined": "evaluations_combined",
+                    "skip_frameworks": "params:skip_frameworks",
+                },
+                outputs={
+                    **{
+                        f: f
+                        for f in filter(
+                            lambda s: ("shots_" in s)
+                            and ("qubits_" in s)
+                            and ("measures" in s),
+                            figures,
+                        )
+                    },
+                },
+                tags=["static"],
+                name=f"depth_measures_viz",
+            ),
+            node(
+                func=shots_measures_viz,
+                inputs={
+                    "evaluations_combined": "evaluations_combined",
+                    "skip_frameworks": "params:skip_frameworks",
+                },
+                outputs={
+                    **{
+                        f: f
+                        for f in filter(
+                            lambda s: ("qubits_" in s)
+                            and ("depth_" in s)
+                            and ("measures" in s),
+                            figures,
+                        )
+                    },
+                },
+                tags=["static"],
+                name=f"shots_measures_viz",
+            ),
+            node(
+                func=qubits_measures_viz,
+                inputs={
+                    "evaluations_combined": "evaluations_combined",
+                    "skip_frameworks": "params:skip_frameworks",
+                },
+                outputs={
+                    **{
+                        f: f
+                        for f in filter(
+                            lambda s: ("shots_" in s)
+                            and ("depth_" in s)
+                            and ("measures" in s),
+                            figures,
+                        )
+                    },
+                },
+                tags=["static"],
+                name=f"qubits_measures_viz",
+            ),
         ],
         inputs={
             "evaluations_combined": "evaluations_combined",
