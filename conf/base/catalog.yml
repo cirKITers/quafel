@@ -59,7 +59,7 @@ execution_durations: # example to save results to multiple partitions
 
 evaluations_combined:
   type: pandas.CSVDataSet
-  filepath: data/06_evaluations_combined/evaluations_combined.csv
+  filepath: data/07_evaluations_combined/evaluations_combined.csv
   # save_args:
   #   index: False
   versioned: true
