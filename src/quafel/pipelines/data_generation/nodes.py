@@ -366,9 +366,7 @@ def calculate_entangling_capability(
             ).result()
 
             # extract the statevector from the simulation result
-            U = result.get_statevector(bound_circuit, decimals=precision).data.reshape(
-                -1, 1
-            )
+            U = result.get_statevector(bound_circuit, decimals=precision)
 
             # generate a list from [0..num_qubits-1]
             # we need that later to trace out the corresponding qubits
@@ -383,11 +381,12 @@ def calculate_entangling_capability(
                 # trace of the density matrix
                 entropy += np.trace(density**2)
 
+            # fixes accumulating decimals that would otherwise lead to a MW > 1
+            entropy = min((entropy.real / circuit.num_qubits), 1)
             # inverse of the normalized entropy is the MW for the current sample of parameters
-            mw_measure[sample] = 1 - entropy / circuit.num_qubits
-
+            mw_measure[sample] = 1 - entropy
         # final normalization according to formula
-        return 2 * np.sum(mw_measure).real / sample
+        return 2 * np.sum(mw_measure).real / samples
 
     rng = np.random.default_rng(seed=seed)
 
