@@ -221,9 +221,6 @@ def _random_circuit(
                     )
                 )
 
-    # if measure:
-    #     qc.measure(qc.qubits, cr)
-
     return qc
 
 
@@ -460,7 +457,9 @@ def calculate_expressibility(
 
     def random_haar_unitary(n_qubits: int, rng) -> np.ndarray:
         """
-        Generate a random unitary matrix in the Haar measure
+        Generate a random unitary matrix in the Haar measure.
+        For details on the QR decomposition, see
+        https://doi.org/10.48550/arXiv.math-ph/0609050
 
         Args:
             n_qubits (int): The number of qubits in the system
@@ -497,9 +496,6 @@ def calculate_expressibility(
 
         zero_state = np.zeros(N, dtype=complex)
         zero_state[0] = 1
-
-        # A = np.kron(zero_state, np.ones((1, samples)))
-        # Z += np.matmul(A, random_haar_unitary(n_qubits).T.reshape(-1, samples))
 
         for _ in range(samples):
             A = np.matmul(zero_state, random_haar_unitary(n_qubits, rng)).reshape(-1, 1)
