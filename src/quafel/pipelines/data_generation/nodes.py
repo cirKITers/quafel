@@ -575,3 +575,24 @@ def combine_measures(
             }
         )
     }
+
+
+def calculate_measures(
+    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+) -> List[float]:
+    expressibility = calculate_expressibility(
+        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+    )["expressibility"]
+
+    entangling_capability = calculate_entangling_capability(
+        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+    )["entangling_capability"]
+
+    return {
+        "measure": pd.DataFrame(
+            {
+                "expressibility": [expressibility],
+                "entangling_capability": [entangling_capability],
+            }
+        )
+    }
