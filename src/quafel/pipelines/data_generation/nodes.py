@@ -548,7 +548,9 @@ def calculate_expressibility(
 
     # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
     # TODO: propagate precision to kedro parameters
-    expressibility = np.linalg.norm(
+    # Note that we use the INVERSE here, because a
+    # a LOW distance would actually correspond to a HIGH expressibility
+    expressibility = 1 - np.linalg.norm(
         haar_integral(n_qubits=n_qubits, samples=samples_per_parameter, rng=rng)
         - pqc_integral(
             circuit=circuit,
