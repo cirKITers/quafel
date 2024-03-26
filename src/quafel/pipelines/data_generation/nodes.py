@@ -140,9 +140,8 @@ def _random_circuit(
 
     qc = QuantumCircuit(num_qubits)
 
-    if conditional:
-        cr = ClassicalRegister(num_qubits, "c")
-        qc.add_register(cr)
+    cr = ClassicalRegister(num_qubits, "c")
+    qc.add_register(cr)
 
     rng = np.random.default_rng(seed)
 
@@ -253,7 +252,10 @@ def generate_random_qasm_circuit(
         {p: v for p, v in zip(qc.parameters, parameter_values)}
     )
     # measure all of the bound circuit
-    bound_circuit.measure_all()
+    # note that we explicitly NOT use measure_all because this would
+    # add a barrier in the qasm representation that is not recognized by some
+    # frameworks when translating back later
+    bound_circuit.measure(bound_circuit.qubits, *bound_circuit.cregs)
 
     # return the bound circuit and the parameterizable circuit
     return {"qasm_circuit": bound_circuit.qasm(), "circuit": qc}
