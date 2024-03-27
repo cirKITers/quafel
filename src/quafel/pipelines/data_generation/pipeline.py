@@ -8,7 +8,8 @@ from quafel.pipelines.data_generation.nodes import (
     log_circuit,
     generate_random_qasm_circuit,
     part_generate_random_qasm_circuit,
-    combine_measures,
+    # combine_measures,
+    calculate_measures,
     full_generate_random_qasm_circuits,
     generate_evaluation_matrix,
     generate_evaluation_partitions,
@@ -84,49 +85,66 @@ def create_pipeline(partitions, **kwargs) -> dict:
                 )
                 for i in partitions
             ],
+            # *[
+            #     node(
+            #         func=calculate_expressibility,
+            #         inputs={
+            #             "circuit": f"circuit_{i}",
+            #             "samples_per_parameter": "params:samples_per_parameter",
+            #             "seed": "params:seed",
+            #         },
+            #         outputs={
+            #             "expressibility": f"expressibility_{i}",
+            #         },
+            #         tags=["dynamic"],
+            #         name=f"calculate_expressibility_{i}",
+            #     )
+            #     for i in partitions
+            # ],
+            # *[
+            #     node(
+            #         func=calculate_entangling_capability,
+            #         inputs={
+            #             "circuit": f"circuit_{i}",
+            #             "samples_per_parameter": "params:samples_per_parameter",
+            #             "seed": "params:seed",
+            #         },
+            #         outputs={
+            #             "entangling_capability": f"entangling_capability_{i}",
+            #         },
+            #         tags=["dynamic"],
+            #         name=f"calculate_entangling_capability_{i}",
+            #     )
+            #     for i in partitions
+            # ],
+            # *[
+            #     node(
+            #         func=combine_measures,
+            #         inputs={
+            #             "expressibility": f"expressibility_{i}",
+            #             "entangling_capability": f"entangling_capability_{i}",
+            #         },
+            #         outputs={
+            #             "measure": f"measure_{i}",
+            #         },
+            #         tags=["dynamic"],
+            #         name=f"calculate_measures_{i}",
+            #     )
+            #     for i in partitions
+            # ],
             *[
                 node(
-                    func=calculate_expressibility,
+                    func=calculate_measures,
                     inputs={
                         "circuit": f"circuit_{i}",
                         "samples_per_parameter": "params:samples_per_parameter",
                         "seed": "params:seed",
-                    },
-                    outputs={
-                        "expressibility": f"expressibility_{i}",
-                    },
-                    tags=["dynamic"],
-                    name=f"calculate_expressibility_{i}",
-                )
-                for i in partitions
-            ],
-            *[
-                node(
-                    func=calculate_entangling_capability,
-                    inputs={
-                        "circuit": f"circuit_{i}",
-                        "samples_per_parameter": "params:samples_per_parameter",
-                        "seed": "params:seed",
-                    },
-                    outputs={
-                        "entangling_capability": f"entangling_capability_{i}",
-                    },
-                    tags=["dynamic"],
-                    name=f"calculate_entangling_capability_{i}",
-                )
-                for i in partitions
-            ],
-            *[
-                node(
-                    func=combine_measures,
-                    inputs={
-                        "expressibility": f"expressibility_{i}",
-                        "entangling_capability": f"entangling_capability_{i}",
                     },
                     outputs={
                         "measure": f"measure_{i}",
                     },
-                    name=f"combine_measures_{i}",
+                    tags=["dynamic"],
+                    name=f"calculate_measures_{i}",
                 )
                 for i in partitions
             ],

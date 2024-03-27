@@ -548,7 +548,9 @@ def calculate_expressibility(
 
     # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
     # TODO: propagate precision to kedro parameters
-    expressibility = np.linalg.norm(
+    # Note that we use the INVERSE here, because a
+    # a LOW distance would actually correspond to a HIGH expressibility
+    expressibility = 1 - np.linalg.norm(
         haar_integral(n_qubits=n_qubits, samples=samples_per_parameter, rng=rng)
         - pqc_integral(
             circuit=circuit,
@@ -567,6 +569,27 @@ def calculate_expressibility(
 def combine_measures(
     expressibility: float, entangling_capability: float
 ) -> List[float]:
+    return {
+        "measure": pd.DataFrame(
+            {
+                "expressibility": [expressibility],
+                "entangling_capability": [entangling_capability],
+            }
+        )
+    }
+
+
+def calculate_measures(
+    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+) -> List[float]:
+    expressibility = calculate_expressibility(
+        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+    )["expressibility"]
+
+    entangling_capability = calculate_entangling_capability(
+        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+    )["entangling_capability"]
+
     return {
         "measure": pd.DataFrame(
             {
