@@ -457,7 +457,7 @@ def calculate_expressibility(
         Dict[str, float]: A dictionary containing the expressibility value
     """
 
-    def random_haar_unitary(n_qubits: int, rng) -> np.ndarray:
+    def random_haar_unitary(n_qubits: int, rng: np.random.RandomState) -> np.ndarray:
         """
         Generate a random unitary matrix in the Haar measure.
         For details on the QR decomposition, see
@@ -465,6 +465,8 @@ def calculate_expressibility(
 
         Args:
             n_qubits (int): The number of qubits in the system
+            rng (np.random.RandomState): The RandomState object to use for
+                generating random numbers
 
         Returns:
             np.ndarray: A 2^n x 2^n unitary matrix representing a random
@@ -481,16 +483,21 @@ def calculate_expressibility(
         # Composite the Haar Unitary
         return np.dot(Q, D)
 
-    def haar_integral(n_qubits: int, samples: int, rng) -> np.ndarray:
+    def haar_integral(
+        n_qubits: int, samples: int, rng: np.random.RandomState
+    ) -> np.ndarray:
         """
         Compute the Haar integral for a given number of samples
 
         Args:
             n_qubits (int): The number of qubits in the system
             samples (int): The number of samples to use for estimation
+            rng (np.random.RandomState): The RandomState object to use for
+                generating random numbers
 
         Returns:
-            np.ndarray: A 2^n x 2^n array representing the max expressibility
+            np.ndarray: A 2^n x 2^n array representing the normalized max
+                expressibility
         """
         N = 2**n_qubits
 
@@ -501,10 +508,17 @@ def calculate_expressibility(
 
         for _ in range(samples):
             A = np.matmul(zero_state, random_haar_unitary(n_qubits, rng)).reshape(-1, 1)
+
             Z += np.kron(A, A.conj().T)
         return Z / samples
 
-    def pqc_integral(circuit, samples, params_shape, precision, rng):
+    def pqc_integral(
+        circuit: QuantumCircuit,
+        samples: int,
+        params_shape: Tuple,
+        precision: int,
+        rng: np.random.default_rng,
+    ) -> np.ndarray:
         """
         Compute the entangling capability of a PQC circuit using a randomized
         estimation scheme
@@ -514,6 +528,8 @@ def calculate_expressibility(
             samples (int): The number of samples to use for estimation
             params_shape (tuple): The shape of the array of parameters to be
                 used in the circuit simulation
+            precision (int): The number of decimals to use when extracting the
+                statevector from the simulation result
 
         Returns:
             np.ndarray: A 2^n x 2^n array representing the expressibility
