@@ -11,7 +11,7 @@ from qiskit.quantum_info import partial_trace
 from qiskit import Aer, execute
 import numpy as np
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import pandas as pd
 
 import logging
