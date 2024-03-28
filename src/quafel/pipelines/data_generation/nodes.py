@@ -7,16 +7,15 @@ from qiskit.circuit import (
 )
 from qiskit.circuit.library import standard_gates
 from qiskit.circuit.exceptions import CircuitError
-from qiskit.quantum_info import partial_trace, random_unitary
-from qiskit import Aer, execute
+from qiskit.quantum_info import partial_trace
+from qiskit import execute
+from qiskit_aer import StatevectorSimulator
 import numpy as np
 
 import jax
 import jax.numpy as jnp
-from functools import partial
 from typing import List, Dict, Tuple
 import pandas as pd
-import time
 import logging
 
 log = logging.getLogger(__name__)
@@ -406,7 +405,7 @@ def calculate_entangling_capability(
             # execute the PQC circuit with the current set of parameters
             result = execute(
                 bound_circuit,
-                backend=Aer.get_backend("statevector_simulator", precision="single"),
+                backend=StatevectorSimulator(precision="single"),
             ).result()
 
             # extract the statevector from the simulation result
@@ -555,7 +554,7 @@ def calculate_expressibility_np(
             # execute the PQC circuit with the current set of parameters
             # ansatz = circuit(params, circuit.num_qubits)
             result = execute(
-                bound_circuit, backend=Aer.get_backend("statevector_simulator")
+                bound_circuit, backend=StatevectorSimulator(precision="single")
             ).result()
 
             # extract the statevector from the simulation result
@@ -581,7 +580,7 @@ def calculate_expressibility_np(
             circuit=circuit,
             samples=samples_per_qubit * len(circuit.parameters),
             params_shape=len(circuit.parameters),
-            precision=5,
+            precision=4,
             rng=rng,
         ),
     )
@@ -713,8 +712,7 @@ def calculate_expressibility(
             # execute the PQC circuit with the current set of parameters
             # ansatz = circuit(params, circuit.num_qubits)
             result = execute(
-                bound_circuit,
-                backend=Aer.get_backend("statevector_simulator", precision="single"),
+                bound_circuit, backend=StatevectorSimulator(precision="single")
             ).result()
 
             # extract the statevector from the simulation result
@@ -745,7 +743,7 @@ def calculate_expressibility(
             circuit=circuit,
             samples=samples_per_qubit * circuit.num_qubits,
             params_shape=len(circuit.parameters),
-            precision=5,
+            precision=4,
             rng=rng,
         ),
     )
