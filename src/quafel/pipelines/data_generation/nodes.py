@@ -361,7 +361,7 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
 
 
 def calculate_entangling_capability(
-    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+    circuit: QuantumCircuit, samples_per_qubit: int, seed: int
 ) -> Dict[str, float]:
     """
     Calculate the entangling capability of a quantum circuit.
@@ -382,7 +382,7 @@ def calculate_entangling_capability(
 
     Args:
         circuit (QuantumCircuit): The quantum circuit.
-        samples_per_parameter (int): The number of samples to generate.
+        samples_per_qubit (int): The number of samples to generate.
         seed (int): The seed for the random number generator.
 
     Returns:
@@ -438,7 +438,7 @@ def calculate_entangling_capability(
     # TODO: propagate precision to kedro parameters
     entangling_capability = meyer_wallach(
         circuit=circuit,
-        samples=samples_per_parameter * len(circuit.parameters),
+        samples=samples_per_qubit * circuit.num_qubits,
         params_shape=len(circuit.parameters),
         precision=5,
         rng=rng,
@@ -448,7 +448,7 @@ def calculate_entangling_capability(
 
 
 def calculate_expressibility_np(
-    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+    circuit: QuantumCircuit, samples_per_qubit: int, seed: int
 ) -> Dict[str, float]:
     """
     Calculate the expressibility of a PQC circuit using
@@ -459,7 +459,7 @@ def calculate_expressibility_np(
 
     Args:
         circuit (QuantumCircuit): The PQC circuit to be analyzed
-        samples_per_parameter (int): The number of samples to use for estimation
+        samples_per_qubit (int): The number of samples to use for estimation
         seed (int): The seed for the random number generator
 
     Returns:
@@ -576,10 +576,10 @@ def calculate_expressibility_np(
     # Note that we use the INVERSE here, because a
     # a LOW distance would actually correspond to a HIGH expressibility
     expressibility = 1 - np.linalg.norm(
-        haar_integral(n_qubits=n_qubits, samples=samples_per_parameter, rng=rng)
+        haar_integral(n_qubits=n_qubits, samples=samples_per_qubit, rng=rng)
         - pqc_integral(
             circuit=circuit,
-            samples=samples_per_parameter * len(circuit.parameters),
+            samples=samples_per_qubit * len(circuit.parameters),
             params_shape=len(circuit.parameters),
             precision=5,
             rng=rng,
@@ -592,7 +592,7 @@ def calculate_expressibility_np(
 
 
 def calculate_expressibility(
-    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+    circuit: QuantumCircuit, samples_per_qubit: int, seed: int
 ) -> Dict[str, float]:
     """
     Calculate the expressibility of a PQC circuit using
@@ -603,7 +603,7 @@ def calculate_expressibility(
 
     Args:
         circuit (QuantumCircuit): The PQC circuit to be analyzed
-        samples_per_parameter (int): The number of samples to use for estimation
+        samples_per_qubit (int): The number of samples to use for estimation
         seed (int): The seed for the random number generator
 
     Returns:
@@ -641,7 +641,7 @@ def calculate_expressibility(
         return jax.jit(f)(Z)
 
     def haar_integral(
-        n_qubits: int, samples: int, Z: np.ndarray, rng: np.random.RandomState
+        n_qubits: int, samples: int, rng: np.random.RandomState
     ) -> np.ndarray:
         """
         Compute the Haar integral for a given number of samples
@@ -657,6 +657,7 @@ def calculate_expressibility(
                 expressibility
         """
         N = 2**n_qubits
+        Z = jnp.zeros((N, N), dtype=complex)
 
         zero_state = jnp.zeros(N, dtype=complex)
         zero_state = zero_state.at[0].set(1)
@@ -678,7 +679,6 @@ def calculate_expressibility(
         samples: int,
         params_shape: Tuple,
         precision: int,
-        Z: np.ndarray,
         rng: np.random.default_rng,
     ) -> np.ndarray:
         """
@@ -697,6 +697,8 @@ def calculate_expressibility(
             np.ndarray: A 2^n x 2^n array representing the expressibility
             of the PQC circuit, where n is the number of qubits in the circuit
         """
+        N = 2**circuit.num_qubits
+        Z = jnp.zeros((N, N), dtype=complex)
 
         def f(U):
             return jnp.kron(U, U.conj().T)  # type: ignore
@@ -727,22 +729,23 @@ def calculate_expressibility(
     rng = np.random.default_rng(seed=seed)
     jrng = jax.random.PRNGKey(seed)
 
-    n_qubits = circuit.num_qubits
-    N = 2**n_qubits
-    Z = jnp.zeros((N, N), dtype=complex)
+    # We generate Z
 
     # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
     # TODO: propagate precision to kedro parameters
     # Note that we use the INVERSE here, because a
     # a LOW distance would actually correspond to a HIGH expressibility
     expressibility = 1 - jnp.linalg.norm(
-        haar_integral(n_qubits=n_qubits, samples=samples_per_parameter, Z=Z, rng=jrng)
+        haar_integral(
+            n_qubits=circuit.num_qubits,
+            samples=samples_per_qubit * circuit.num_qubits,
+            rng=jrng,
+        )
         - pqc_integral(
             circuit=circuit,
-            samples=samples_per_parameter * len(circuit.parameters),
+            samples=samples_per_qubit * circuit.num_qubits,
             params_shape=len(circuit.parameters),
             precision=5,
-            Z=Z,
             rng=rng,
         ),
     )
@@ -766,22 +769,22 @@ def combine_measures(
 
 
 def calculate_measures(
-    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+    circuit: QuantumCircuit, samples_per_qubit: int, seed: int
 ) -> List[float]:
     # start = time.time()
     expressibility = calculate_expressibility(
-        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+        circuit=circuit, samples_per_qubit=samples_per_qubit, seed=seed
     )["expressibility"]
     # print(f"expressibility calculation took {time.time() - start} seconds")
 
     # start = time.time()
     # expressibility = calculate_expressibility_np(
-    #     circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+    #     circuit=circuit, samples_per_qubit=samples_per_qubit, seed=seed
     # )["expressibility"]
     # print(f"expressibility calculation w. numpy took {time.time() - start} seconds")
 
     entangling_capability = calculate_entangling_capability(
-        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+        circuit=circuit, samples_per_qubit=samples_per_qubit, seed=seed
     )["entangling_capability"]
 
     return {
