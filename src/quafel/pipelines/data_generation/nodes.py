@@ -399,7 +399,10 @@ def get_pqc_statevector(
 
 
 def calculate_entangling_capability(
-    circuit: QuantumCircuit, samples_per_parameter: int, seed: int
+    circuit: QuantumCircuit,
+    samples_per_parameter: int,
+    samples_per_qubit: int,
+    seed: int,
 ) -> Dict[str, float]:
     """
     Calculate the entangling capability of a quantum circuit.
@@ -475,14 +478,18 @@ def calculate_entangling_capability(
 
     rng = np.random.default_rng(seed=seed)
 
-    # TODO: propagate precision to kedro parameters
-    entangling_capability = meyer_wallach(
-        circuit=circuit,
-        samples=samples_per_parameter * int(np.log(len(circuit.parameters))),
-        params_shape=len(circuit.parameters),
-        precision=5,
-        rng=rng,
-    )
+    if len(circuit.parameters) == 0:
+        entangling_capability = 0
+    else:
+        # TODO: propagate precision to kedro parameters
+        entangling_capability = meyer_wallach(
+            circuit=circuit,
+            samples=samples_per_parameter * int(np.log(len(circuit.parameters)) + 1)
+            + samples_per_qubit * circuit.num_qubits,
+            params_shape=len(circuit.parameters),
+            precision=5,
+            rng=rng,
+        )
 
     return {"entangling_capability": entangling_capability}
 
@@ -678,7 +685,8 @@ def calculate_expressibility(
         )
         pi = pqc_integral(
             circuit=circuit,
-            samples=samples_per_parameter * int(np.log(len(circuit.parameters))),
+            samples=samples_per_parameter * int(np.log(len(circuit.parameters)) + 1)
+            + haar_samples_per_qubit * circuit.num_qubits,
             params_shape=len(circuit.parameters),
             precision=5,
             rng=rng,
@@ -717,7 +725,10 @@ def calculate_measures(
     )["expressibility"]
 
     entangling_capability = calculate_entangling_capability(
-        circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
+        circuit=circuit,
+        samples_per_parameter=samples_per_parameter,
+        samples_per_qubit=haar_samples_per_qubit,
+        seed=seed,
     )["entangling_capability"]
 
     return {
