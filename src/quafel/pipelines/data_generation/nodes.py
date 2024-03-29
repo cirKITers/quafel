@@ -645,14 +645,12 @@ def calculate_measures(
     haar_samples_per_qubit: int,
     seed: int,
 ) -> List[float]:
-    # start = time.time()
     expressibility = calculate_expressibility(
         circuit=circuit,
         samples_per_parameter=samples_per_parameter,
         haar_samples_per_qubit=haar_samples_per_qubit,
         seed=seed,
     )["expressibility"]
-    # print(f"expressibility calculation took {time.time() - start} seconds")
 
     entangling_capability = calculate_entangling_capability(
         circuit=circuit, samples_per_parameter=samples_per_parameter, seed=seed
