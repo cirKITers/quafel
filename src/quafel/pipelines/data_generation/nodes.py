@@ -389,7 +389,10 @@ def calculate_entangling_capability(
     """
 
     def meyer_wallach(circuit, samples, params_shape, precision, rng):
-        mw_measure = np.zeros(samples, dtype=complex)
+        if circuit.num_qubits == 1:
+            return 0
+
+        mw_measure = np.zeros(samples)
 
         # FIXME: unify the range for parameters in the circuit
         # generation method and the sampling here
@@ -422,15 +425,15 @@ def calculate_entangling_capability(
                 # density of the jth qubit after tracing out the rest
                 density = partial_trace(U, qb[:j] + qb[j + 1 :]).data
                 # trace of the density matrix
-                entropy += np.trace(density**2)
+                entropy += np.trace(density**2).real
 
             # fixes accumulating decimals that would otherwise lead to a MW > 1
-            entropy = min((entropy.real / circuit.num_qubits), 1)
+            entropy = min((entropy / circuit.num_qubits), 1)
             # inverse of the normalized entropy is the MW
             # for the current sample of parameters
             mw_measure[i] = 1 - entropy
         # final normalization according to formula
-        return 2 * np.sum(mw_measure).real / samples
+        return 2 * np.sum(mw_measure) / samples
 
     rng = np.random.default_rng(seed=seed)
 
