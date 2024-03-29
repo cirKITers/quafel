@@ -7,7 +7,7 @@ from qiskit.circuit import (
 )
 from qiskit.circuit.library import standard_gates
 from qiskit.circuit.exceptions import CircuitError
-from qiskit.quantum_info import partial_trace
+from qiskit.quantum_info import partial_trace, random_unitary
 from qiskit import execute
 from qiskit_aer import StatevectorSimulator
 import numpy as np
@@ -624,20 +624,25 @@ def calculate_expressibility(
             np.ndarray: A 2^n x 2^n unitary matrix representing a random
                 unitary in the Haar measure on the unitary group U(2^n)
         """
+
         N = 2**n_qubits
 
-        # Generate uniformly sampled random complex numbers
-        Z = jax.random.normal(rng, (N, N)) + 1.0j * jax.random.normal(rng, (N, N))
+        # # Generate uniformly sampled random complex numbers
+        # Z = jax.random.normal(rng, (N, N)) + 1.0j * jax.random.normal(rng, (N, N))
 
-        def f(Z):
-            # Do a QR decomposition
-            [Q, R] = jnp.linalg.qr(Z)
-            # Allow D following unitary matrix constraints
-            D = jnp.diag(jnp.diagonal(R) / jnp.abs(jnp.diagonal(R)))
-            # Composite the Haar Unitary
-            return jnp.dot(Q, D)
+        # def f(Z):
+        #     # Do a QR decomposition
+        #     [Q, R] = jnp.linalg.qr(Z)
+        #     # Allow D following unitary matrix constraints
+        #     D = jnp.diag(jnp.diagonal(R) / jnp.abs(jnp.diagonal(R)))
+        #     # Composite the Haar Unitary
+        #     return jnp.dot(Q, D)
+        # return jax.jit(f)(Z)
 
-        return jax.jit(f)(Z)
+        return random_unitary(
+            N,
+            int(rng._base_array.real[0]),
+        ).data
 
     def haar_integral(
         n_qubits: int, samples: int, rng: np.random.RandomState
