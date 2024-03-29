@@ -403,13 +403,20 @@ def calculate_entangling_capability(
         # we need that later to trace out the corresponding qubits
         qb = list(range(circuit.num_qubits))
 
+        backend = StatevectorSimulator(precision="single")
+        backend.set_options(
+            max_parallel_threads=10,
+            max_parallel_experiments=0,
+            statevector_parallel_threshold=16,
+        )
+
         # outer sum of the MW measure; iterate over set of parameters
         for i in range(samples):
             bound_circuit = circuit.bind_parameters(params[i])
             # execute the PQC circuit with the current set of parameters
             result = execute(
                 bound_circuit,
-                backend=StatevectorSimulator(precision="single"),
+                backend=backend,
             ).result()
 
             # extract the statevector from the simulation result
@@ -600,6 +607,13 @@ def calculate_expressibility(
 
         jf = jax.jit(f)
 
+        backend = StatevectorSimulator(precision="single")
+        backend.set_options(
+            max_parallel_threads=10,
+            max_parallel_experiments=0,
+            statevector_parallel_threshold=16,
+        )
+
         # FIXME: unify the range for parameters in the circuit
         # generation method and the sampling here
         params = rng.uniform(0, 2 * np.pi, (samples, params_shape))
@@ -607,9 +621,7 @@ def calculate_expressibility(
             bound_circuit = circuit.bind_parameters(params[i])
             # execute the PQC circuit with the current set of parameters
             # ansatz = circuit(params, circuit.num_qubits)
-            result = execute(
-                bound_circuit, backend=StatevectorSimulator(precision="single")
-            ).result()
+            result = execute(bound_circuit, backend=backend).result()
 
             # extract the statevector from the simulation result
             U = result.get_statevector(bound_circuit, decimals=precision).data.reshape(
