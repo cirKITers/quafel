@@ -738,20 +738,23 @@ def calculate_expressibility(
     # TODO: propagate precision to kedro parameters
     # Note that we use the INVERSE here, because a
     # a LOW distance would actually correspond to a HIGH expressibility
-    expressibility = 1 - jnp.linalg.norm(
-        haar_integral(
-            n_qubits=circuit.num_qubits,
-            samples=samples_per_qubit * circuit.num_qubits,
-            rng=jrng,
+    if len(circuit.parameters) == 0:
+        expressibility = 0
+    else:
+        expressibility = jf(
+            haar_integral(
+                n_qubits=circuit.num_qubits,
+                samples=haar_samples_per_qubit * circuit.num_qubits,
+                rng=jrng,
+            ),
+            pqc_integral(
+                circuit=circuit,
+                samples=samples_per_parameter * len(circuit.parameters),
+                params_shape=len(circuit.parameters),
+                precision=5,
+                rng=rng,
+            ),
         )
-        - pqc_integral(
-            circuit=circuit,
-            samples=samples_per_qubit * circuit.num_qubits,
-            params_shape=len(circuit.parameters),
-            precision=4,
-            rng=rng,
-        ),
-    )
 
     return {
         "expressibility": expressibility,
