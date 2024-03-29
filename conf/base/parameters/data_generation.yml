@@ -115,13 +115,13 @@ data_generation:
 #   samples_per_parameter: 20
 #   haar_samples_per_qubit: 20
 
-#   min_qubits: 15
-#   max_qubits: 16
+#   min_qubits: 5
+#   max_qubits: 6
 #   qubits_increment: 1
 #   qubits_type: "linear"
 
-#   min_depth: 9
-#   max_depth: 10
+#   min_depth: 5
+#   max_depth: 6
 #   depth_increment: 1
 #   depth_type: "exp2"
 
