@@ -17,6 +17,7 @@ import jax.numpy as jnp
 from typing import List, Dict, Tuple
 import pandas as pd
 import logging
+import os
 
 log = logging.getLogger(__name__)
 
@@ -542,6 +543,32 @@ def calculate_expressibility(
 
         return Z / samples
 
+    def get_haar_integral(
+        n_qubits: int, samples: int, rng: np.random.RandomState, cache=True
+    ) -> float:
+        if cache:
+            name = f"haar_{n_qubits}q_{samples}s.npy"
+
+            cache_folder = ".cache"
+            if not os.path.exists(cache_folder):
+                os.mkdir(cache_folder)
+
+            file_path = os.path.join(cache_folder, name)
+
+            if os.path.isfile(file_path):
+                log.info(f"Loading Haar integral from {file_path}")
+                loaded_array = np.load(file_path)
+                return loaded_array
+
+        # Note that this is a jax rng, so it does not matter if we call that multiple times
+        array = haar_integral(n_qubits, samples, rng)
+
+        if cache:
+            log.info(f"Cached Haar integral into {file_path}")
+            np.save(file_path, array)
+
+        return array
+
     def pqc_integral(
         circuit: QuantumCircuit,
         samples: int,
@@ -598,31 +625,28 @@ def calculate_expressibility(
     jrng = jax.random.key(seed)
 
     def f(haar, pqc):
+        # Note that we use the INVERSE here, because a
+        # a LOW distance would actually correspond to a HIGH expressibility
         return 1 - jnp.linalg.norm(haar - pqc)
 
     jf = jax.jit(f)
 
     # FIXME: the actual value is strongly dependend on the seed (~5-10% deviation)
     # TODO: propagate precision to kedro parameters
-    # Note that we use the INVERSE here, because a
-    # a LOW distance would actually correspond to a HIGH expressibility
     if len(circuit.parameters) == 0:
         expressibility = 0
     else:
-        expressibility = jf(
-            haar_integral(
-                n_qubits=circuit.num_qubits,
-                samples=haar_samples_per_qubit * circuit.num_qubits,
-                rng=jrng,
-            ),
-            pqc_integral(
-                circuit=circuit,
-                samples=samples_per_parameter * len(circuit.parameters),
-                params_shape=len(circuit.parameters),
-                precision=5,
-                rng=rng,
-            ),
+        hi = get_haar_integral(
+            n_qubits=circuit.num_qubits, samples=haar_samples_per_qubit, rng=jrng
         )
+        pi = pqc_integral(
+            circuit=circuit,
+            samples=samples_per_parameter * len(circuit.parameters),
+            params_shape=len(circuit.parameters),
+            precision=5,
+            rng=rng,
+        )
+        expressibility = jf(hi, pi)
 
     return {
         "expressibility": expressibility,
