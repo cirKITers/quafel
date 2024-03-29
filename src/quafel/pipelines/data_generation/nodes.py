@@ -18,6 +18,7 @@ from typing import List, Dict, Tuple
 import pandas as pd
 import logging
 import os
+import hashlib
 
 log = logging.getLogger(__name__)
 
@@ -360,6 +361,43 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
     return {"evaluation_partitions": eval_partitions}
 
 
+def get_pqc_statevector(
+    circuit: QuantumCircuit, params: np.ndarray, backend, precision: int, cache=True
+) -> float:
+    # Note that this is a jax rng, so it does not matter if we call that multiple times
+    bound_circuit = circuit.bind_parameters(params)
+
+    # the qasm representation contains the bound parameters, thus it is ok to hash that
+    hs = hashlib.md5(bound_circuit.qasm().encode()).hexdigest()
+
+    if cache:
+        name = f"pqc_{hs}.npy"
+
+        cache_folder = ".cache"
+        if not os.path.exists(cache_folder):
+            os.mkdir(cache_folder)
+
+        file_path = os.path.join(cache_folder, name)
+
+        if os.path.isfile(file_path):
+            log.debug(f"Loading PQC statevector from {file_path}")
+            loaded_array = np.load(file_path)
+            return loaded_array
+
+    # execute the PQC circuit with the current set of parameters
+    # ansatz = circuit(params, circuit.num_qubits)
+    result = execute(bound_circuit, backend=backend).result()
+
+    # extract the statevector from the simulation result
+    U = result.get_statevector(bound_circuit, decimals=precision).data
+
+    if cache:
+        log.debug(f"Cached PQC statevector into {file_path}")
+        np.save(file_path, U)
+
+    return U
+
+
 def calculate_entangling_capability(
     circuit: QuantumCircuit, samples_per_parameter: int, seed: int
 ) -> Dict[str, float]:
@@ -412,15 +450,7 @@ def calculate_entangling_capability(
 
         # outer sum of the MW measure; iterate over set of parameters
         for i in range(samples):
-            bound_circuit = circuit.bind_parameters(params[i])
-            # execute the PQC circuit with the current set of parameters
-            result = execute(
-                bound_circuit,
-                backend=backend,
-            ).result()
-
-            # extract the statevector from the simulation result
-            U = result.get_statevector(bound_circuit, decimals=precision)
+            U = get_pqc_statevector(circuit, params[i], backend, precision)
 
             # generate a list from [0..num_qubits-1]
             # we need that later to trace out the corresponding qubits
@@ -448,7 +478,7 @@ def calculate_entangling_capability(
     # TODO: propagate precision to kedro parameters
     entangling_capability = meyer_wallach(
         circuit=circuit,
-        samples=samples_per_parameter * circuit.num_qubits,
+        samples=samples_per_parameter * int(np.log(len(circuit.parameters))),
         params_shape=len(circuit.parameters),
         precision=5,
         rng=rng,
@@ -563,7 +593,7 @@ def calculate_expressibility(
             file_path = os.path.join(cache_folder, name)
 
             if os.path.isfile(file_path):
-                log.info(f"Loading Haar integral from {file_path}")
+                log.debug(f"Loading Haar integral from {file_path}")
                 loaded_array = np.load(file_path)
                 return loaded_array
 
@@ -571,7 +601,7 @@ def calculate_expressibility(
         array = haar_integral(n_qubits, samples, rng)
 
         if cache:
-            log.info(f"Cached Haar integral into {file_path}")
+            log.debug(f"Cached Haar integral into {file_path}")
             np.save(file_path, array)
 
         return array
@@ -618,13 +648,8 @@ def calculate_expressibility(
         # generation method and the sampling here
         params = rng.uniform(0, 2 * np.pi, (samples, params_shape))
         for i in range(samples):
-            bound_circuit = circuit.bind_parameters(params[i])
-            # execute the PQC circuit with the current set of parameters
-            # ansatz = circuit(params, circuit.num_qubits)
-            result = execute(bound_circuit, backend=backend).result()
-
             # extract the statevector from the simulation result
-            U = result.get_statevector(bound_circuit, decimals=precision).data.reshape(
+            U = get_pqc_statevector(circuit, params[i], backend, precision).reshape(
                 -1, 1
             )
 
@@ -653,7 +678,7 @@ def calculate_expressibility(
         )
         pi = pqc_integral(
             circuit=circuit,
-            samples=samples_per_parameter * len(circuit.parameters),
+            samples=samples_per_parameter * int(np.log(len(circuit.parameters))),
             params_shape=len(circuit.parameters),
             precision=5,
             rng=rng,
