@@ -94,6 +94,8 @@ def get_time_scale(pd_time: pd.array):
         """
         From https://stackoverflow.com/questions/64183806/extracting-the-exponent-from-scientific-notation # noqa
         """
+        if number == 0:
+            return 0
         base10 = log10(abs(number))
         return floor(base10)
 
