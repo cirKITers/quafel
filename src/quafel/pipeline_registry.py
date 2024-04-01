@@ -23,8 +23,8 @@ def register_pipelines() -> Dict[str, Pipeline]:
     # get all the partitions created with the "prepare" pipeline
     all_partitions = [Path(f).stem for f in glob.glob("data/02_intermediate/*.csv")]
 
-    # get all existing circuits, durations and results. The hooks run prior to this, so in
-    # case we don't want to restore existing results, we should find empty directories
+    # get all existing circuits, durations and results. The hooks run prior to this, so
+    # in case we don't want to restore exist. results, we should find empty directories
     existing_circuits = [Path(f).stem for f in glob.glob("data/03_qasm_circuits/*.txt")]
     existing_durations = [
         Path(f).stem for f in glob.glob("data/05_execution_durations/*.csv")
