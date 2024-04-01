@@ -92,7 +92,7 @@ def _random_circuit(
         num_qubits (int): Number of qubits.
         depth (int): Depth of the circuit.
         max_operands (int, optional): Maximum number of operands. Defaults to 2.
-        conditional (bool, optional): Whether the circuit is conditional. Defaults to False.
+        conditional (bool, optional): Cond. Circuit?. Defaults to False.
         reset (bool, optional): Whether to reset the circuit. Defaults to False.
         seed (int, optional): Seed for random number generation. Defaults to None.
 
@@ -604,7 +604,8 @@ def calculate_expressibility(
                 loaded_array = np.load(file_path)
                 return loaded_array
 
-        # Note that this is a jax rng, so it does not matter if we call that multiple times
+        # Note that this is a jax rng, so it does not matter if we
+        # call that multiple times
         array = haar_integral(n_qubits, samples, rng)
 
         if cache:
