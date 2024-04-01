@@ -12,41 +12,27 @@ def log_circuit(qasm_circuit):
     return {"circuit_image": None}
 
 
-def full_generate_random_qasm_circuits(evaluation_partitions, seed=100):
-    qasm_circuits = {}
-    n_shots = {}
-    frameworks = {}
-
-    for partition_id, partition_load_func in evaluation_partitions.items():
-        partition_data = partition_load_func()
-        partition_data.index = ["framework", "qubits", "depth", "shots"]
-
-        framework = partition_data[partition_id]["framework"]
-        qubits = int(partition_data[partition_id]["qubits"])
-        depth = int(partition_data[partition_id]["depth"])
-        shots = int(partition_data[partition_id]["shots"])
-
-        qasm_circuits[f"qasm_circuit_{partition_id}"] = generate_random_qasm_circuit(
-            qubits, depth, seed
-        )["qasm_circuit"]
-        n_shots[f"n_shots_{partition_id}"] = shots
-        frameworks[f"framework_{partition_id}"] = framework
-
+def generate_random_qasm_circuit(partition, seed=100):
+    # TODO: improve this by accessing data by name
+    partition_data = extract_partition_data(partition)
     return {
-        **qasm_circuits,
-        **n_shots,
-        **frameworks,
+        **generate_random_qasm_circuit(
+            partition_data["qubits"], partition_data["depth"], seed
+        ),
+        "n_shots": partition_data["depth"],
+        "framework": partition_data["framework"],
     }
 
 
-def part_generate_random_qasm_circuit(partition, seed=100):
+def extract_partition_data(partition):
     # TODO: improve this by accessing data by name
     framework = partition[partition.columns[0]][0]
     qubits = int(partition[partition.columns[0]][1])
     depth = int(partition[partition.columns[0]][2])
     shots = int(partition[partition.columns[0]][3])
     return {
-        **generate_random_qasm_circuit(qubits, depth, seed),
+        "qubits": qubits,
+        "depth": depth,
         "n_shots": shots,
         "framework": framework,
     }

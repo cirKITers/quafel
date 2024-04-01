@@ -6,15 +6,16 @@ generated using Kedro 0.18.3
 from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.data_generation.nodes import (
     log_circuit,
+    extract_partition_data,
     generate_random_qasm_circuit,
-    part_generate_random_qasm_circuit,
-    full_generate_random_qasm_circuits,
     generate_evaluation_matrix,
     generate_evaluation_partitions,
 )
 
 
-def create_pipeline(partitions, **kwargs) -> dict:
+def create_pipeline(
+    partitions, circuit_partitions, extract_partitions, **kwargs
+) -> dict:
     # nd_log_circuit = node(
     #     func=log_circuit,
     #     inputs={"qasm_circuit": "qasm_circuit"},
@@ -61,11 +62,15 @@ def create_pipeline(partitions, **kwargs) -> dict:
         namespace="data_generation",
     )
 
-    pl_generate_qasm_circuits_splitted = pipeline(
+    pl_generate_qasm_circuits = pipeline(
         [
+            # These two nodes are mutually exclusive
+            # That means that partitions in 'circuit_partitions' are not contained
+            # in 'extract_partitions' which helps to prevent generating
+            # existent circuits after resuming a pipeline
             *[
                 node(
-                    func=part_generate_random_qasm_circuit,
+                    func=generate_random_qasm_circuit,
                     inputs={
                         "partition": f"evaluation_partition_{i}",
                         "seed": "params:seed",
@@ -78,7 +83,24 @@ def create_pipeline(partitions, **kwargs) -> dict:
                     tags=["dynamic"],
                     name=f"part_generate_random_qasm_circuit_{i}",
                 )
-                for i in partitions
+                for i in circuit_partitions
+            ],
+            *[
+                node(
+                    func=extract_partition_data,
+                    inputs={
+                        "partition": f"evaluation_partition_{i}",
+                    },
+                    outputs={
+                        "qubits": f"qubits_{i}",
+                        "depth": f"depth_{i}",
+                        "n_shots": f"n_shots_{i}",
+                        "framework": f"framework_{i}",
+                    },
+                    tags=["dynamic"],
+                    name=f"part_generate_random_qasm_circuit_{i}",
+                )
+                for i in extract_partitions
             ],
         ],
         inputs={
@@ -89,43 +111,14 @@ def create_pipeline(partitions, **kwargs) -> dict:
             },
         },
         outputs={
-            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
+            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in circuit_partitions},
             **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
             **{f"framework_{i}": f"framework_{i}" for i in partitions},
         },
         namespace="data_generation",
     )
-
-    pl_generate_qasm_circuits = pipeline(
-        [
-            node(
-                func=full_generate_random_qasm_circuits,
-                inputs={
-                    "evaluation_partitions": "evaluation_partitions",
-                    "seed": "params:seed",
-                },
-                outputs={
-                    **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
-                    **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
-                    **{f"framework_{i}": f"framework_{i}" for i in partitions},
-                },
-            ),
-        ],
-        inputs={
-            "evaluation_partitions": "evaluation_partitions",
-        },
-        outputs={
-            **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in partitions},
-            **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
-            **{f"framework_{i}": f"framework_{i}" for i in partitions},
-        },
-        namespace="data_generation",
-    )
-
-    
 
     return {
         "pl_generate_evaluation_partitions": pl_generate_evaluation_partitions,
         "pl_generate_qasm_circuits": pl_generate_qasm_circuits,
-        "pl_generate_qasm_circuits_splitted": pl_generate_qasm_circuits_splitted,
     }
