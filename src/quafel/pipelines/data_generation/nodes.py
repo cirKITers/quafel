@@ -466,10 +466,10 @@ def calculate_entangling_capability(
                 # density of the jth qubit after tracing out the rest
                 density = partial_trace(U, qb[:j] + qb[j + 1 :]).data
                 # trace of the density matrix
-                entropy += np.trace(density**2).real
+                entropy += np.trace(density @ density).real
 
             # fixes accumulating decimals that would otherwise lead to a MW > 1
-            entropy = min((entropy / circuit.num_qubits), 1)
+            entropy = max(0, min((entropy / circuit.num_qubits), 1))
             # inverse of the normalized entropy is the MW
             # for the current sample of parameters
             mw_measure[i] = 1 - entropy
