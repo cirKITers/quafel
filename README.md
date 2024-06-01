@@ -54,7 +54,7 @@ followed by
 ```
 kedro run
 ```
-and a default pipeline should run. In this and following examples the leading `poetry run` is omitted for simplicity.
+and a default pipeline should run. In this and following examples the leading `kedro run` is omitted for simplicity.
 
 Note that is required to always run the `prepare` pipeline in advance to any actual processing pipeline.
 This is because of the current implementation relies on dynamically created nodes that are depending on the configuration and therefore requiring two separate pipeline executions.
