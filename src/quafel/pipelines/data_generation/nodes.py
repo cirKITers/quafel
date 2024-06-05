@@ -469,12 +469,12 @@ def calculate_entangling_capability(
                 entropy += np.trace(density @ density).real
 
             # fixes accumulating decimals that would otherwise lead to a MW > 1
-            entropy = max(0, min((entropy / circuit.num_qubits), 1))
+            entropy = entropy / circuit.num_qubits
             # inverse of the normalized entropy is the MW
             # for the current sample of parameters
             mw_measure[i] = 1 - entropy
         # final normalization according to formula
-        return 2 * np.sum(mw_measure) / samples
+        return max(0, min((2 * np.sum(mw_measure) / samples), 1))
 
     rng = np.random.default_rng(seed=seed)
 
