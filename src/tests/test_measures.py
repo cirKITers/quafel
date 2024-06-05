@@ -41,15 +41,12 @@ def project_context(config_loader):
     )
 
 
-# The tests below are here for the demonstration purpose
-# and should be replaced with the ones testing the project
-# functionality
 class TestMeasures:
     samples_per_parameter = 40
     haar_samples_per_qubit = 60
     seed = 100
 
-    def build_circuit_19(self, n_qubits, n_layers):
+    def build_circuit_19(self, n_qubits: int, n_layers: int) -> QuantumCircuit:
         qc = QuantumCircuit(n_qubits)
         log.info(f"Testing Circuit19 with {n_qubits} qubits and {n_layers} layers")
 
@@ -134,11 +131,12 @@ class TestMeasures:
     def test_variance(self):
         n_qubits = 4
         n_layers = 4
+        n_samples = 10  # Number of iterations where we calculate the measures
 
         qc = self.build_circuit_19(n_qubits, n_layers)
 
         measures = None
-        for i in range(10):
+        for i in range(n_samples):
             m = calculate_measures(
                 qc,
                 samples_per_parameter=self.samples_per_parameter,
@@ -146,17 +144,15 @@ class TestMeasures:
                 seed=self.seed + i,
             )["measure"]
 
-            if measures is None:
-                measures = m
-            else:
-                measures = measures.append(m)
+            measures = measures.append(m) if measures is not None else m
 
         variance = measures.std()
 
-        assert math.isclose(variance.expressiblity, 0.0, abs_tol=0.01)
+        assert math.isclose(variance.expressibility, 0.0, abs_tol=0.01)
         assert math.isclose(variance.entangling_capability, 0.0, abs_tol=0.01)
 
 
+# main for debugging purposes
 if __name__ == "__main__":
     tm = TestMeasures()
     tm.test_idle_circuit()
