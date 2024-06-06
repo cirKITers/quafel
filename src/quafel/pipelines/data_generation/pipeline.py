@@ -7,7 +7,8 @@ from kedro.pipeline import Pipeline, node, pipeline
 from quafel.pipelines.data_generation.nodes import (
     log_circuit,
     extract_partition_data,
-    generate_random_qasm_circuit,
+    generate_random_qasm_circuit_from_partition,
+    calculate_measures,
     generate_evaluation_matrix,
     generate_evaluation_partitions,
 )
@@ -70,7 +71,7 @@ def create_pipeline(
             # existent circuits after resuming a pipeline
             *[
                 node(
-                    func=generate_random_qasm_circuit,
+                    func=generate_random_qasm_circuit_from_partition,
                     inputs={
                         "partition": f"evaluation_partition_{i}",
                         "seed": "params:seed",
@@ -79,9 +80,10 @@ def create_pipeline(
                         "qasm_circuit": f"qasm_circuit_{i}",
                         "n_shots": f"n_shots_{i}",
                         "framework": f"framework_{i}",
+                        "circuit": f"circuit_{i}",
                     },
                     tags=["dynamic"],
-                    name=f"part_generate_random_qasm_circuit_{i}",
+                    name=f"generate_random_qasm_circuit_from_partition_{i}",
                 )
                 for i in circuit_partitions
             ],
@@ -102,6 +104,23 @@ def create_pipeline(
                 )
                 for i in extract_partitions
             ],
+            *[
+                node(
+                    func=calculate_measures,
+                    inputs={
+                        "circuit": f"circuit_{i}",
+                        "samples_per_parameter": "params:samples_per_parameter",
+                        "haar_samples_per_qubit": "params:haar_samples_per_qubit",
+                        "seed": "params:seed",
+                    },
+                    outputs={
+                        "measure": f"measure_{i}",
+                    },
+                    tags=["dynamic"],
+                    name=f"calculate_measures_{i}",
+                )
+                for i in partitions
+            ],
         ],
         inputs={
             # note that this dataset is dynamically created in the hooks, so it is not directly available in the catalog
@@ -114,6 +133,7 @@ def create_pipeline(
             **{f"qasm_circuit_{i}": f"qasm_circuit_{i}" for i in circuit_partitions},
             **{f"n_shots_{i}": f"n_shots_{i}" for i in partitions},
             **{f"framework_{i}": f"framework_{i}" for i in partitions},
+            **{f"measure_{i}": f"measure_{i}" for i in partitions},
         },
         namespace="data_generation",
     )
