@@ -63,24 +63,28 @@ def _random_circuit(
     seed=None,
 ):
     """
-    Generates a random quantum circuit with the number of qubits
-    and circuit depth provided.
+    <<<<<<< HEAD
+        Code partly taken from Qiskit:
+        qiskit/circuit/random/utils.py
 
-    The generating method will favor multi-qubit gates.
+        Generates a random quantum circuit with the number of qubits
+        and circuit depth provided.
 
-    Parameterized gates will have UNBOUND parameters, thus it is
-    required to bind them before the circuit can be evaluated.
+        The generating method will favor multi-qubit gates.
 
-    Args:
-        num_qubits (int): Number of qubits.
-        depth (int): Depth of the circuit.
-        max_operands (int, optional): Maximum number of operands. Defaults to 2.
-        conditional (bool, optional): Cond. Circuit?. Defaults to False.
-        reset (bool, optional): Whether to reset the circuit. Defaults to False.
-        seed (int, optional): Seed for random number generation. Defaults to None.
+        Parameterized gates will have UNBOUND parameters, thus it is
+        required to bind them before the circuit can be evaluated.
 
-    Returns:
-        QuantumCircuit: The generated quantum circuit.
+        Args:
+            num_qubits (int): Number of qubits.
+            depth (int): Depth of the circuit.
+            max_operands (int, optional): Maximum number of operands. Defaults to 2.
+            conditional (bool, optional): Cond. Circuit?. Defaults to False.
+            reset (bool, optional): Whether to reset the circuit. Defaults to False.
+            seed (int, optional): Seed for random number generation. Defaults to None.
+
+        Returns:
+            QuantumCircuit: The generated quantum circuit.
     """
     if num_qubits == 0:
         return QuantumCircuit()
@@ -114,6 +118,7 @@ def _random_circuit(
         (standard_gates.CCXGate, 3, 0),
     ]
 
+    # add gates to the overall set, depending on the number of operands
     gates = gates_1q.copy()
     if max_operands >= 2:
         gates.extend(gates_2q)
@@ -123,6 +128,8 @@ def _random_circuit(
         gates,
         dtype=[("class", object), ("num_qubits", np.int16), ("num_params", np.int32)],
     )
+
+    # generate a numpy array, that we will use later, to fill "gaps"
     gates_1q = np.array(gates_1q, dtype=gates.dtype)
 
     qc = QuantumCircuit(num_qubits)
@@ -146,6 +153,8 @@ def _random_circuit(
         # Efficiently find the point in the list where the total gates would use as many as
         # possible of, but not more than, the number of qubits in the layer.  If there's slack, fill
         # it with 1q gates.
+        # This will, with favor multi qubit gates, but does not ensure >1 qubit gates
+        # being used, especially with a low number of layers
         max_index = np.searchsorted(cumulative_qubits, num_qubits, side="right")
         gate_specs = gate_specs[:max_index]
         slack = num_qubits - cumulative_qubits[max_index - 1]
