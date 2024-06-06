@@ -132,7 +132,8 @@ class TestMeasures:
         # TODO: this is not very precise yet
         assert math.isclose(
             measures.iloc[0].entangling_capability, ent_cap_haar_mean, abs_tol=0.1
-        ), f"Entangling capability should be ~{ent_cap_haar_mean} for Circuit19, but is {measures.iloc[0].entangling_capability}"
+        ), f"Entangling capability should be ~{ent_cap_haar_mean} for Circuit19, \
+            but is {measures.iloc[0].entangling_capability}"
 
         # Expected expr. for circuit 19 is quite high
         assert (
