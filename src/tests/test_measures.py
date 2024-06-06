@@ -103,12 +103,14 @@ class TestMeasures:
         # CNOT gate, so full entanglement
         assert math.isclose(
             measures.iloc[0].entangling_capability, 1.0, abs_tol=1e-3
-        ), f"Entangling capability should be 1 for Bell state, but is {measures.iloc[0].entangling_capability}"
+        ), f"Entangling capability should be 1 for Bell state, \
+            but is {measures.iloc[0].entangling_capability}"
 
         # Due to the coarse sampling, there is quite a range that we allow
         assert math.isclose(
             measures.iloc[0].expressibility, 0.46, abs_tol=1e-2
-        ), f"Expressibility should be ~0.46 for Bell state, but is {measures.iloc[0].expressibility}"
+        ), f"Expressibility should be ~0.46 for Bell state, \
+            but is {measures.iloc[0].expressibility}"
 
     def test_circuit19(self):
         n_qubits = 4
@@ -135,7 +137,8 @@ class TestMeasures:
         # Expected expr. for circuit 19 is quite high
         assert (
             measures.iloc[0].expressibility > 0.8
-        ), f"Expressibility should be > 0.8 for Circuit19, but is {measures.iloc[0].expressibility}"
+        ), f"Expressibility should be > 0.8 for Circuit19, \
+            but is {measures.iloc[0].expressibility}"
 
     def test_variance(self):
         n_qubits = 4
@@ -159,10 +162,12 @@ class TestMeasures:
 
         assert math.isclose(
             variance.expressibility, 0.0, abs_tol=0.01
-        ), f"Variance of expressiblity should be within 0.01, but is {variance.expressibility}"
+        ), f"Variance of expressiblity should be within 0.01, \
+            but is {variance.expressibility}"
         assert math.isclose(
             variance.entangling_capability, 0.0, abs_tol=0.01
-        ), f"Variance of entangling capability should be within 0.01, but is {variance.entangling_capability}"
+        ), f"Variance of entangling capability should be within 0.01, \
+            but is {variance.entangling_capability}"
 
 
 # main for debugging purposes
