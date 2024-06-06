@@ -72,7 +72,7 @@ def combine_evaluations(
     execution_durations: Dict,
     execution_results: Dict,
     measures: Dict,
-    export_results: bool = False,
+    export_results: bool,
 ):
     combine_all = pd.DataFrame()
 
