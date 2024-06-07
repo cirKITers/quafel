@@ -54,11 +54,11 @@ def extract_partition_data(partition):
     }
 
 
-def extract_circuit(qasm_circuit):
+def qasm_circuit_to_qiskit(qasm_circuit):
     qc = QuantumCircuit.from_qasm_str(qasm_circuit)
 
     return {
-        "circuit": qc,
+        "qiskit_circuit": qc,
     }
 
 
@@ -262,7 +262,7 @@ def generate_random_qasm_circuit(
     bound_circuit.measure(bound_circuit.qubits, *bound_circuit.cregs)
 
     # return the bound circuit and the parameterizable circuit
-    return {"qasm_circuit": bound_circuit.qasm(), "circuit": qc}
+    return {"qasm_circuit": bound_circuit.qasm(), "qiskit_circuit": qc}
 
 
 def generate_evaluation_matrix(

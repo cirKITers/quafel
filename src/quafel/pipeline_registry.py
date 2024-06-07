@@ -23,6 +23,10 @@ def register_pipelines() -> Dict[str, Pipeline]:
     # get all the partitions created with the "prepare" pipeline
     all_partitions = [Path(f).stem for f in glob.glob("data/02_intermediate/*.csv")]
 
+    # ----------------------------------------------------------------
+    # Gather all the existing artifacts and calculate the difference
+    # ----------------------------------------------------------------
+
     # get all existing circuits, durations and results. The hooks run prior to this, so
     # in case we don't want to restore exist. results, we should find empty directories
     existing_circuits = [Path(f).stem for f in glob.glob("data/03_qasm_circuits/*.txt")]
@@ -38,22 +42,20 @@ def register_pipelines() -> Dict[str, Pipeline]:
     # get the intersection of the durations and results
     existing_evals = [m for m in existing_durations if m in existing_results]
     # .. and the intersection of all partitions
-
-    circuit_partitions = [p for p in all_partitions if p not in existing_circuits]
-    extract_partitions = [p for p in all_partitions if p in existing_circuits]
-    # .. and the intersection of all partitions for data science
     ds_partitions = [p for p in all_partitions if p not in existing_evals]
-    # .. and the intersection of all partitions for data generation
-    dg_partitions = [p for p in all_partitions if p not in existing_measures]
 
     # gather all the .tmp files to create figures output
     tmp_files = [Path(f).stem for f in glob.glob("data/08_reporting/*.tmp")]
 
+    # ----------------------------------------------------------------
+    # Create the pipelines
+    # ----------------------------------------------------------------
+
     # pass only the number of partitions we want to generate circuits for
     dg_pipelines = dg.create_pipeline(
-        partitions=dg_partitions,
-        circuit_partitions=circuit_partitions,
-        extract_partitions=extract_partitions,
+        partitions=all_partitions,
+        existing_circuits=existing_circuits,
+        existing_measures=existing_measures,
     )
     # pass only the number of partitions we want to evaluate (this would be equal to all partitions in an initial run or in case we don't want to restore existing results)
     ds_pipelines = ds.create_pipeline(partitions=ds_partitions)
