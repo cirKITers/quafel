@@ -2,6 +2,7 @@
 data_generation.evaluation_matrix:
   type: json.JSONDataSet
   filepath: data/01_raw/dataset.json
+  versioned: true
 
 # Evaluation partitions
 evaluation_partitions:
