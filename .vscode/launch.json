@@ -37,7 +37,7 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - SP",
+            "name": "Measure - Single Processing",
             "type": "python",
             "request": "launch",
             "module": "kedro",
@@ -68,7 +68,7 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - MP - Custom",
+            "name": "Measure - Multiprocessing",
             "type": "python",
             "request": "launch",
             "module": "kedro",
@@ -77,7 +77,7 @@
                 "--pipeline",
                 "measure",
                 "--runner",
-                "quafel.runner.MyParallelRunner",
+                "quafel.runner.parallel",
             ],
             // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
             "console": "integratedTerminal",
