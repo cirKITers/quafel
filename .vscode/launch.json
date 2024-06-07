@@ -50,24 +50,6 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - MP - Dask",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": [
-                "run",
-                "--env",
-                "dask",
-                "--pipeline",
-                "measure",
-                "--runner",
-                "quafel.runner.DaskRunner",
-            ],
-            // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
             "name": "Measure - MP - Custom",
             "type": "python",
             "request": "launch",
@@ -80,35 +62,6 @@
                 "quafel.runner.MyParallelRunner",
             ],
             // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "Ct. Measure - SP",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": [
-                "run",
-                "--pipeline",
-                "ctmeasure",
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "Ct. Measure - MP",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": [
-                "run",
-                "--pipeline",
-                "ctmeasure",
-                "--runner",
-                "ParallelRunner",
-                "--async"
-            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
