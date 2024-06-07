@@ -58,11 +58,6 @@ class PipelineHooks:
             tempFiles = glob.glob("data/03_qasm_circuits/*.txt")
             for f in tempFiles:
                 os.remove(f)
-        if (
-            run_params["pipeline_name"] is None  # Running the Default pipeline
-            or run_params["pipeline_name"] == "prepare"
-            or run_params["pipeline_name"] == "measure"
-        ):
             tempFiles = glob.glob("data/04_measures/*.csv")
             for f in tempFiles:
                 os.remove(f)
