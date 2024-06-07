@@ -54,6 +54,14 @@ def extract_partition_data(partition):
     }
 
 
+def extract_circuit(qasm_circuit):
+    qc = QuantumCircuit.from_qasm_str(qasm_circuit)
+
+    return {
+        "circuit": qc,
+    }
+
+
 def _random_circuit(
     num_qubits,
     depth,

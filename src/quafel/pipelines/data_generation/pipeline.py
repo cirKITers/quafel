@@ -11,6 +11,7 @@ from quafel.pipelines.data_generation.nodes import (
     calculate_measures,
     generate_evaluation_matrix,
     generate_evaluation_partitions,
+    extract_circuit,
 )
 
 
@@ -26,20 +27,20 @@ def create_pipeline(
     nd_generate_evaluation_matrix = node(
         func=generate_evaluation_matrix,
         inputs={
-            "min_qubits": "params:min_qubits",
-            "max_qubits": "params:max_qubits",
-            "qubits_increment": "params:qubits_increment",
-            "qubits_type": "params:qubits_type",
-            "min_depth": "params:min_depth",
-            "max_depth": "params:max_depth",
-            "depth_increment": "params:depth_increment",
-            "depth_type": "params:depth_type",
-            "min_shots": "params:min_shots",
-            "max_shots": "params:max_shots",
-            "max_shots": "params:max_shots",
-            "shots_increment": "params:shots_increment",
-            "shots_type": "params:shots_type",
-            "frameworks": "params:frameworks",
+            "min_qubits": "params:data_generation.min_qubits",
+            "max_qubits": "params:data_generation.max_qubits",
+            "qubits_increment": "params:data_generation.qubits_increment",
+            "qubits_type": "params:data_generation.qubits_type",
+            "min_depth": "params:data_generation.min_depth",
+            "max_depth": "params:data_generation.max_depth",
+            "depth_increment": "params:data_generation.depth_increment",
+            "depth_type": "params:data_generation.depth_type",
+            "min_shots": "params:data_generation.min_shots",
+            "max_shots": "params:data_generation.max_shots",
+            "max_shots": "params:data_generation.max_shots",
+            "shots_increment": "params:data_generation.shots_increment",
+            "shots_type": "params:data_generation.shots_type",
+            "frameworks": "params:data_generation.frameworks",
         },
         outputs={
             "evaluation_matrix": "evaluation_matrix",
@@ -50,7 +51,7 @@ def create_pipeline(
         func=generate_evaluation_partitions,
         inputs={
             "evaluation_matrix": "evaluation_matrix",
-            "skip_combinations": "params:skip_combinations",
+            "skip_combinations": "params:data_generation.skip_combinations",
         },
         outputs={
             "evaluation_partitions": "evaluation_partitions",
@@ -74,7 +75,7 @@ def create_pipeline(
                     func=generate_random_qasm_circuit_from_partition,
                     inputs={
                         "partition": f"evaluation_partition_{i}",
-                        "seed": "params:seed",
+                        "seed": "params:data_generation.seed",
                     },
                     outputs={
                         "qasm_circuit": f"qasm_circuit_{i}",
@@ -100,7 +101,21 @@ def create_pipeline(
                         "framework": f"framework_{i}",
                     },
                     tags=["dynamic"],
-                    name=f"part_generate_random_qasm_circuit_{i}",
+                    name=f"extract_partition_data_{i}",
+                )
+                for i in extract_partitions
+            ],
+            *[
+                node(
+                    func=extract_circuit,
+                    inputs={
+                        "qasm_circuit": f"qasm_circuit_{i}",
+                    },
+                    outputs={
+                        "circuit": f"circuit_{i}",
+                    },
+                    tags=["dynamic"],
+                    name=f"extract_circuit_{i}",
                 )
                 for i in extract_partitions
             ],
@@ -109,9 +124,9 @@ def create_pipeline(
                     func=calculate_measures,
                     inputs={
                         "circuit": f"circuit_{i}",
-                        "samples_per_parameter": "params:samples_per_parameter",
-                        "haar_samples_per_qubit": "params:haar_samples_per_qubit",
-                        "seed": "params:seed",
+                        "samples_per_parameter": "params:data_generation.samples_per_parameter",
+                        "haar_samples_per_qubit": "params:data_generation.haar_samples_per_qubit",
+                        "seed": "params:data_generation.seed",
                     },
                     outputs={
                         "measure": f"measure_{i}",
@@ -135,7 +150,6 @@ def create_pipeline(
             **{f"framework_{i}": f"framework_{i}" for i in partitions},
             **{f"measure_{i}": f"measure_{i}" for i in partitions},
         },
-        namespace="data_generation",
     )
 
     return {
