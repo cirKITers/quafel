@@ -62,7 +62,6 @@ This is because of the current implementation relies on dynamically created node
 In summary, the following pipelines exist:
 - `prepare` : generates all possible combinations of configurations based on the current parameter set
 - `measure` : performs the actual time measurement by executing experiments for each of the previously generated configurations with the ability to parallelize processing
-- `ctmeasure` : if the `measure` pipeline failed or was cancelled, use this pipeline to resume
 - `combine` : gathers all the results from the `measure` pipeline and combines them into a single output dataset
 - `visualize` : takes the combined experiment results and generates your plots
 
@@ -74,7 +73,7 @@ To use this, you should explicitly call the individual pipelines.
 In summary the whole experiment will then look as follows:
 ```
 kedro run --pipeline prepare
-kedro run --pipeline measure --runner quafel.runner.MyParallelRunner
+kedro run --pipeline measure --runner quafel.runner.Parallel
 kedro run --pipeline combine
 kedro run --pipeline visualize
 ```
@@ -82,6 +81,7 @@ kedro run --pipeline visualize
 Here, only the pipeline `measure` will utilize multiprocessing and the rest will run single process.
 We recommend this approach since there is no advantage by running the other pipelines in parallel as well.
 Of course, you can run the `measure` pipeline in a single process as well by omitting the `--runner` option.
+If for some reason the execution of the `measure` pipeline gets interrupted, running the same pipeline again **without** running `prepare` will allow re-using previously generated artefacts.
 
 For details on the output, see the [Data Structure Section](#floppy_disk-data-structure).
 
@@ -129,19 +129,23 @@ which will open a browser with [kedro-viz](https://github.com/kedro-org/kedro-vi
   - The number of partitions depend on the configuration.
 - [data/03_qasm_circuits](data/03_qasm_circuits/):
   - A QASM circuit for each partition.
-- [data/04_execution_results](data/04_execution_results/):
+- [data/04_measures](data/04_measures/):
+  - Entangling capability and expressibility of each generated circuit
+  - Calculation according to [Sim et al. - Expressibility and entangling capability of parameterized quantum circuits for hybrid quantum-classical algorithms](https://arxiv.org/abs/1905.10876)
+  - Statevectors of circuits are cached (`./.cache/` folder) based on the md5 hash of provided circuit to speedup calculation
+- [data/05_execution_results](data/05_execution_results/):
   - Simulator results of the job with the corresponding id.
   - Result formats are unified as a dictionary with the keys containing the binary bit representation of the measured qubit and the normalized counts as values.
   - Results are zero padded, so it is ensured that also state combinations with $0$ probability are represented.
-- [data/05_execution_durations](data/05_execution_durations/):
+- [data/06_execution_durations](data/06_execution_durations/):
   - Duration for the simulation of the job with the corresponding id
   - Duration is only measured using `perf_counter` and `process_time`
-- [data/06_evaluations_combined](data/06_evaluations_combined/):
+- [data/07_evaluations_combined](data/07_evaluations_combined/):
   - **Versioned** dataset containing the combined information of both, the input parameters (```framework```, ```qubits```, ```depth```, ```shots```), the measured duration and the simulator results
-- [data/07_reportings](data/07_reporting):
+- [data/08_reportings](data/08_reportings):
   - **Versioned** dataset with the ```.json``` formatted ploty heatmaps
   - The data in this folder is named by the framework and the fixed parameter. E.g. when the number of ```qubits``` is plotted against the ```shots``` and the ```qiskit_fw``` is being used to simulate a circuit of ```depth``` $3$, the filename would be ```qiskit_fw_depth_3```.
-- [data/08_print](data/07_reporting):
+- [data/09_print](data/09_print):
   - Print-ready output of the visualization pipeline in `pdf` and `png` format.
 
 Note that all datasets that are not marked as "**versioned**" will be overwritten on the next run!

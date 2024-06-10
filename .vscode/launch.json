@@ -37,7 +37,7 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - SP",
+            "name": "Measure - Single Processing",
             "type": "python",
             "request": "launch",
             "module": "kedro",
@@ -50,7 +50,7 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - MP - Custom",
+            "name": "Measure - Multiprocessing",
             "type": "python",
             "request": "launch",
             "module": "kedro",
@@ -59,7 +59,7 @@
                 "--pipeline",
                 "measure",
                 "--runner",
-                "quafel.runner.MyParallelRunner",
+                "quafel.runner.Parallel",
             ],
             // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
             "console": "integratedTerminal",
@@ -78,16 +78,6 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
-        // Multithreading disabled due to issue with qiskit
-        // {
-        //     "name": "Measure - MT",
-        //     "type": "python",
-        //     "request": "launch",
-        //     "module": "kedro",
-        //     "args": ["run", "--pipeline", "measure", "--runner", "ThreadRunner", "--async"],
-        //     "console": "integratedTerminal",
-        //     "justMyCode": true
-        // },
         {
             "name": "Visualize - SP",
             "type": "python",
