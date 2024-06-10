@@ -73,7 +73,7 @@ To use this, you should explicitly call the individual pipelines.
 In summary the whole experiment will then look as follows:
 ```
 kedro run --pipeline prepare
-kedro run --pipeline measure --runner quafel.runner.parallel
+kedro run --pipeline measure --runner quafel.runner.Parallel
 kedro run --pipeline combine
 kedro run --pipeline visualize
 ```
