@@ -50,24 +50,6 @@
             "justMyCode": true
         },
         {
-            "name": "Measure - MP - Dask",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": [
-                "run",
-                "--env",
-                "dask",
-                "--pipeline",
-                "measure",
-                "--runner",
-                "quafel.runner.DaskRunner",
-            ],
-            // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
             "name": "Measure - Multiprocessing",
             "type": "python",
             "request": "launch",
@@ -77,38 +59,9 @@
                 "--pipeline",
                 "measure",
                 "--runner",
-                "quafel.runner.parallel",
+                "quafel.runner.Parallel",
             ],
             // "args": ["run", "--pipeline", "measure", "--runner", "ParallelRunner", "--async"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "Ct. Measure - SP",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": [
-                "run",
-                "--pipeline",
-                "ctmeasure",
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "Ct. Measure - MP",
-            "type": "python",
-            "request": "launch",
-            "module": "kedro",
-            "args": [
-                "run",
-                "--pipeline",
-                "ctmeasure",
-                "--runner",
-                "ParallelRunner",
-                "--async"
-            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
