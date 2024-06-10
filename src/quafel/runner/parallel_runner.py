@@ -1,6 +1,7 @@
-"""``ParallelRunner`` is an ``AbstractRunner`` implementation. It can
+"""``parallel`` is an ``AbstractRunner`` implementation. It can
 be used to run the ``Pipeline`` in parallel groups formed by toposort.
 """
+
 from __future__ import annotations
 
 import multiprocessing
@@ -140,8 +141,8 @@ def _run_node_synchronization(  # noqa: too-many-arguments
     return run_node(node, catalog, hook_manager, is_async, session_id)
 
 
-class MyParallelRunner(AbstractRunner):
-    """``ParallelRunner`` is an ``AbstractRunner`` implementation. It can
+class Parallel(AbstractRunner):
+    """``Parallel`` is an ``AbstractRunner`` implementation. It can
     be used to run the ``Pipeline`` in parallel groups formed by toposort.
     Please note that this `runner` implementation validates dataset using the
     ``_validate_catalog`` method, which checks if any of the datasets are
