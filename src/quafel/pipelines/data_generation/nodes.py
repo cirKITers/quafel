@@ -27,47 +27,80 @@ def log_circuit(qasm_circuit):
     return {"circuit_image": None}
 
 
-def full_generate_random_qasm_circuits(evaluation_partitions, seed=100):
-    qasm_circuits = {}
-    n_shots = {}
-    frameworks = {}
+def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
+    partitions = {}
+    idx = 0
+    for f in evaluation_matrix["frameworks"]:
+        if "qubits" in skip_combinations:
+            q = max(evaluation_matrix["qubits"])
+            for d in evaluation_matrix["depths"]:
+                for s in evaluation_matrix["shots"]:
+                    partitions[f"{idx}"] = {
+                        "framework": f,
+                        "qubits": q,
+                        "depth": d,
+                        "shots": s,
+                    }
+                    idx += 1
+        elif "depth" in skip_combinations:
+            d = max(evaluation_matrix["depth"])
+            for q in evaluation_matrix["qubits"]:
+                for s in evaluation_matrix["shots"]:
+                    partitions[f"{idx}"] = {
+                        "framework": f,
+                        "qubits": q,
+                        "depth": d,
+                        "shots": s,
+                    }
+                    idx += 1
+        elif "shots" in skip_combinations:
+            s = max(evaluation_matrix["shots"])
+            for d in evaluation_matrix["depths"]:
+                for q in evaluation_matrix["qubits"]:
+                    partitions[f"{idx}"] = {
+                        "framework": f,
+                        "qubits": q,
+                        "depth": d,
+                        "shots": s,
+                    }
+                    idx += 1
+        else:
+            for q in evaluation_matrix["qubits"]:
+                for d in evaluation_matrix["depths"]:
+                    for s in evaluation_matrix["shots"]:
+                        partitions[f"{idx}"] = {
+                            "framework": f,
+                            "qubits": q,
+                            "depth": d,
+                            "shots": s,
+                        }
+                        idx += 1
 
-    for partition_id, partition_load_func in evaluation_partitions.items():
-        partition_data = partition_load_func()
-        partition_data.index = ["framework", "qubits", "depth", "shots"]
-
-        framework = partition_data[partition_id]["framework"]
-        qubits = int(partition_data[partition_id]["qubits"])
-        depth = int(partition_data[partition_id]["depth"])
-        shots = int(partition_data[partition_id]["shots"])
-
-        qasm_circuits[f"qasm_circuit_{partition_id}"] = generate_random_qasm_circuit(
-            qubits, depth, seed
-        )["qasm_circuit"]
-        n_shots[f"n_shots_{partition_id}"] = shots
-        frameworks[f"framework_{partition_id}"] = framework
-
-    return {
-        **qasm_circuits,
-        **n_shots,
-        **frameworks,
-    }
+    eval_partitions = pd.DataFrame(partitions)
+    log.info(f"Generated {eval_partitions.shape[1]} partitions")
+    return {"evaluation_partitions": eval_partitions}
 
 
-def part_generate_random_qasm_circuit(partition, seed=100):
+def extract_partition_data(partition):
     # TODO: improve this by accessing data by name
     framework = partition[partition.columns[0]][0]
     qubits = int(partition[partition.columns[0]][1])
     depth = int(partition[partition.columns[0]][2])
     shots = int(partition[partition.columns[0]][3])
 
-    result = generate_random_qasm_circuit(qubits, depth, seed)
-
     return {
-        "qasm_circuit": result["qasm_circuit"],
+        "qubits": qubits,
+        "depth": depth,
         "n_shots": shots,
         "framework": framework,
-        "circuit": result["circuit"],
+    }
+
+
+def qasm_circuit_to_qiskit(qasm_circuit):
+    qc = QuantumCircuit.from_qasm_str(qasm_circuit)
+
+    return {
+        "qiskit_circuit": qc,
     }
 
 
@@ -236,6 +269,17 @@ def _random_circuit(
     return qc
 
 
+def generate_random_qasm_circuit_from_partition(partition, seed):
+    partition_data = extract_partition_data(partition)
+    return {
+        **generate_random_qasm_circuit(
+            partition_data["qubits"], partition_data["depth"], seed
+        ),
+        "n_shots": partition_data["depth"],
+        "framework": partition_data["framework"],
+    }
+
+
 def generate_random_qasm_circuit(
     qubits: int, depth: int, seed: int
 ) -> Dict[str, List[float]]:
@@ -271,7 +315,7 @@ def generate_random_qasm_circuit(
     bound_circuit.measure(bound_circuit.qubits, *bound_circuit.cregs)
 
     # return the bound circuit and the parameterizable circuit
-    return {"qasm_circuit": bound_circuit.qasm(), "circuit": qc}
+    return {"qasm_circuit": bound_circuit.qasm(), "qiskit_circuit": qc}
 
 
 def generate_evaluation_matrix(
@@ -314,60 +358,6 @@ def generate_evaluation_matrix(
             "shots": shots,
         }
     }
-
-
-def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
-    partitions = {}
-    idx = 0
-    for f in evaluation_matrix["frameworks"]:
-        if "qubits" in skip_combinations:
-            q = max(evaluation_matrix["qubits"])
-            for d in evaluation_matrix["depths"]:
-                for s in evaluation_matrix["shots"]:
-                    partitions[f"{idx}"] = {
-                        "framework": f,
-                        "qubits": q,
-                        "depth": d,
-                        "shots": s,
-                    }
-                    idx += 1
-        elif "depth" in skip_combinations:
-            d = max(evaluation_matrix["depth"])
-            for q in evaluation_matrix["qubits"]:
-                for s in evaluation_matrix["shots"]:
-                    partitions[f"{idx}"] = {
-                        "framework": f,
-                        "qubits": q,
-                        "depth": d,
-                        "shots": s,
-                    }
-                    idx += 1
-        elif "shots" in skip_combinations:
-            s = max(evaluation_matrix["shots"])
-            for d in evaluation_matrix["depths"]:
-                for q in evaluation_matrix["qubits"]:
-                    partitions[f"{idx}"] = {
-                        "framework": f,
-                        "qubits": q,
-                        "depth": d,
-                        "shots": s,
-                    }
-                    idx += 1
-        else:
-            for q in evaluation_matrix["qubits"]:
-                for d in evaluation_matrix["depths"]:
-                    for s in evaluation_matrix["shots"]:
-                        partitions[f"{idx}"] = {
-                            "framework": f,
-                            "qubits": q,
-                            "depth": d,
-                            "shots": s,
-                        }
-                        idx += 1
-
-    eval_partitions = pd.DataFrame(partitions)
-    log.info(f"Generated {eval_partitions.shape[1]} partitions")
-    return {"evaluation_partitions": eval_partitions}
 
 
 def get_pqc_statevector(
@@ -705,19 +695,6 @@ def calculate_expressibility(
 
     return {
         "expressibility": expressibility,
-    }
-
-
-def combine_measures(
-    expressibility: float, entangling_capability: float
-) -> List[float]:
-    return {
-        "measure": pd.DataFrame(
-            {
-                "expressibility": [expressibility],
-                "entangling_capability": [entangling_capability],
-            }
-        )
     }
 
 

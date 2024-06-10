@@ -23,6 +23,13 @@ def register_pipelines() -> Dict[str, Pipeline]:
     # get all the partitions created with the "prepare" pipeline
     all_partitions = [Path(f).stem for f in glob.glob("data/02_intermediate/*.csv")]
 
+    # ----------------------------------------------------------------
+    # Gather all the existing artifacts and calculate the difference
+    # ----------------------------------------------------------------
+
+    # get all existing circuits, durations and results. The hooks run prior to this, so
+    # in case we don't want to restore exist. results, we should find empty directories
+    existing_circuits = [Path(f).stem for f in glob.glob("data/03_qasm_circuits/*.txt")]
     # get all existing durations and results. The hooks run prior to this, so in case we don't want to restore existing results, we should find empty directories
     existing_measures = [Path(f).stem for f in glob.glob("data/04_measures/*.csv")]
     existing_durations = [
@@ -31,36 +38,38 @@ def register_pipelines() -> Dict[str, Pipeline]:
     existing_results = [
         Path(f).stem for f in glob.glob("data/05_execution_results/*.csv")
     ]
-    # existing_circuits = [
-    #     Path(f).stem for f in glob.glob("data/03_qasm_circuits/*.txt")
-    # ]
 
     # get the intersection of the durations and results
     existing_evals = [m for m in existing_durations if m in existing_results]
-    # .. and the intersection of all partitions for data science
+    # .. and the intersection of all partitions
     ds_partitions = [p for p in all_partitions if p not in existing_evals]
-    # .. and the intersection of all partitions for data generation
-    dg_partitions = [p for p in all_partitions if p not in existing_measures]
-    # circuit_partitions = [p for p in all_partitions if p not in existing_circuits]
 
     # gather all the .tmp files to create figures output
     tmp_files = [Path(f).stem for f in glob.glob("data/08_reporting/*.tmp")]
 
+    # ----------------------------------------------------------------
+    # Create the pipelines
+    # ----------------------------------------------------------------
+
     # pass only the number of partitions we want to generate circuits for
-    dg_pipelines = dg.create_pipeline(partitions=dg_partitions)
+    dg_pipelines = dg.create_pipeline(
+        partitions=all_partitions,
+        existing_circuits=existing_circuits,
+        existing_measures=existing_measures,
+    )
     # pass only the number of partitions we want to evaluate (this would be equal to all partitions in an initial run or in case we don't want to restore existing results)
     ds_pipelines = ds.create_pipeline(partitions=ds_partitions)
     viz_pipelines = viz.create_pipeline(figures=tmp_files)
 
     return {
         "__default__": dg_pipelines["pl_generate_evaluation_partitions"]
-        + dg_pipelines["pl_generate_qasm_circuits_splitted"]
+        + dg_pipelines["pl_generate_qasm_circuits"]
         + ds_pipelines["pl_parallel_measure_execution_durations"]
         + viz_pipelines["pl_visualize_evaluations"],
         "prepare": dg_pipelines["pl_generate_evaluation_partitions"],
         "measure": dg_pipelines[
             # "pl_generate_qasm_circuits"
-            "pl_generate_qasm_circuits_splitted"
+            "pl_generate_qasm_circuits"
         ]
         + ds_pipelines["pl_parallel_measure_execution_durations"],
         # ct measure is the same as the measure pipeline, but we need to tell the hooks that we don't want to delete the existing results

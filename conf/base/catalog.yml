@@ -1,75 +1,56 @@
-# Here you can define all your data sets by using simple YAML syntax.
-#
-# Documentation for this file format can be found in "The Data Catalog"
-# Link: https://kedro.readthedocs.io/en/stable/data/data_catalog.html
-
-data_generation.evaluation_matrix: # example to save results to multiple partitions
+# Evaluation matrix
+data_generation.evaluation_matrix:
   type: json.JSONDataSet
-    # save_args:
-    #   index: False
   filepath: data/01_raw/dataset.json
   versioned: true
 
-
-evaluation_partitions: # example to save results to multiple partitions
+# Evaluation partitions
+evaluation_partitions:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    # save_args:
-    #   index: False
   path: data/02_intermediate/
   filename_suffix: ".csv"
 
-qasm_circuits: # example to save results to multiple partitions
+# QASM circuits
+qasm_circuits:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    # save_args:
-    #   index: False
   path: data/03_qasm_circuits/
   filename_suffix: ".txt"
 
-measures: # example to save results to multiple partitions
+# Measures
+measures:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    # save_args:
-    #   index: False
   path: data/04_measures/
   filename_suffix: ".csv"
 
-execution_results: # example to save results to multiple partitions
+# Execution results
+execution_results:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    # save_args:
-    #   index: False
   path: data/05_execution_results/
   filename_suffix: ".csv"
 
-execution_durations: # example to save results to multiple partitions
+# Execution durations
+execution_durations:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
-    # save_args:
-    #   index: False
   path: data/06_execution_durations/
   filename_suffix: ".csv"
 
-
+# Evaluations combined (results + durations)
 evaluations_combined:
   type: pandas.CSVDataSet
   filepath: data/07_evaluations_combined/evaluations_combined.csv
-  # save_args:
-  #   index: False
   versioned: true
 
-dummy_versioned_dataset: # example to save results to multiple 
+dummy_versioned_dataset:
   type: pandas.CSVDataSet
   filepath: data/08_reporting/dummy.csv
   versioned: true
-
-# numpy_fw_depth_1: # example to save results to multiple 
-#   type: plotly.JSONDataSet
-#   filepath: data/08_reporting/numpy_fw_depth_1.json
-#   versioned: true
