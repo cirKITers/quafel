@@ -76,7 +76,11 @@ def generate_evaluation_partitions(evaluation_matrix, skip_combinations):
                         }
                         idx += 1
 
-    eval_partitions = pd.DataFrame(partitions)
+    # Add row index, because the order of the order
+    # of the rows might get scrambled otherwise
+    eval_partitions = pd.DataFrame(
+        partitions, index=["framework", "qubits", "depth", "shots"]
+    )
     log.info(f"Generated {eval_partitions.shape[1]} partitions")
     return {"evaluation_partitions": eval_partitions}
 
