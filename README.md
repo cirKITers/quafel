@@ -9,3 +9,5 @@ Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffl
 See [our poster](https://bwsyncandshare.kit.edu/s/CdnD6MEsNwYgJMd) contributed to the [QTML23](https://indico.cern.ch/event/1288979/) for more details.
 
 You can find a more extensive documentation on the [Github Page](https://cirkiters.github.io/quafel/).
+
+We're also working on a [software](https://github.com/cirKITers/Quafel-PSE-2024) to make the benchmarking results available online. Stay tuned!
