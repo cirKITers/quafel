@@ -47,7 +47,7 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/cirKITers/Quafel
+      link: https://github.com/cirKITers/quafel
       name: Github
     - icon: fontawesome/brands/researchgate
       link: https://www.researchgate.net/profile/Melvin-Strobl
