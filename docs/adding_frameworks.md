@@ -1,4 +1,4 @@
-# Adding new frameworks :heavy_plus_sign:
+# Adding New Frameworks
 
 New frameworks can easily be added by editing the [frameworks.py](src/quafel/pipelines/data_science/frameworks.py) file.
 Frameworks are defined by classes following the ```NAME_fw``` naming template where ```NAME``` should be replaced by the framework to be implemented.
