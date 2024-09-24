@@ -4,6 +4,7 @@ __pycache__
 config.py
 .DS_Store
 *.out
+.pytest_cache
 
 ##########################
 # KEDRO PROJECT
