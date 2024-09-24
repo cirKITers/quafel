@@ -24,29 +24,6 @@ If you want to go with Pip instead, run
 pip install -r src/requirements.in
 ```
 
-<details>
-<summary>:construction: only:</summary>
-
-If you considere building docs, running tests and commiting to the project, run:
-```
-poetry install
-poetry run pre-commit autoupdate
-poetry run pre-commit install
-poetry run pytest
-poetry run mkdocs build
-```
-Again, there is a ```setup_dev.sh``` script in the ```.vscode``` directory for convenience.
-
-With Pip the equivalent is
-```
-pip install -r src/requirements_dev.in
-pre-commit autoupdate
-pre-commit install
-pytest
-mkdocs build
-```
-</details>
-
 ## Usage :rocket: 
 
 Without any configuration needed, you can execute
@@ -91,11 +68,6 @@ For details on the output, see the [Data Structure Section](#floppy_disk-data-st
 Note that if you want to re-run e.g. the `visualize` pipeline, you have to re-run the `prepare` pipeline as well.
 This is because intermediate data containing information about the partitions is being deleted after the `visualize` pipeline of an experimant successfully ran.
 This constraint will be removed in future releases.
-
-<details>
-<summary>:construction: only:</summary>
-Checkout the pre-defined VSCode tasks if you want to develop on the project.
-</details>
 
 ## Configuration :wrench:
 
