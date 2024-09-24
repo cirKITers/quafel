@@ -1,5 +1,7 @@
 # QUAFEL - QUAntum Framework EvaLuation
 
+[![Quality](https://github.com/cirKITers/quafel/actions/workflows/qa.yml/badge.svg)](https://github.com/cirKITers/quafel/actions/workflows/qa.yml) [![Testing](https://github.com/cirKITers/quafel/actions/workflows/test.yml/badge.svg)](https://github.com/cirKITers/quafel/actions/workflows/test.yml) [![Documentation](https://github.com/cirKITers/quafel/actions/workflows/docs.yml/badge.svg)](https://github.com/cirKITers/quafel/actions/workflows/docs.yml)
+
 Not to be confused with the [Quaffle](https://harrypotter.fandom.com/wiki/Quaffle) :wink:
 
 ![Overview](docs/overview.png)
