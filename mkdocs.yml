@@ -3,9 +3,10 @@ nav:
   - index.md
   - setup.md
   - usage.md
-  - configuration.md
-  - data_structure.md
-  - adding_frameworks.md
+  - Advanced:
+    - configuration.md
+    - data_structure.md
+    - adding_frameworks.md
 theme:
   name: material
   highlightjs: true
