@@ -1,4 +1,4 @@
-site_name: quafel
+site_name: QML Essentials
 theme:
   name: material
   highlightjs: true
@@ -26,8 +26,6 @@ plugins:
         # See: https://mkdocstrings.github.io/python/usage/
         python:
           paths: ["src"]
-          options:
-            docstring_style: sphinx
 markdown_extensions:
   - markdown_include.include:
       base_path: .
@@ -40,12 +38,9 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
 extra:
   social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/cirKITers/qml-essentials
+      name: Github
     - icon: fontawesome/brands/researchgate
       link: https://www.researchgate.net/profile/Melvin-Strobl
       name: Researchgate
-    - icon: fontawesome/brands/github
-      link: https://github.com/stroblme/qLearning
-      name: Github
-    - icon: fontawesome/solid/section
-      link: https://stroblme.de/index.php/legal-notice/
-      name: Legal Notice
