@@ -6,7 +6,7 @@ authors = ["lc3267 <melvin.strobl@kit.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
+python = ">=3.10,<3.12"
 kedro = "^0.18.13"
 pennylane = "^0.33.1"
 qiskit = "^0.45.0"
