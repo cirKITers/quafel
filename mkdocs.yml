@@ -1,4 +1,4 @@
-site_name: QML Essentials
+site_name: QUAFEL
 theme:
   name: material
   highlightjs: true
@@ -39,7 +39,7 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/cirKITers/qml-essentials
+      link: https://github.com/cirKITers/Quafel
       name: Github
     - icon: fontawesome/brands/researchgate
       link: https://www.researchgate.net/profile/Melvin-Strobl
