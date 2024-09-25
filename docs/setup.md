@@ -1,13 +1,14 @@
 # Setup
 
-This project follows the [Kedro Framework](https://kedro.org/) approach.
-Straight, **without development packages**, you can execute the following command, assuming you have [Poetry](https://python-poetry.org/) installed:
-```
-poetry install --without dev
-```
-There is a ```setup.sh``` script in the ```.vscode``` directory for convenience.
+This package is available via [PyPi](https://pypi.org/project/qml-essentials/).
+Installing this package is as simple as with any other package:
 
-If you want to go with Pip instead, run 
-```
-pip install -r src/requirements.in
-```
+`pip install quafel`
+
+Or, if you prefer poetry:
+
+`poetry add quafel`
+
+Once you set things up, go ahead and checkout [how to use qml-essentials](usage.md).
+
+If you want to contribute to this project, a more detailled explaination is available in the [CONTRIBUTING guide](https://github.com/cirKITers/qml-essentials/blob/main/CONTRIBUTING.md). 
