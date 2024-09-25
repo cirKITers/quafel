@@ -26,7 +26,8 @@ def measure_execution_durations(
         framework = getattr(fw, framework_id)
     except AttributeError:
         raise AttributeError(
-            f"Framework identifier does not match one of the existing frameworks. Existing frameworks are {fw}"
+            f"Framework identifier does not match one of the existing frameworks.\
+            Existing frameworks are {fw}"
         )
 
     framework_instance = framework(qasm_circuit=qasm_circuit, n_shots=int(n_shots))

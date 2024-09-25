@@ -39,7 +39,9 @@ class PipelineHooks:
         """
 
         # ----------------------------------------------------------------
-        # If we are running a new experiment setup (e.g. executing the "pre" pipeline), we want to cleanup all the files that are **not** versioned but were used as results in previous runs
+        # If we are running a new experiment setup (e.g. executing the "pre"
+        # pipeline), we want to cleanup all the files that are **not**
+        # versioned but were used as results in previous runs
         # ----------------------------------------------------------------
 
         if run_params["pipeline_name"] == "prepare":
@@ -114,11 +116,13 @@ class PipelineHooks:
             for f in tempFiles:
                 os.remove(f)
             # ----------------------------------------------------------------
-            # This section ensures that the reporting dictionary always contains the proper output data catalogs so that kedro-viz is happy
+            # This section ensures that the reporting dictionary always
+            # contains the proper output data catalogs so that kedro-viz is happy
             # ----------------------------------------------------------------
 
             try:
-                # get the evaluation matrix where information about all the possible combinations is stored
+                # get the evaluation matrix where information about
+                # all the possible combinations is stored
                 evaluation_matrix = (
                     catalog.datasets.data_generation__evaluation_matrix.load()
                 )
@@ -126,8 +130,10 @@ class PipelineHooks:
                 log.exception(e)
                 return
 
-            # generate a list of names that will be used as plots later in the visualization pipeline
-            # If you add new visualization outputs, you must also create the file names here
+            # generate a list of names that will be used as plots
+            # later in the visualization pipeline
+            # If you add new visualization outputs, you must also
+            # create the file names here
             names = []
             for fw in evaluation_matrix["frameworks"]:
                 for q in evaluation_matrix["qubits"]:
@@ -152,7 +158,8 @@ class PipelineHooks:
                     names.append(f"shots_{s}_qubits_{q}_time")
                     names.append(f"shots_{s}_qubits_{q}_measures")
 
-            # use the dummy dataset to get the version of the current kedro run, so that it matches the ones from the versioned datasets
+            # use the dummy dataset to get the version of the current
+            # kedro run, so that it matches the ones from the versioned datasets
             version = Version(
                 None, catalog.datasets.dummy_versioned_dataset._version.save
             )
@@ -164,14 +171,16 @@ class PipelineHooks:
                 dataset_template = JSONDataSet(filepath=filepath, version=version)
                 catalog.add(name, dataset_template)
 
-                # create a dictionary if necessary (versioned datasets need dictionaries)
+                # create a dictionary if necessary
+                # (versioned datasets need dictionaries)
                 try:
                     os.mkdir(filepath)
                 except FileExistsError:
                     # directory already exists
                     pass
 
-                # create a .tmp file which we will use later in the pipeline_registry to create node outputs dynamically
+                # create a .tmp file which we will use later in the
+                # pipeline_registry to create node outputs dynamically
                 with open(os.path.join("data/08_reporting/", f"{name}.tmp"), "w") as fw:
                     fw.write("")
 
@@ -199,8 +208,10 @@ class DataCatalogHooks:
     @hook_impl
     def after_catalog_created(self, catalog: DataCatalog) -> None:
         # ----------------------------------------------------------------
-        # This section creates csv datasets based on the partitioned dataset stored in the intermediate directory
-        # Also based on those partitions, it creates further csv datasets for the evaluation durations and the evaluation results
+        # This section creates csv datasets based on the partitioned
+        # dataset stored in the intermediate directory
+        # Also based on those partitions, it creates further csv datasets
+        # for the evaluation durations and the evaluation results
         # ----------------------------------------------------------------
 
         # get all the partitions created by the "pre" pipeline

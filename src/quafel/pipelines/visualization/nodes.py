@@ -6,7 +6,6 @@ generated using Kedro 0.18.4
 import plotly.graph_objs as go
 import plotly.express as px
 import plotly.io as pio
-from plotly.subplots import make_subplots
 
 from typing import Dict, List
 import pandas as pd
@@ -631,14 +630,14 @@ def qubits_measures_viz(evaluations_combined: Dict) -> Dict[str, go.Figure]:
 
             scatter_viz(
                 fig=figures[f"shots_{s}_depth_{d}_measures"],
-                name=f"Entangling Capability",
+                name="Entangling Capability",
                 main_color_sel=design.qual_main[0],
                 sec_color_sel=rgb_to_rgba(design.qual_second[0], 0.2),
                 x=duration_sorted_by_qubit["qubits"],
                 y=entangling_capabilities,
                 x_title="# of Qubits",
                 log_x=False,
-                y_title=f"Measures",
+                y_title="Measures",
                 log_y=False,
                 plot_title=f"Measures per Framework over "
                 f"# of Qubits @ {s} Shots, Circuit Depth {d}",
@@ -646,14 +645,14 @@ def qubits_measures_viz(evaluations_combined: Dict) -> Dict[str, go.Figure]:
 
             scatter_viz(
                 fig=figures[f"shots_{s}_depth_{d}_measures"],
-                name=f"Expressibility",
+                name="Expressibility",
                 main_color_sel=design.qual_main[1],
                 sec_color_sel=rgb_to_rgba(design.qual_second[1], 0.2),
                 x=duration_sorted_by_qubit["qubits"],
                 y=expressiblities,
                 x_title="# of Qubits",
                 log_x=False,
-                y_title=f"Measures",
+                y_title="Measures",
                 log_y=False,
                 plot_title=f"Measures per Framework over "
                 f"# of Qubits @ {s} Shots, Circuit Depth {d}",
@@ -696,14 +695,14 @@ def shots_measures_viz(evaluations_combined: Dict):
 
             scatter_viz(
                 fig=figures[f"qubits_{q}_depth_{d}_measures"],
-                name=f"Entangling Capability",
+                name="Entangling Capability",
                 main_color_sel=design.qual_main[0],
                 sec_color_sel=rgb_to_rgba(design.qual_second[0], 0.2),
                 x=duration_sorted_by_shots["shots"].astype(int),
                 y=entangling_capabilities,
                 x_title="# of Shots",
                 log_x=True,
-                y_title=f"Measures",
+                y_title="Measures",
                 log_y=False,
                 plot_title=f"Measures per Framework over "
                 f"# of Shots @ {q} Qubits, Circuit Depth {d}",
@@ -711,14 +710,14 @@ def shots_measures_viz(evaluations_combined: Dict):
 
             scatter_viz(
                 fig=figures[f"qubits_{q}_depth_{d}_measures"],
-                name=f"Expressibility",
+                name="Expressibility",
                 main_color_sel=design.qual_main[1],
                 sec_color_sel=rgb_to_rgba(design.qual_second[1], 0.2),
                 x=duration_sorted_by_shots["shots"].astype(int),
                 y=expressiblities,
                 x_title="# of Shots",
                 log_x=True,
-                y_title=f"Measures",
+                y_title="Measures",
                 log_y=False,
                 plot_title=f"Measures per Framework over "
                 f"# of Shots @ {q} Qubits, Circuit Depth {d}",
@@ -764,14 +763,14 @@ def depth_measures_viz(evaluations_combined: Dict):
 
             scatter_viz(
                 fig=figures[f"shots_{s}_qubits_{q}_measures"],
-                name=f"Entangling Capability",
+                name="Entangling Capability",
                 main_color_sel=design.qual_main[0],
                 sec_color_sel=rgb_to_rgba(design.qual_second[0], 0.2),
                 x=duration_sorted_by_depth["depth"].astype(int),
                 y=entangling_capabilities,
                 x_title="Circuit Depth",
                 log_x=True,
-                y_title=f"Measures",
+                y_title="Measures",
                 log_y=False,
                 plot_title=f"Measures per Framework over "
                 f"Circuit Depth @ {s} Shots, {q} Qubits",
@@ -779,14 +778,14 @@ def depth_measures_viz(evaluations_combined: Dict):
 
             scatter_viz(
                 fig=figures[f"shots_{s}_qubits_{q}_measures"],
-                name=f"Expressibility",
+                name="Expressibility",
                 main_color_sel=design.qual_main[1],
                 sec_color_sel=rgb_to_rgba(design.qual_second[1], 0.2),
                 x=duration_sorted_by_depth["depth"].astype(int),
                 y=expressiblities,
                 x_title="Circuit Depth",
                 log_x=True,
-                y_title=f"Measures",
+                y_title="Measures",
                 log_y=False,
                 plot_title=f"Measures per Framework over "
                 f"Circuit Depth @ {s} Shots, {q} Qubits",
@@ -812,13 +811,21 @@ def extract_tests(evaluations_combined: Dict):
 
     log = logging.getLogger(__name__)
     log.info(f"Received {n_evals} evaluations and {n_runs} runs")
-    log.info(f"Evaluation mean across all runs (perf timing): {evals_perf_mean.mean()}")
     log.info(
-        f"Evaluation deviation across all runs (perf timing): {evals_perf_mean.max() - evals_perf_mean.min()}"
+        f"Evaluation mean across all runs (perf timing): \
+            {evals_perf_mean.mean()}"
     )
-    log.info(f"Evaluation mean across all runs (proc timing): {evals_proc_mean.mean()}")
     log.info(
-        f"Evaluation deviation across all runs (proc timing): {evals_proc_mean.max() - evals_proc_mean.min()}"
+        f"Evaluation deviation across all runs (perf timing): \
+            {evals_perf_mean.max() - evals_perf_mean.min()}"
+    )
+    log.info(
+        f"Evaluation mean across all runs (proc timing): \
+             {evals_proc_mean.mean()}"
+    )
+    log.info(
+        f"Evaluation deviation across all runs (proc timing):\
+            {evals_proc_mean.max() - evals_proc_mean.min()}"
     )
 
     return {}

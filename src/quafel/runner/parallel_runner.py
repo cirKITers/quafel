@@ -31,15 +31,13 @@ from kedro.pipeline import Pipeline
 from kedro.pipeline.node import Node
 from kedro.runner.runner import AbstractRunner, run_node
 
-# see https://github.com/python/cpython/blob/master/Lib/concurrent/futures/process.py#L114
 _MAX_WINDOWS_WORKERS = 61
-
-# https://github.com/pylint-dev/pylint/issues/4300#issuecomment-1043601901
-_SharedMemoryDataSet: type[_SharedMemoryDataset]
 
 
 class _SharedMemoryDataset:
-    """``_SharedMemoryDataset`` is a wrapper class for a shared MemoryDataset in SyncManager.
+    """
+    ``_SharedMemoryDataset`` is a wrapper class for a shared MemoryDataset
+     in SyncManager.
     It is not inherited from AbstractDataset class.
     """
 
@@ -209,12 +207,7 @@ class Parallel(AbstractRunner):
 
         if unserialisable:
             raise AttributeError(
-                f"The following nodes cannot be serialised: {sorted(unserialisable)}\n"
-                f"In order to utilize multiprocessing you need to make sure all nodes "
-                f"are serialisable, i.e. nodes should not include lambda "
-                f"functions, nested functions, closures, etc.\nIf you "
-                f"are using custom decorators ensure they are correctly decorated using "
-                f"functools.wraps()."
+                f"The following nodes cannot be serialised: {sorted(unserialisable)}"
             )
 
     @classmethod

@@ -4,7 +4,6 @@ https://kedro.readthedocs.io/en/stable/kedro_project_setup/settings.html."""
 
 # Instantiated project hooks.
 from quafel.hooks import ProjectHooks, PipelineHooks, DataCatalogHooks
-from kedro.config import TemplatedConfigLoader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from pathlib import Path
 

@@ -112,8 +112,8 @@ def create_pipeline(partitions, existing_circuits, existing_measures, **kwargs) 
                     func=calculate_measures,
                     inputs={
                         "circuit": f"qiskit_circuit_{i}",
-                        "samples_per_parameter": "params:data_generation.samples_per_parameter",
-                        "haar_samples_per_qubit": "params:data_generation.haar_samples_per_qubit",
+                        "samples_per_parameter": "params:data_generation.samples_per_parameter",  # noqa
+                        "haar_samples_per_qubit": "params:data_generation.haar_samples_per_qubit",  # noqa
                         "seed": "params:data_generation.seed",
                     },
                     outputs={

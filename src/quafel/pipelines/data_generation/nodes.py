@@ -197,15 +197,20 @@ def _random_circuit(
 
     # Apply arbitrary random operations in layers across all qubits.
     for layer_number in range(depth):
-        # We generate all the randomness for the layer in one go, to avoid many separate calls to
+        # We generate all the randomness for the layer in one go,
+        # to avoid many separate calls to
         # the randomisation routines, which can be fairly slow.
 
-        # This reliably draws too much randomness, but it's less expensive than looping over more
-        # calls to the rng. After, trim it down by finding the point when we've used all the qubits.
+        # This reliably draws too much randomness,
+        # but it's less expensive than looping over more
+        # calls to the rng. After, trim it down by finding the point
+        # when we've used all the qubits.
         gate_specs = rng.choice(gates, size=len(qubits))
         cumulative_qubits = np.cumsum(gate_specs["num_qubits"], dtype=np.int16)
-        # Efficiently find the point in the list where the total gates would use as many as
-        # possible of, but not more than, the number of qubits in the layer.  If there's slack, fill
+        # Efficiently find the point in the list where the total gates
+        # would use as many as
+        # possible of, but not more than, the number of qubits in the layer.
+        # If there's slack, fill
         # it with 1q gates.
         # This will, with favor multi qubit gates, but does not ensure >1 qubit gates
         # being used, especially with a low number of layers
@@ -215,8 +220,10 @@ def _random_circuit(
         if slack:
             gate_specs = np.hstack((gate_specs, rng.choice(gates_1q, size=slack)))
 
-        # For efficiency in the Python loop, this uses Numpy vectorisation to pre-calculate the
-        # indices into the lists of qubits and parameters for every gate, and then suitably
+        # For efficiency in the Python loop, this uses Numpy vectorisation to
+        # pre-calculate the
+        # indices into the lists of qubits and parameters for every gate,
+        # and then suitably
         # randomises those lists.
         q_indices = np.empty(len(gate_specs) + 1, dtype=np.int16)
         p_indices = np.empty(len(gate_specs) + 1, dtype=np.int16)
@@ -227,8 +234,10 @@ def _random_circuit(
         parameters = ParameterVector(f"p_{layer_number}", p_indices[-1])
         rng.shuffle(qubits)
 
-        # We've now generated everything we're going to need.  Now just to add everything.  The
-        # conditional check is outside the two loops to make the more common case of no conditionals
+        # We've now generated everything we're going to need.
+        # Now just to add everything.  The
+        # conditional check is outside the two loops to make
+        # the more common case of no conditionals
         # faster, since in Python we don't have a compiler to do this for us.
         if conditional and layer_number != 0:
             is_conditional = rng.random(size=len(gate_specs)) < 0.1
@@ -247,7 +256,8 @@ def _random_circuit(
                 operation = gate(*parameters[p_start:p_end])
                 if is_cond:
                     qc.measure(qc.qubits, cr)
-                    # The condition values are required to be bigints, not Numpy's fixed-width type.
+                    # The condition values are required to be bigints,
+                    # not Numpy's fixed-width type.
                     operation.condition = (cr, int(condition_values[c_ptr]))
                     c_ptr += 1
                 qc._append(

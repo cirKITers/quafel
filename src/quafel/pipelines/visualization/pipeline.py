@@ -3,7 +3,7 @@ This is a boilerplate pipeline 'visualization'
 generated using Kedro 0.18.4
 """
 
-from kedro.pipeline import Pipeline, node, pipeline
+from kedro.pipeline import node, pipeline
 from quafel.pipelines.visualization.nodes import (
     shots_depths_viz,
     shots_qubits_viz,
@@ -39,7 +39,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"shots_depths_viz",
+                name="shots_depths_viz",
             ),
             node(
                 func=shots_qubits_viz,
@@ -58,7 +58,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"shots_depth_viz",
+                name="shots_depth_viz",
             ),
             node(
                 func=depth_qubits_viz,
@@ -77,7 +77,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"depth_qubits_viz",
+                name="depth_qubits_viz",
             ),
             node(
                 func=qubits_time_viz,
@@ -97,7 +97,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"qubits_time_viz",
+                name="qubits_time_viz",
             ),
             node(
                 func=shots_time_viz,
@@ -117,7 +117,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"shots_time_viz",
+                name="shots_time_viz",
             ),
             node(
                 func=depth_time_viz,
@@ -137,7 +137,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"depth_time_viz",
+                name="depth_time_viz",
             ),
             node(
                 func=depth_measures_viz,
@@ -156,7 +156,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"depth_measures_viz",
+                name="depth_measures_viz",
             ),
             node(
                 func=shots_measures_viz,
@@ -175,7 +175,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"shots_measures_viz",
+                name="shots_measures_viz",
             ),
             node(
                 func=qubits_measures_viz,
@@ -194,7 +194,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                     },
                 },
                 tags=["static"],
-                name=f"qubits_measures_viz",
+                name="qubits_measures_viz",
             ),
         ],
         inputs={
@@ -215,7 +215,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                 },
                 outputs={},
                 tags=["static"],
-                name=f"extract_tests",
+                name="extract_tests",
             )
         ],
         inputs={
@@ -237,7 +237,7 @@ def create_pipeline(figures, **kwargs) -> dict:
                 },
                 outputs={},
                 tags=["dynamic"],
-                name=f"export_selected",
+                name="export_selected",
             )
         ],
         inputs={

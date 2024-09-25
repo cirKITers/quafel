@@ -3,7 +3,7 @@ This is a boilerplate pipeline 'data_science'
 generated using Kedro 0.18.3
 """
 
-from kedro.pipeline import Pipeline, node, pipeline
+from kedro.pipeline import node, pipeline
 from quafel.pipelines.data_science.nodes import (
     measure_execution_durations,
     combine_evaluations,
@@ -61,7 +61,7 @@ def create_pipeline(partitions, **kwargs) -> dict:
                     "evaluations_combined": "evaluations_combined",
                 },
                 tags=["static"],
-                name=f"combine_evaluations",
+                name="combine_evaluations",
             ),
         ],
         inputs={
@@ -77,6 +77,6 @@ def create_pipeline(partitions, **kwargs) -> dict:
     )
 
     return {
-        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations,
+        "pl_parallel_measure_execution_durations": pl_parallel_measure_execution_durations,  # noqa
         "pl_combine_evaluations": pl_combine_evaluations,
     }
