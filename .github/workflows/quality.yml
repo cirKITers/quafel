@@ -1,22 +1,15 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
 name: Quality
-
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+  workflow_call:
 permissions:
   contents: read
-
 jobs:
-  build:
-
+  quality:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Install poetry
@@ -25,7 +18,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.11"
-        cache: 'poetry' # caching pip dependencies
+        cache: 'poetry'
     - name: Install dependencies
       run: poetry install --with dev
     - name: Lint with flake8
