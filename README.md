@@ -12,6 +12,9 @@ See [our poster](https://bwsyncandshare.kit.edu/s/CdnD6MEsNwYgJMd) contributed t
 
 ## 🚀 Getting Started
 
+To get started, clone this repository and head to our [documentation](https://cirkiters.github.io/quafel/) to see how you can get things rolling.
+
+<!--
 ```
 pip install quafel
 ```
@@ -22,6 +25,7 @@ poetry add quafel
 
 To install our package from [PyPI](https://pypi.org/project/quafel/).
 You can find details on how to use it and further documentation on the corresponding [Github Page](https://cirkiters.github.io/quafel/).
+-->
 
 We're also working on a [software](https://github.com/cirKITers/Quafel-PSE-2024) to make the benchmarking results available online. Stay tuned!
 

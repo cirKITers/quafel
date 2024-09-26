@@ -2,7 +2,7 @@
 name = "quafel"
 version = "0.1.0"
 description = ""
-authors = ["lc3267 <melvin.strobl@kit.edu>"]
+authors = ["Melvin Strobl <lc3267@kit.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -23,6 +23,9 @@ plotly = "^5.18.0"
 jax = "^0.4.25"
 jaxlib = "^0.4.25"
 
+[tool.poetry.group.dev]
+optional = true
+
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
 pytest-cov = "^4.0.0"
@@ -30,6 +33,9 @@ pre-commit = "^2.20.0"
 black = "^22.10.0"
 flake8 = "^6.0.0"
 coverage = "^7.6.1"
+
+[tool.poetry.group.docs]
+optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
